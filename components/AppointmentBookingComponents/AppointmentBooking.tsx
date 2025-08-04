@@ -524,22 +524,22 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }, 100);
     };
 
-    // Initialize notifications
-    useEffect(() => {
-        const setupNotifications = async () => {
-            try {
-                const pushToken = await registerForPushNotificationsAsync();
-                if (pushToken) {
-                    setToken(pushToken);
-                    console.log('Push token registered:', pushToken);
-                }
-            } catch (error) {
-                console.error('Error setting up notifications:', error);
-            }
-        };
+    // // Initialize notifications
+    // useEffect(() => {
+    //     const setupNotifications = async () => {
+    //         try {
+    //             const pushToken = await registerForPushNotificationsAsync();
+    //             if (pushToken) {
+    //                 setToken(pushToken);
+    //                 console.log('Push token registered:', pushToken);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error setting up notifications:', error);
+    //         }
+    //     };
 
-        setupNotifications();
-    }, []);
+    //     setupNotifications();
+    // }, []);
 
     // OTP countdown timer
     useEffect(() => {
