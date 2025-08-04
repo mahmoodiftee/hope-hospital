@@ -2,7 +2,6 @@ import useAuthStore from '@/store/auth.store';
 import { Redirect } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
-// 
 export default function Index() {
   const { user, fetchAuthenticatedUser, isLoading } = useAuthStore();
   // const {
@@ -31,6 +30,29 @@ export default function Index() {
 
   //   setupNotifications();
   // }, [user?.id, fetchUnreadCount]);
+
+
+  // useEffect(() => {
+  //   fetchAuthenticatedUser();
+  //   SecureStore.deleteItemAsync("user");
+  //   const storeUser = async () => {
+  //     try {
+  //       await SecureStore.setItemAsync('user', JSON.stringify({
+  //         id: "688521fc003e6eeb2343",
+  //         name: "Mahmood Iffty",
+  //         age: 27,
+  //         phone: "01788126796",
+  //         createdAt: new Date().toISOString(),
+  //       }));
+  //       console.log("User stored in SecureStore.");
+  //     } catch (e) {
+  //       console.error('Error saving user to SecureStore:', e);
+  //     }
+  //   };
+
+  //   storeUser();
+  //   console.log(user);
+  // }, []);
 
 
   if (isLoading) {
