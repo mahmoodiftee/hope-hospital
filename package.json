@@ -51,7 +51,9 @@
     "sonner-native": "^0.21.0",
     "tailwindcss": "^3.4.17",
     "use-debounce": "^10.0.5",
-    "zustand": "^5.0.7"
+    "zustand": "^5.0.7",
+    "react-native-maps": "1.20.1",
+    "expo-dev-client": "~5.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
