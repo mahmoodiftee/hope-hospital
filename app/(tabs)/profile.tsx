@@ -32,7 +32,7 @@ export default function Profile() {
     console.log("user", JSON.stringify(user, null, 2));
 
     const quickActions = [
-        { id: 1, url: "/appointments", title: "Booked", subtitle: "Appointment", icon: Calendar, color: "#007AFF" },
+        { id: 1, url: "/appointment", title: "Booked", subtitle: "Appointment", icon: Calendar, color: "#007AFF" },
         { id: 2, url: "/notifications", title: "Notifications", subtitle: "Messages", icon: Bell, color: "#f97316" },
         { id: 3, url: "/contact", title: "Emergency", subtitle: "Services", icon: Phone, color: "#FF3B30" },
         { id: 4, url: "/prescriptions", title: "Find", subtitle: "Prescriptions", icon: FileText, color: "#22c55e" }
