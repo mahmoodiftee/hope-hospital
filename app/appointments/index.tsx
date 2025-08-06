@@ -156,7 +156,7 @@ const Appointments = () => {
 const Header = () => (
     <View className="flex-row items-center">
         <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.push('/profile')}
             className="mr-4 p-2"
         >
             <Ionicons name="arrow-back" size={24} color="#374151" />

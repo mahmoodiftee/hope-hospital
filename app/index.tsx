@@ -1,35 +1,39 @@
 import useAuthStore from '@/store/auth.store';
-import { Redirect } from 'expo-router';
-import React from 'react';
+import useNotificationStore from '@/store/notification.store';
+import * as Notifications from 'expo-notifications';
+import { Redirect, router } from 'expo-router';
+import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+
+
 export default function Index() {
   const { user, fetchAuthenticatedUser, isLoading } = useAuthStore();
-  // const {
-  //   fetchUnreadCount,
-  // } = useNotificationStore();
-  // useEffect(() => {
-  //   fetchAuthenticatedUser();
-  //   if (user?.id) {
-  //     fetchUnreadCount(user.id);
-  //   }
-  //   const setupNotifications = async () => {
-  //     const subscriptionReceived = Notifications.addNotificationReceivedListener(notification => {
-  //       console.log('📥 Notification received in foreground:', notification);
-  //     });
+  const {
+    fetchUnreadCount,
+  } = useNotificationStore();
+  useEffect(() => {
+    fetchAuthenticatedUser();
+    if (user?.id) {
+      fetchUnreadCount(user.id);
+    }
+    const setupNotifications = async () => {
+      const subscriptionReceived = Notifications.addNotificationReceivedListener(notification => {
+        console.log('📥 Notification received in foreground:', notification);
+      });
 
-  //     const subscriptionResponse = Notifications.addNotificationResponseReceivedListener(response => {
-  //       console.log('👆 User tapped notification:', response);
-  //       router.push('/appointments');
-  //     });
+      const subscriptionResponse = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log('👆 User tapped notification:', response);
+        router.push('/appointments');
+      });
 
-  //     return () => {
-  //       subscriptionReceived.remove();
-  //       subscriptionResponse.remove();
-  //     };
-  //   };
+      return () => {
+        subscriptionReceived.remove();
+        subscriptionResponse.remove();
+      };
+    };
 
-  //   setupNotifications();
-  // }, [user?.id, fetchUnreadCount]);
+    setupNotifications();
+  }, [user?.id, fetchUnreadCount]);
 
 
   // useEffect(() => {
