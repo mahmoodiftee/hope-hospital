@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Prescriptions() {
@@ -121,11 +121,11 @@ export default function Prescriptions() {
         <SafeAreaView className="flex-1 bg-gray-50">
             <View className="px-4">
                 {/* Header */}
-                <View className="flex-row items-center justify-between mb-5 mt-2">
+                <View className="flex-row items-center justify-between py-3">
                     <View className="flex-row items-center">
                         <TouchableOpacity
-                            onPress={() => router.push('/profile')}
-                            className="mr-3"
+                            onPress={() => router.back()}
+                            className="mr-4 p-2 rounded-full bg-white shadow-sm"
                         >
                             <Ionicons name="arrow-back" size={24} color="#374151" />
                         </TouchableOpacity>

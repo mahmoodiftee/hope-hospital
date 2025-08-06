@@ -154,10 +154,10 @@ const Appointments = () => {
 
 // Reusable UI Components
 const Header = () => (
-    <View className="flex-row items-center">
+    <View className="flex-row items-center py-3 mx-4">
         <TouchableOpacity
-            onPress={() => router.push('/profile')}
-            className="mr-4 p-2"
+             onPress={() => router.back()}
+            className="mr-4 p-2 rounded-full bg-white shadow-sm"
         >
             <Ionicons name="arrow-back" size={24} color="#374151" />
         </TouchableOpacity>

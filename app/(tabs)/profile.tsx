@@ -147,7 +147,7 @@ export default function Profile() {
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-                <View className="px-4 pt-1">
+                <View className="px-4 py-3">
                     <Text className="text-dark-100 text-3xl font-bold mb-3 pl-1">Profile</Text>
 
                     {/* User Card */}

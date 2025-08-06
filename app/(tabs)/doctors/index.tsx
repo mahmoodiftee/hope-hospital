@@ -84,7 +84,7 @@ const DoctorsScreen: React.FC = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
-            <View className="mx-4 pt-1">
+            <View className="mx-4 py-3">
                 <View className="flex-row items-center justify-between mb-4">
                     <Text className="text-dark-100 text-3xl font-bold pl-1">Doctors</Text>
                     <TouchableOpacity

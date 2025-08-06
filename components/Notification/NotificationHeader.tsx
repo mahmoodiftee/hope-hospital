@@ -21,10 +21,10 @@ const NotificationHeader: React.FC<NotificationHeaderProps> = ({
     return (
         <>
             <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center mb-1.5">
+                <View className="flex-row items-center py-3 ">
                     <TouchableOpacity
-                        onPress={() => router.push('/profile')}
-                        className="mr-3"
+                        onPress={() => router.back()}
+                        className="mr-4 p-2 rounded-full bg-white shadow-sm"
                     >
                         <Ionicons name="arrow-back" size={24} color="#374151" />
                     </TouchableOpacity>
