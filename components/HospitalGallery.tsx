@@ -1,12 +1,12 @@
-import React from 'react';
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    Image,
-} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import React from 'react';
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import HeaderText from './HeaderText';
 
 
@@ -49,7 +49,7 @@ export const demoGalleryImages = [
     'https://images.unsplash.com/photo-1670665352618-49ae2ae914ff?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 ];
 const HospitalGallery: React.FC = () => {
-  const navigateToGallery = () => router.push('/(auth)/gallery' as any);
+  const navigateToGallery = () => router.push('/gallery' as any);
 
   return (
     <View className="">
