@@ -24,7 +24,7 @@ const Register = () => {
     const [focusedField, setFocusedField] = useState<string>('');
 
     // Your backend URL
-    const API_BASE_URL = "https://882dc0c8de8b.ngrok-free.app";
+    const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
     const handleRegister = async () => {
         if (!name.trim() || !age.trim()) {

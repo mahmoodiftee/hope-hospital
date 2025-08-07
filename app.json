@@ -16,6 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.hope.hopehopital",
+      "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "config": {
         "googleMaps": {
@@ -43,6 +45,13 @@
     ],
     "experiments": {
       "typedRoutes": false
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0a9be857-9039-4488-a49a-ea2a37259acb"
+      }
+    },
+    "owner": "mahmoodiftee"
   }
 }

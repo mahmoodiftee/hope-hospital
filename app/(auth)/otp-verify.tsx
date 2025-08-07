@@ -35,7 +35,7 @@ export default function OtpVerify() {
     const inputRefs = useRef<(TextInput | null)[]>([]);
     const containerRef = useRef<View>(null);
 
-    const API_BASE_URL = "https://882dc0c8de8b.ngrok-free.app";
+    const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
     const isLoginFlow = isLogin === 'true';
 
     useEffect(() => {

@@ -9,9 +9,9 @@ import {
     saveUserToDB,
     updateAppointment
 } from '@/lib/appwrite';
-import { registerForPushNotificationsAsync } from '@/lib/notifications';
 import useAppwrite from '@/lib/useAppwrite';
 import useAuthStore from '@/store/auth.store';
+import useNotificationStore from '@/store/notification.store';
 import * as SecureStore from 'expo-secure-store';
 import { X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -32,7 +32,6 @@ import OtpModal from './OtpModal';
 import PatientInfoForm from './PatientInfoForm';
 import SuccessModal from './SuccessModal';
 import TimeSlotPicker from './TimeSlotPicker';
-import useNotificationStore from '@/store/notification.store';
 
 // Types for better type safety
 type BookingResult = {
@@ -96,7 +95,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
     const { fetchUnreadCount, fetchNotifications } = useNotificationStore();
 
 
-    const API_BASE_URL = "https://882dc0c8de8b.ngrok-free.app";
+    const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
     // Utility functions
     const getUserType = (): UserType => {
