@@ -10,6 +10,7 @@ import {
     saveUserToDB,
     updateAppointment
 } from '@/lib/appwrite';
+import { sendPushToUser } from '@/lib/sendNotification';
 import useAppwrite from '@/lib/useAppwrite';
 import useAuthStore from '@/store/auth.store';
 import useNotificationStore from '@/store/notification.store';
@@ -376,6 +377,18 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
 
         if (result.success) {
             refetchAppointments();
+            try {
+                await sendPushToUser({
+                    userId: userIdCommon,
+                    title: reschedule ? 'Appointment Rescheduled!' : 'Appointment Confirmed!',
+                    message: reschedule
+                        ? `Your appointment with ${appointmentData.doctor_name} has been rescheduled to ${appointmentData.date} at ${appointmentData.time}.`
+                        : `Your appointment with ${appointmentData.doctor_name} has been confirmed for ${appointmentData.date} at ${appointmentData.time}.`,
+                });
+            } catch (error) {
+                console.warn('Push notification failed, but appointment was booked successfully:', error);
+                // Don't fail the entire booking process for push notification errors
+            }
             await handleNotifications(appointmentData, result.data.$id, userIdCommon);
             showSuccessMessage();
         } else {
@@ -454,6 +467,17 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
 
             if (result.success) {
                 const appointmentId = result.data?.appointment?.$id || result.data?.$id;
+                try {
+                    await sendPushToUser({
+                        userId,
+                        title: reschedule ? 'Appointment Rescheduled!' : 'Appointment Confirmed!',
+                        message: reschedule
+                            ? `Your appointment with ${tempAppointmentData.doctor_name} has been rescheduled to ${tempAppointmentData.date} at ${tempAppointmentData.time}.`
+                            : `Your appointment with ${tempAppointmentData.doctor_name} has been confirmed for ${tempAppointmentData.date} at ${tempAppointmentData.time}.`,
+                    });
+                } catch (error) {
+                    console.warn('Push notification failed, but appointment was booked successfully:', error);
+                }
                 await handleNotifications(tempAppointmentData, appointmentId, userId);
                 refetchAppointments();
                 setShowOtpModal(false);
