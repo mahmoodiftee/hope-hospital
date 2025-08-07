@@ -7,7 +7,7 @@ type Props = {
 
 const sendTestNotification = async (token: string) => {
     try {
-        const res = await fetch('https://882dc0c8de8b.ngrok-free.app/api/send-notification', {
+        const res = await fetch('https://7f348af9ced6.ngrok-free.app/api/send-notification', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -21,7 +21,6 @@ export interface User extends Models.Document {
     name: string;
     age: number;
     phone: string;
-    pushToken: string;
     createdAt: string;
 }
 
@@ -30,7 +29,6 @@ export interface LocalUser {
     name: string;
     age: number;
     phone: string;
-    pushToken: string;
     createdAt: string;
 }
 

@@ -1,4 +1,5 @@
 // otp-verify.tsx - Enhanced OTP verification with auto-fill support
+import { registerUserForNotifications } from "@/hooks/nativeNotify";
 import { saveUserToDB } from "@/lib/appwrite";
 import { registerForPushNotificationsAsync } from "@/lib/notifications";
 import { Ionicons } from '@expo/vector-icons';
@@ -169,11 +170,11 @@ export default function OtpVerify() {
                         name: parsedUserData?.name,
                         age: parsedUserData?.age,
                         phone: parsedUserData?.phone,
-                        pushToken: token || parsedUserData?.pushToken || "",
                         createdAt: parsedUserData?.createdAt || new Date().toISOString(),
                     };
 
                     await saveUserToSecureStore(userForStore);
+                    await registerUserForNotifications(parsedUserData?.$id || parsedUserData?.id);
                     router.replace('/(tabs)');
                 } else {
                     try {
@@ -181,7 +182,6 @@ export default function OtpVerify() {
                             name: name!.trim(),
                             age: parseInt(age!),
                             phone: phone,
-                            pushToken: token || "",
                         };
 
                         const savedUser = await saveUserToDB(cleanedUser);
@@ -191,10 +191,9 @@ export default function OtpVerify() {
                             name: cleanedUser.name,
                             age: cleanedUser.age,
                             phone: cleanedUser.phone,
-                            pushToken: token || "",
                             createdAt: new Date().toISOString(),
                         };
-
+                        await registerUserForNotifications(savedUser.$id);
                         await saveUserToSecureStore(userForStore);
                         router.replace('/(tabs)');
                     } catch (dbError) {

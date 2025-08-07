@@ -1,3 +1,4 @@
+import { registerUserForNotifications } from '@/hooks/nativeNotify';
 import {
     createAppointmentConfirmationNotification,
     createAppointmentRescheduleConfirmationNotification,
@@ -50,7 +51,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
     reschedule = false
 }) => {
     // State management
-    const [token, setToken] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>(rescheduleDetails?.date || '');
     const [selectedTime, setSelectedTime] = useState<string>(rescheduleDetails?.time || '');
     const [showOtpModal, setShowOtpModal] = useState(false);
@@ -70,6 +70,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         date: '',
         time: ''
     });
+
     const [patientInfo, setPatientInfo] = useState<PatientInfo>({
         name: rescheduleDetails?.patient_name || '',
         age: rescheduleDetails?.patient_age?.toString() || '',
@@ -94,10 +95,8 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
 
     const { fetchUnreadCount, fetchNotifications } = useNotificationStore();
 
-
     const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
-    // Utility functions
     const getUserType = (): UserType => {
         return (user && dbUser) ? 'authenticated' : 'guest';
     };
@@ -124,18 +123,14 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }
     };
 
-    // FIXED: Time validation utility - properly handles format mismatch
     const isTimeSlotAvailable = (timeString: string, dateString: string): boolean => {
-        // Normalize the time format for comparison
         const normalizedTime = normalizeTimeFormat(timeString);
-
-        // Check if slot is in doctor's available times (using normalized format)
         const isInDoctorSchedule = slots?.availableTimes?.some(availableTime =>
             normalizeTimeFormat(availableTime) === normalizedTime
         ) ?? false;
 
         if (!isInDoctorSchedule) {
-            return false; // Not in doctor's schedule
+            return false;
         }
 
         // Get today's date in the same format as dateString (YYYY-MM-DD)
@@ -171,23 +166,15 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         return slotTimeInMinutes > currentTimeInMinutes;
     };
 
-    // NEW: Helper function to normalize time format
     const normalizeTimeFormat = (timeString: string): string => {
-        // Handle both "9:00 AM" and "09:00 AM" formats
         const [time, period] = timeString.split(' ');
         const [hour, minute] = time.split(':');
-
-        // Pad hour with leading zero if needed
         const paddedHour = hour.padStart(2, '0');
-
         return `${paddedHour}:${minute} ${period}`;
     };
 
     const getTimeSlotStatus = (timeString: string, dateString: string) => {
-        // Normalize the time format for comparison
         const normalizedTime = normalizeTimeFormat(timeString);
-
-        // Check if slot is in doctor's available times (using normalized format)
         const isInDoctorSchedule = slots?.availableTimes?.some(availableTime =>
             normalizeTimeFormat(availableTime) === normalizedTime
         ) ?? false;
@@ -200,10 +187,8 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
             };
         }
 
-        // Get today's date in the same format as dateString (YYYY-MM-DD)
         const today = new Date().toLocaleDateString('en-CA');
 
-        // If it's NOT today (future date), all doctor's available times are valid
         if (dateString !== today) {
             return {
                 available: true,
@@ -212,25 +197,21 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
             };
         }
 
-        // ONLY for today, check if the time has already passed
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
 
-        // Parse the time string (e.g., "09:00 AM", "01:30 PM")
         const [time, period] = timeString.split(' ');
         const [hourStr, minuteStr] = time.split(':');
         let hour = parseInt(hourStr);
         const minute = parseInt(minuteStr);
 
-        // Convert to 24-hour format
         if (period === 'PM' && hour !== 12) {
             hour += 12;
         } else if (period === 'AM' && hour === 12) {
             hour = 0;
         }
 
-        // Compare with current time (add 30 minutes buffer for booking)
         const slotTimeInMinutes = hour * 60 + minute;
         const currentTimeInMinutes = currentHour * 60 + currentMinute + 30; // 30 min buffer
 
@@ -251,11 +232,9 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }
     };
 
-    // Notification management
     const handleNotifications = async (appointmentData: Appointment, appointmentId: string, userId: string): Promise<void> => {
         try {
             if (reschedule && rescheduleDetails?.$id) {
-                // Clean up old notifications
                 const oldNotifications = await getAppointmentNotifications(rescheduleDetails.$id);
                 if (oldNotifications.documents) {
                     const deletePromises = oldNotifications.documents
@@ -276,16 +255,14 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 await createAppointmentConfirmationNotification(appointmentData, appointmentId, userId);
             }
 
-            // Update notification store after successful notification creation
             await fetchUnreadCount(userIdCommon);
             await fetchNotifications(userIdCommon);
 
         } catch (error) {
             console.error("Error handling notifications:", error);
-            // Don't throw - notifications are not critical for appointment booking
         }
     };
-    // OTP Service
+
     class OtpService {
         static async sendOtp(phoneNumber: string): Promise<{ success: boolean; message?: string }> {
             try {
@@ -319,7 +296,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }
     }
 
-    // Appointment Service
     class AppointmentService {
         static async processAppointment(appointmentData: Appointment, isReschedule: boolean, rescheduleId?: string): Promise<BookingResult> {
             try {
@@ -342,13 +318,12 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
             }
         }
 
-        static async createUserAndAppointment(patientData: PatientInfo, appointmentData: Appointment, pushToken: string): Promise<BookingResult> {
+        static async createUserAndAppointment(patientData: PatientInfo, appointmentData: Appointment): Promise<BookingResult> {
             try {
                 const cleanedUser = {
                     name: patientData.name.trim(),
                     age: parseInt(patientData.age.trim(), 10),
                     phone: patientData.phone.trim(),
-                    pushToken: pushToken,
                 };
 
                 const savedUser = await saveUserToDB(cleanedUser);
@@ -375,7 +350,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }
     }
 
-    // Main booking logic - simplified and cleaner
     const handleBookAppointment = async (): Promise<void> => {
         if (!validateForm()) return;
 
@@ -464,7 +438,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                     name: dbUser.name,
                     age: dbUser.age,
                     phone: dbUser.phone,
-                    pushToken: dbUser.pushToken || token || "",
                     createdAt: new Date().toISOString(),
                 });
 
@@ -475,7 +448,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 result = await AppointmentService.createUserAndAppointment(
                     patientInfo,
                     tempAppointmentData,
-                    token || ""
                 );
                 userId = result.data?.user?.$id;
             }
@@ -487,6 +459,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 setShowOtpModal(false);
                 showSuccessMessage();
                 fetchAuthenticatedUser();
+                await registerUserForNotifications(userId);
             } else {
                 setShowOtpModal(false);
                 toast.error(result.message || 'Booking failed');
@@ -517,30 +490,11 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         setOtpError('');
         setCountdown(60);
         setCanResend(false);
-        // Auto-focus first OTP input when modal opens
         setTimeout(() => {
             inputRefs.current[0]?.focus();
         }, 100);
     };
 
-    // // Initialize notifications
-    // useEffect(() => {
-    //     const setupNotifications = async () => {
-    //         try {
-    //             const pushToken = await registerForPushNotificationsAsync();
-    //             if (pushToken) {
-    //                 setToken(pushToken);
-    //                 console.log('Push token registered:', pushToken);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error setting up notifications:', error);
-    //         }
-    //     };
-
-    //     setupNotifications();
-    // }, []);
-
-    // OTP countdown timer
     useEffect(() => {
         if (showOtpModal && countdown > 0) {
             const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -550,7 +504,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }
     }, [countdown, showOtpModal]);
 
-    // ENHANCED Validation functions - NOW INCLUDES TIME VALIDATION
     const validateForm = (): boolean => {
         const errors: ValidationErrors = {
             name: '',
@@ -586,7 +539,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         if (!selectedTime) {
             errors.time = 'Please select an appointment time';
         } else if (selectedDate && !isTimeSlotAvailable(selectedTime, selectedDate)) {
-            // Check if the selected time slot is still available and not in the past
             const today = new Date().toLocaleDateString('en-CA');
             if (selectedDate === today) {
                 errors.time = 'This time slot has passed. Please select a future time.';
@@ -605,13 +557,12 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
             patientInfo.name.trim() &&
             patientInfo.age.trim() &&
             patientInfo.phone.trim() &&
-            isTimeSlotAvailable(selectedTime, selectedDate)); // Added time validation
+            isTimeSlotAvailable(selectedTime, selectedDate));
     };
 
-    // Event handlers
     const handleDateSelect = (day: any): void => {
         setSelectedDate(day.dateString);
-        setSelectedTime(''); // Clear selected time when date changes
+        setSelectedTime('');
         setValidationErrors(prev => ({
             ...prev,
             date: '',
@@ -629,7 +580,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 time: ''
             }));
         } else {
-            // Show appropriate error message based on status
             if (status.status === 'time_passed') {
                 toast.error('This time slot has passed. Please select a future time.');
             } else if (status.status === 'not_available') {
@@ -638,44 +588,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         }
     };
 
-    // ENHANCED: Debug function with better format checking
-    const debugTimeSlots = () => {
-        const today = new Date().toLocaleDateString('en-CA');
-        const now = new Date();
-
-        console.log('=== TIME SLOT DEBUG ===');
-        console.log('Selected Date:', selectedDate);
-        console.log('Today:', today);
-        console.log('Current Time:', now.toLocaleTimeString());
-        console.log('Is Selected Date Today?:', selectedDate === today);
-        console.log('Doctor Available Times:', slots?.availableTimes);
-
-        // Debug format matching
-        console.log('=== FORMAT MATCHING DEBUG ===');
-        masterTimeSlots.forEach(time => {
-            const normalizedMaster = normalizeTimeFormat(time);
-            const matchingSlot = slots?.availableTimes?.find(availableTime =>
-                normalizeTimeFormat(availableTime) === normalizedMaster
-            );
-            console.log(`${time} -> ${normalizedMaster} | Match: ${matchingSlot || 'NONE'}`);
-        });
-
-        masterTimeSlots.forEach(time => {
-            const status = getTimeSlotStatus(time, selectedDate);
-            const normalizedTime = normalizeTimeFormat(time);
-            const isInSchedule = slots?.availableTimes?.some(availableTime =>
-                normalizeTimeFormat(availableTime) === normalizedTime
-            );
-            console.log(`${time}: InSchedule=${isInSchedule}, Status=${status.status}, Available=${status.available}`);
-        });
-        console.log('=====================');
-    };
-
-    useEffect(() => {
-        if (selectedDate && slots?.availableTimes) {
-            debugTimeSlots();
-        }
-    }, [selectedDate, slots?.availableTimes]);
 
     const handlePatientInfoChange = (field: keyof PatientInfo, value: string): void => {
         setPatientInfo(prev => ({
@@ -695,32 +607,25 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         onClose();
     };
 
-    // ENHANCED OTP handling functions - IMPROVED FOCUS MANAGEMENT
     const handleOtpChange = (text: string, index: number): void => {
-        // Only allow single digit
         const digit = text.slice(-1);
 
         const newOtp = [...otp];
         newOtp[index] = digit;
         setOtp(newOtp);
 
-        // Auto-focus next input if digit entered
         if (digit && index < 5) {
             inputRefs.current[index + 1]?.focus();
         }
 
-        // Clear error when user starts typing
         if (otpError) setOtpError('');
     };
 
     const handleKeyPress = (e: any, index: number): void => {
-        // Handle backspace to go to previous input
         if (e.nativeEvent.key === 'Backspace') {
             if (!otp[index] && index > 0) {
-                // If current field is empty, go to previous field
                 inputRefs.current[index - 1]?.focus();
             } else if (otp[index]) {
-                // If current field has content, clear it
                 const newOtp = [...otp];
                 newOtp[index] = '';
                 setOtp(newOtp);
@@ -742,7 +647,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 setCountdown(60);
                 setCanResend(false);
                 setOtpError('');
-                // Focus first input after resend
                 setTimeout(() => {
                     inputRefs.current[0]?.focus();
                 }, 100);
@@ -766,7 +670,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         setCanResend(false);
     };
 
-    // Loading state
     if (loading) {
         return (
             <SafeAreaView className="flex-1 bg-white">
@@ -777,8 +680,8 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         );
     }
 
-    // Time slots setup - ENHANCED WITH TIME VALIDATION
     const today = new Date().toLocaleDateString('en-CA');
+
     const masterTimeSlots = [
         '09:00 AM',
         '10:00 AM',
@@ -794,15 +697,14 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         '08:00 PM',
     ];
 
-    // FIXED: timeSlots with proper time validation and format matching
     const timeSlots: TimeSlot[] = masterTimeSlots.map((time, index) => {
         const status = getTimeSlotStatus(time, selectedDate);
         return {
             id: `${index + 1}`,
             time,
             available: status.available,
-            status: status.status, // Add status to TimeSlot if your type supports it
-            label: status.label    // Add label to TimeSlot if your type supports it
+            status: status.status,
+            label: status.label
         };
     });
 

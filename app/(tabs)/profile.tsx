@@ -1,3 +1,4 @@
+import { unregisterUserFromNotifications } from "@/hooks/nativeNotify";
 import useAuthStore from "@/store/auth.store";
 import useNotificationStore from "@/store/notification.store";
 import { useRouter } from "expo-router";
@@ -69,7 +70,7 @@ export default function Profile() {
 
             // Clear storage in the background
             await SecureStore.deleteItemAsync("user");
-
+            await unregisterUserFromNotifications(user?.id || dbUser?.$id);
             toast.success('Signed Out');
 
             router.replace("/profile");
