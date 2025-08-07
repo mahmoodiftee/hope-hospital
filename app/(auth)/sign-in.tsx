@@ -82,7 +82,6 @@ const SignIn = () => {
 
     return (
         <>
-            {/* <StatusBar barStyle="light-content" backgroundColor="#f9fafb" /> */}
             <View className="flex-1 pb-10 bg-white">
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

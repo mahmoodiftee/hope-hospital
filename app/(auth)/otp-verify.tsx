@@ -1,7 +1,5 @@
-// otp-verify.tsx - Enhanced OTP verification with auto-fill support
 import { registerUserForNotifications } from "@/hooks/nativeNotify";
 import { saveUserToDB } from "@/lib/appwrite";
-import { registerForPushNotificationsAsync } from "@/lib/notifications";
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from "expo-router";
 import * as SecureStore from 'expo-secure-store';
@@ -30,7 +28,6 @@ export default function OtpVerify() {
     const [resendLoading, setResendLoading] = useState(false);
     const [countdown, setCountdown] = useState(60);
     const [canResend, setCanResend] = useState(false);
-    const [token, setToken] = useState<string | null>(null);
     const [isAutoFilling, setIsAutoFilling] = useState(false);
 
     const inputRefs = useRef<(TextInput | null)[]>([]);
@@ -39,15 +36,6 @@ export default function OtpVerify() {
     const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
     const isLoginFlow = isLogin === 'true';
 
-    useEffect(() => {
-        const setupNotifications = async () => {
-            const token = await registerForPushNotificationsAsync();
-            if (token) {
-                setToken(token);
-            }
-        };
-        setupNotifications();
-    }, []);
 
     useEffect(() => {
         if (countdown > 0) {

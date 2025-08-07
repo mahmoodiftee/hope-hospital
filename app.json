@@ -11,6 +11,14 @@
     "ios": {
       "supportsTablet": false
     },
+   "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#000000"
+    },
+    "androidNavigationBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#000000"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

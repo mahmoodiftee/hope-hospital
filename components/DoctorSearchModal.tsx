@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, {  useEffect, useRef, useMemo } from 'react';
 import {
     Modal,
     View,
@@ -193,8 +193,6 @@ const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
             transparent={true}
             onRequestClose={handleClose}
         >
-            <StatusBar barStyle="light-content" backgroundColor="rgba(0,0,0,0.1)" />
-
             <Animated.View
                 className="flex-1"
                 style={{

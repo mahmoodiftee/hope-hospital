@@ -9,7 +9,6 @@ import {
     Dimensions,
     Image,
     ScrollView,
-    StatusBar,
     Text,
     TouchableOpacity,
     View,
@@ -235,8 +234,6 @@ const GalleryScreen: React.FC = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-white">
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-
             {/* Header */}
             <View className="flex-row items-center px-3 py-2 border-b-4 border-gray-50">
                 <TouchableOpacity

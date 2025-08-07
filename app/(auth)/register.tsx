@@ -7,7 +7,6 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    StatusBar,
     Text,
     TextInput,
     TouchableOpacity,
@@ -78,7 +77,6 @@ const Register = () => {
 
     return (
         <>
-            <StatusBar barStyle="light-content" backgroundColor="#f9fafb" />
             <View className="flex-1 pb-10">
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

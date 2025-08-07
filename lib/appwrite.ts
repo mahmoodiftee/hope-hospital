@@ -78,40 +78,15 @@ export const logout = async () => {
     }
 };
 
-export const saveUserToDB = async ({ name, age, phone, pushToken = "" }: { name: string; age: number; phone: string; pushToken?: string; }) => {
+export const saveUserToDB = async ({ name, age, phone }: { name: string; age: number; phone: string;}) => {
     return await databases.createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.userCollectionId,
         ID.unique(),
-        { name, age, phone, pushToken }
+        { name, age, phone }
     );
 };
 
-export const updateUser = async ({ token, phone }: { token: string; phone: string }) => {
-    try {
-        // 1. Find user by phone
-        const res = await databases.listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.userCollectionId,
-            [Query.equal("phone", phone)]
-        );
-
-        if (!res?.documents?.length) throw new Error("User not found");
-
-        const userDoc = res.documents[0];
-
-        // 2. Update user by document ID
-        return await databases.updateDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.userCollectionId,
-            userDoc.$id,
-            { pushToken: token }
-        );
-    } catch (e: any) {
-        console.error("❌ updateUser failed:", e.message);
-        throw new Error(e.message || "Something went wrong");
-    }
-};
 
 export const getUser = async ({ phone }: { phone: string }) => {
     try {

@@ -1,26 +1,26 @@
-import React, { useState, useRef } from 'react';
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    Image,
-    Dimensions,
-    FlatList,
-    Modal,
-    StatusBar,
-    ActivityIndicator,
-    Alert
-} from 'react-native';
-import {
-    X,
     ChevronLeft,
     ChevronRight,
     Download,
+    MoreVertical,
     Share2,
+    X,
     ZoomIn,
-    ZoomOut,
-    MoreVertical
+    ZoomOut
 } from 'lucide-react-native';
+import React, { useRef, useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    FlatList,
+    Image,
+    Modal,
+    StatusBar,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

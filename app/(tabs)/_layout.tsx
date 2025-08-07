@@ -179,7 +179,7 @@ const CustomTabBar = ({ state, navigation }: { state: any; navigation: any }) =>
 const styles = StyleSheet.create({
     tabBarContainer: {
         position: "absolute",
-        bottom: 5,
+        bottom:10,
         left: 20,
         right: 20,
         height: 70,

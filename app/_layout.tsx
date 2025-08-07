@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SplashScreen as ExpoSplashScreen, Stack } from "expo-router";
 import { useFonts } from 'expo-font';
+import { SplashScreen as ExpoSplashScreen, Stack } from "expo-router";
+import * as SystemUI from 'expo-system-ui';
+import React, { useEffect } from "react";
+import { StatusBar } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Toaster } from 'sonner-native';
-import { StatusBar } from 'expo-status-bar';
-
 import './globals.css';
 
 export default function RootLayout() {
@@ -19,6 +19,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
     if (fontsLoaded) ExpoSplashScreen.hideAsync();
+
+    SystemUI.setBackgroundColorAsync('#000000');
   }, [fontsLoaded, error]);
 
   if (!fontsLoaded && !error) {
@@ -27,7 +29,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar style="light" backgroundColor="#f9fafb" />
+      <StatusBar barStyle="default" />
 
       <Stack screenOptions={{ headerShown: false }} />
 
