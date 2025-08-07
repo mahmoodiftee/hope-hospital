@@ -55,8 +55,7 @@
           "icon": "./assets/images/notification-icon.png",
           "color": "#ffffff"
         }
-      ],
-      "react-native-svg"
+      ]
     ],
     "experiments": {
       "typedRoutes": false
