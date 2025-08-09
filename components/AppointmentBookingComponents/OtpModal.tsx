@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import { X } from 'lucide-react-native';
+import React from 'react';
+import { ActivityIndicator, Modal, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface OtpModalProps {
     visible: boolean;
@@ -12,7 +12,7 @@ interface OtpModalProps {
     canResend: boolean;
     isOtpComplete: boolean;
     phone: string;
-    inputRefs: React.RefObject<TextInput>[];
+    inputRefs: React.RefObject<(TextInput | null)[]>;
     onOtpChange: (text: string, index: number) => void;
     onKeyPress: (e: any, index: number) => void;
     onResendOtp: () => void;
@@ -69,15 +69,18 @@ const OtpModal: React.FC<OtpModalProps> = ({
                         {otp.map((digit, index) => (
                             <TextInput
                                 key={index}
-                                ref={inputRefs[index]}
+                                ref={(ref) => { inputRefs.current[index] = ref; }}
                                 value={digit}
-                                onChangeText={(text) => onOtpChange(text.replace(/[^0-9]/g, ''), index)}
+                                onChangeText={(text) => onOtpChange(text, index)}
                                 onKeyPress={(e) => onKeyPress(e, index)}
                                 keyboardType="number-pad"
-                                maxLength={1}
+                                maxLength={Platform.OS === 'ios' ? 1 : 6}
                                 className="w-12 h-14 border-2 border-dark-100/10 rounded-lg text-center text-2xl font-medium bg-slate-100 text-dark-100"
                                 selectionColor="#007AFF"
                                 autoFocus={index === 0}
+                                textContentType="oneTimeCode"
+                                autoComplete="sms-otp"
+                                importantForAutofill="yes"
                             />
                         ))}
                     </View>

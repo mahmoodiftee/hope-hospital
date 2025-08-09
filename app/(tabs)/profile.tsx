@@ -1,4 +1,3 @@
-import NotificationTestButton from "@/components/NotificationTestButton";
 import { unregisterUserFromNotifications } from "@/hooks/nativeNotify";
 import useAuthStore from "@/store/auth.store";
 import useNotificationStore from "@/store/notification.store";
@@ -182,7 +181,7 @@ export default function Profile() {
                         </View>
                     </View>
 
-                    <NotificationTestButton />
+                    {/* <NotificationTestButton /> */}
 
                     {/* Quick Actions */}
                     <View className="mb-4">

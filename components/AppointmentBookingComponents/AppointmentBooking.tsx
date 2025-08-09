@@ -632,22 +632,59 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
     };
 
     const handleOtpChange = (text: string, index: number): void => {
-        const digit = text.slice(-1);
+        // Handle multi-digit input (auto-fill or paste)
+        if (text.length > 1) {
+            const otpArray = text.replace(/[^0-9]/g, '').split('').slice(0, 6);
+            const newOtp = [...otp];
 
+            // Fill the OTP array with the digits
+            otpArray.forEach((digit, i) => {
+                if (i < 6) {
+                    newOtp[i] = digit;
+                }
+            });
+
+            // Clear remaining fields if the input is shorter than 6 digits
+            for (let i = otpArray.length; i < 6; i++) {
+                newOtp[i] = '';
+            }
+
+            setOtp(newOtp);
+
+            // Focus the next empty field or the last field if all are filled
+            const nextEmptyIndex = newOtp.findIndex(digit => digit === '');
+            const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
+
+            setTimeout(() => {
+                inputRefs.current[focusIndex]?.focus();
+            }, 100);
+
+            // Clear any existing error
+            if (otpError) setOtpError('');
+            return;
+        }
+
+        // Handle single digit input
+        const digit = text.replace(/[^0-9]/g, '');
         const newOtp = [...otp];
         newOtp[index] = digit;
         setOtp(newOtp);
 
+        // Auto-focus next input for single digit entry
         if (digit && index < 5) {
             inputRefs.current[index + 1]?.focus();
         }
 
+        // Clear any existing error
         if (otpError) setOtpError('');
     };
 
     const handleKeyPress = (e: any, index: number): void => {
         if (e.nativeEvent.key === 'Backspace') {
             if (!otp[index] && index > 0) {
+                const newOtp = [...otp];
+                newOtp[index - 1] = '';
+                setOtp(newOtp);
                 inputRefs.current[index - 1]?.focus();
             } else if (otp[index]) {
                 const newOtp = [...otp];

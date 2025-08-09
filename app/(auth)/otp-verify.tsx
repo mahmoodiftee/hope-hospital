@@ -268,7 +268,7 @@ export default function OtpVerify() {
             </View>
 
             {/* Enhanced OTP Input with better auto-fill support */}
-            <View ref={containerRef} className="flex-row justify-center space-x-3 mb-8">
+            <View ref={containerRef} className="flex-row justify-center gap-1 mb-6">
                 {otp.map((digit, index) => (
                     <TextInput
                         key={index}
