@@ -1,4 +1,3 @@
-// Contact.tsx
 import { ContactCard } from '@/components/Contact/ContactCard';
 import { HospitalAddress } from '@/components/Contact/HospitalAddress';
 import { OperatingHours } from '@/components/Contact/OperatingHours';

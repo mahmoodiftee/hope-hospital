@@ -1,26 +1,25 @@
-import React, {  useEffect, useRef, useMemo } from 'react';
+import Search from '@/components/Search';
+import { getAllDoctors } from '@/lib/appwrite';
+import useAppwrite from '@/lib/useAppwrite';
+import { Doctor } from '@/types';
+import { CARD_CONFIG } from '@/utils/constants';
+import { router, useLocalSearchParams } from 'expo-router';
+import { PhoneCall, Stethoscope, Tag, X } from 'lucide-react-native';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
-    Modal,
-    View,
-    Text,
-    TouchableOpacity,
+    Animated,
     FlatList,
     Image,
-    Dimensions,
-    StatusBar,
     Keyboard,
-    Animated,
+    Modal,
     Platform,
+    StatusBar,
     StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
-import { X, Stethoscope, PhoneCall, Tag } from 'lucide-react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import useAppwrite from '@/lib/useAppwrite';
-import { getAllDoctors } from '@/lib/appwrite';
-import Search from '@/components/Search';
-import { Doctor } from '@/types';
 
-const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 interface DoctorSearchModalProps {
     visible: boolean;
@@ -36,7 +35,7 @@ const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
     onDoctorSelect,
 }) => {
     // Animation values
-    const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+    const slideAnim = useRef(new Animated.Value(CARD_CONFIG.height)).current;
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
     const params = useLocalSearchParams<{ query?: string; filter?: string }>();
@@ -93,7 +92,7 @@ const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
             ]).start();
         } else {
             // Reset animations
-            slideAnim.setValue(screenHeight);
+            slideAnim.setValue(CARD_CONFIG.height);
             fadeAnim.setValue(0);
         }
     }, [visible]);
@@ -104,7 +103,7 @@ const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
         // Smooth exit animation
         Animated.parallel([
             Animated.timing(slideAnim, {
-                toValue: screenHeight,
+                toValue: CARD_CONFIG.height,
                 duration: 300,
                 useNativeDriver: true,
             }),

@@ -1,9 +1,13 @@
-import React, { useRef } from 'react';
-import { View, FlatList, TouchableOpacity, Dimensions, ImageBackground, Image, Text } from 'react-native';
-import HeaderText from './HeaderText';
+import { images } from "@/constants";
+import { CARD_CONFIG } from '@/utils/constants';
+import { transformAppointmentToDoctorType } from '@/utils/formatters';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Clock, MapPin, MessageCircle, Phone } from 'lucide-react-native';
-import { images } from "@/constants";
+import React, { useRef } from 'react';
+import { FlatList, Image, ImageBackground, Text, TouchableOpacity, View } from 'react-native';
+import EmptyAppointmentCard from './EmptyAppointmentCard';
+import HeaderText from './HeaderText';
+import SkeletonCard from './SkeletonCard';
 
 type DoctorType = {
     id: number;
@@ -15,49 +19,40 @@ type DoctorType = {
     bgColor: string;
 };
 
+interface Appointment {
+    $id: string;
+    $createdAt: string;
+    patientName: string;
+    patientPhone: string;
+    appointmentDateTime: string;
+    status: string;
+    doctorId?: {
+        image?: string;
+        name?: string;
+        specialty?: string;
+    };
+    doctorName?: string;
+    doctorImage?: string;
+    doctorSpecialty?: string;
+    location?: string;
+    notes?: string;
+    doctor_name?: string;
+    specialty?: string;
+}
 
-export const doctors: DoctorType[] = [
-    {
-        id: 1,
-        name: "Dr. Masud Khan",
-        specialization: "Specializes in mental health",
-        image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=50&h=50&fit=crop&crop=face",
-        location: "Dhaka, Gulshan 2",
-        time: "24 Feb, 11:00 pm",
-        bgColor: "bg-blue/90"
-    },
-    {
-        id: 2,
-        name: "Dr. Sarah Ahmed",
-        specialization: "Cardiologist & Heart Specialist",
-        image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=50&h=50&fit=crop&crop=face",
-        location: "Dhaka, Dhanmondi",
-        time: "25 Feb, 2:30 pm",
-        bgColor: "bg-blue/90"
-    },
-    {
-        id: 3,
-        name: "Dr. Rahman Ali",
-        specialization: "Pediatrician & Child Care",
-        image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=50&h=50&fit=crop&crop=face",
-        location: "Dhaka, Uttara",
-        time: "26 Feb, 10:00 am",
-        bgColor: "bg-blue/90"
-    }
-];
+interface UpcomingConsultationsProps {
+    upcomingAppointments: Appointment[];
+    loading?: boolean;
+}
 
-const { width: screenWidth } = Dimensions.get('window');
-
-const UpcomingConsultations = () => {
+const UpcomingConsultations = ({ upcomingAppointments, loading = false }: UpcomingConsultationsProps) => {
     const flatListRef = useRef<FlatList<DoctorType>>(null);
     const [currentIndex, setCurrentIndex] = React.useState(0);
 
-    const cardWidth = screenWidth - 30;
-    const cardMargin = 8;
-
+    const doctors: DoctorType[] = upcomingAppointments.map(transformAppointmentToDoctorType);
 
     const onScroll = (event: any) => {
-        const slideSize = cardWidth + cardMargin;
+        const slideSize = CARD_CONFIG.width + CARD_CONFIG.margin;
         const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
         setCurrentIndex(index);
     };
@@ -68,7 +63,7 @@ const UpcomingConsultations = () => {
     };
 
     const renderDoctorCard = ({ item: doctor }: { item: DoctorType }) => (
-        <View style={{ width: cardWidth, marginRight: cardMargin }}>
+        <View style={{ width: CARD_CONFIG.width, marginRight: CARD_CONFIG.margin }}>
             <View className={`${doctor.bgColor} rounded-2xl p-4 relative overflow-hidden`}>
                 <ImageBackground
                     source={images.texture}
@@ -139,6 +134,35 @@ const UpcomingConsultations = () => {
         </View>
     );
 
+    if (loading) {
+        return (
+            <View className="mb-2">
+                <HeaderText title="Upcoming Consultation" />
+                <FlatList
+                    data={[1, 2]}
+                    renderItem={() => <SkeletonCard />}
+                    keyExtractor={(item, index) => `skeleton-${index}`}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ paddingHorizontal: 0 }}
+                    scrollEnabled={false}
+                />
+                <View className="flex-row justify-center mt-4 gap-2">
+                    <View className="w-2 h-2 rounded-full bg-gray-300" />
+                    <View className="w-2 h-2 rounded-full bg-gray-300" />
+                </View>
+            </View>
+        );
+    }
+
+    if (!upcomingAppointments || upcomingAppointments.length === 0) {
+        return (
+            <View className="mb-2">
+                <HeaderText title="Upcoming Consultation" />
+                <EmptyAppointmentCard />
+            </View>
+        );
+    }
 
     return (
         <View className="mb-2">
@@ -155,12 +179,12 @@ const UpcomingConsultations = () => {
                 onScroll={onScroll}
                 scrollEventThrottle={16}
                 contentContainerStyle={{ paddingHorizontal: 0 }}
-                snapToInterval={cardWidth + cardMargin}
+                snapToInterval={CARD_CONFIG.width + CARD_CONFIG.margin}
                 decelerationRate="fast"
                 bounces={false}
                 getItemLayout={(data, index) => ({
-                    length: cardWidth + cardMargin,
-                    offset: (cardWidth + cardMargin) * index,
+                    length: CARD_CONFIG.width + CARD_CONFIG.margin,
+                    offset: (CARD_CONFIG.width + CARD_CONFIG.margin) * index,
                     index,
                 })}
             />

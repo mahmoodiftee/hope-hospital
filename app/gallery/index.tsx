@@ -1,21 +1,20 @@
 import { demoGalleryImages } from '@/components/HospitalGallery';
 import { ImageViewer } from '@/components/ImageViewer';
+import { CARD_CONFIG } from '@/utils/constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
-    Dimensions,
     Image,
     ScrollView,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const { width: screenWidth } = Dimensions.get('window');
 
 interface ImageDimensions {
     width: number;
@@ -56,7 +55,7 @@ const GalleryScreen: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const ITEMS_PER_PAGE = 8;
-    const columnWidth = (screenWidth - 30) / 2;
+    const columnWidth = (CARD_CONFIG.width - 30) / 2;
 
     // Fetch images function
     const fetchImages = useCallback(async (page: number): Promise<string[]> => {

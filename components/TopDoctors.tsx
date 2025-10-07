@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { View, FlatList, TouchableOpacity, Dimensions, Text, Image, Modal } from 'react-native';
-import HeaderText from './HeaderText';
+import { Dimensions, FlatList, Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 import AppointmentBooking from './AppointmentBookingComponents/AppointmentBooking';
+import HeaderText from './HeaderText';
 
 interface DoctorI {
     $id?: string;

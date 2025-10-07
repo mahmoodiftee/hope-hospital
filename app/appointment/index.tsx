@@ -1,12 +1,9 @@
 import { AppointmentCard } from '@/components/Appointment/AppointmentCard'
-import { getAppointments } from '@/lib/appwrite'
-import useAuthStore from '@/store/auth.store'
-import useNotificationStore from '@/store/notification.store'
-import { Appointment } from '@/types'
+import { useUserAppointments } from '@/hooks/useUserAppointments'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { AlertCircle, Calendar } from 'lucide-react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import {
     ActivityIndicator,
     RefreshControl,
@@ -18,75 +15,17 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Appointments = () => {
-    const { user, fetchAuthenticatedUser } = useAuthStore()
-    const { fetchUnreadCount, fetchNotifications } = useNotificationStore()
+    const {
+        appointments,
+        loading,
+        refreshing,
+        error,
+        refresh,
+        refreshAppointments,
+        retry
+    } = useUserAppointments()
 
-    const [refreshing, setRefreshing] = useState(false)
-    const [appointments, setAppointments] = useState<Appointment[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-
-    // Ensure user is loaded
-    useEffect(() => {
-        if (!user) {
-            fetchAuthenticatedUser()
-        }
-    }, [user, fetchAuthenticatedUser])
-
-    const fetchAppointments = useCallback(async (phone?: string) => {
-        if (!phone) {
-            console.warn('No phone number provided for fetching appointments')
-            return
-        }
-
-        try {
-            setError(null)
-            const result = await getAppointments({ phone })
-            console.log('Fetched appointments:', result?.length || 0)
-            setAppointments(result || [])
-        } catch (err: any) {
-            console.error('Error fetching appointments:', err)
-            setError(err.message || 'Failed to fetch appointments')
-        }
-    }, [])
-
-    // Initial fetch when user phone is available
-    useEffect(() => {
-        if (user?.phone && loading) {
-            fetchAppointments(user.phone).finally(() => setLoading(false))
-        }
-    }, [user?.phone, loading, fetchAppointments])
-
-    const onRefresh = useCallback(async () => {
-        if (!user?.phone) {
-            console.warn('No phone number available for refresh')
-            return
-        }
-
-        console.log("Starting refresh...")
-        setRefreshing(true)
-        try {
-            await fetchAppointments(user.phone)
-
-            if (user?.id) {
-                await fetchUnreadCount(user.id)
-                await fetchNotifications(user.id)
-            }
-            console.log("Refresh completed successfully")
-        } catch (error) {
-            console.error('Error refreshing appointments:', error)
-        } finally {
-            setRefreshing(false)
-        }
-    }, [user?.phone, user?.id, fetchAppointments, fetchUnreadCount, fetchNotifications])
-
-    const handleRefresh = useCallback(() => {
-        if (user?.phone) {
-            fetchAppointments(user.phone)
-        }
-    }, [user?.phone, fetchAppointments])
-
-    if (loading) {
+    if (loading && appointments.length === 0) {
         return (
             <SafeAreaView className="flex-1 bg-white">
                 <View className="flex-1 justify-center items-center">
@@ -96,14 +35,8 @@ const Appointments = () => {
         )
     }
 
-    if (error) {
-        return <ErrorState error={error} onRetry={() => {
-            setError(null)
-            if (user?.phone) {
-                setLoading(true)
-                fetchAppointments(user.phone).finally(() => setLoading(false))
-            }
-        }} />
+    if (error && appointments.length === 0) {
+        return <ErrorState error={error} onRetry={retry} />
     }
 
     return (
@@ -116,7 +49,7 @@ const Appointments = () => {
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
-                            onRefresh={onRefresh}
+                            onRefresh={refresh}
                             colors={['#007AFF']}
                             tintColor="#007AFF"
                         />
@@ -131,7 +64,7 @@ const Appointments = () => {
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
-                            onRefresh={onRefresh}
+                            onRefresh={refresh}
                             colors={['#007AFF']}
                             tintColor="#007AFF"
                         />
@@ -142,7 +75,7 @@ const Appointments = () => {
                             <AppointmentCard
                                 key={`${appointment.$id}-${index}`}
                                 appointment={appointment}
-                                onRefresh={handleRefresh}
+                                onRefresh={refreshAppointments}
                             />
                         ))}
                     </View>
@@ -152,11 +85,11 @@ const Appointments = () => {
     )
 }
 
-// Reusable UI Components
+// Reusable UI Components (unchanged)
 const Header = () => (
     <View className="flex-row items-center py-3 mx-4">
         <TouchableOpacity
-             onPress={() => router.back()}
+            onPress={() => router.back()}
             className="mr-4 p-2 rounded-full bg-white shadow-sm"
         >
             <Ionicons name="arrow-back" size={24} color="#374151" />

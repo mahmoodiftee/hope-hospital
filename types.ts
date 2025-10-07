@@ -46,7 +46,6 @@ export interface Doctor {
     reviews?: Review[]; // optional in case no reviews
 }
 
-
 export interface Appointment {
     id?: string;
     $id?: string;
@@ -61,6 +60,15 @@ export interface Appointment {
     patient_age: number;
     contactNumber: string;
     status?: string;
+    $createdAt: string;
+    patientName: string;
+    patientPhone: string;
+    appointmentDateTime: string;
+    doctorName?: string;
+    doctorImage?: string;
+    doctorSpecialty?: string;
+    location?: string;
+    notes?: string;
 }
 
 export interface DoctorAvailability {

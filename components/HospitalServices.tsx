@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, FlatList, TouchableOpacity, Dimensions, ImageBackground, Text, Linking } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Clock, Siren, Stethoscope, Heart, Phone, Calendar } from 'lucide-react-native';
 import { images } from "@/constants";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Calendar, Clock, Heart, Phone, Siren, Stethoscope } from 'lucide-react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, FlatList, ImageBackground, Linking, Text, TouchableOpacity, View } from 'react-native';
 import { toast } from 'sonner-native';
 
 type ServiceType = {
@@ -231,7 +231,7 @@ const HospitalServices: React.FC<HospitalServicesProps> = ({ setSearchModalVisib
     };
 
     const handlePhoneCall = () => {
-        const url = 'tel:+8801712345678';
+        const url = 'tel:+8801818928493';
         Linking.canOpenURL(url)
             .then(supported => {
                 if (supported) Linking.openURL(url);

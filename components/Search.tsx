@@ -1,9 +1,8 @@
+import { router, useLocalSearchParams } from "expo-router";
+import { Check, Funnel, Search as SearchIcon, X } from 'lucide-react-native';
 import React, { useState } from "react";
-import { View, TouchableOpacity, Image, TextInput, Text, Modal, FlatList } from "react-native";
+import { FlatList, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useDebouncedCallback } from "use-debounce";
-import { images } from "@/constants";
-import { useLocalSearchParams, router } from "expo-router";
-import { X, Search as SearchIcon, ChevronDown, Check, Funnel } from 'lucide-react-native';
 
 const SPECIALTIES = [
     { id: "all", label: "All", value: "" },
@@ -50,11 +49,11 @@ const Search = () => {
 
 
     return (
-        <View className="pb-2">
+        <View className="pb-3">
 
             <View className="flex-row items-center w-full gap-2 px-1">
                 {/* Search Bar */}
-                <View className="flex-row items-center flex-1 bg-white border border-black/10 rounded-xl px-4 py-2 shadow-sm">
+                <View className="flex-row items-center flex-1 bg-white border border-black/10 rounded-xl px-4 py-[12px] shadow-sm">
                     <SearchIcon color="black" size={20} style={{ opacity: 0.8 }} />
                     <TextInput
                         value={search}
@@ -73,7 +72,7 @@ const Search = () => {
                 </View>
 
                 {/* Filter Button */}
-                <View className="flex-row items-center bg-white border border-black/10 rounded-xl p-[17px] shadow-sm">
+                <View className="flex-row items-center bg-white border border-black/10 rounded-xl p-[13px] shadow-sm">
 
                     <TouchableOpacity
                         onPress={() => setShowFilterDropdown(true)}

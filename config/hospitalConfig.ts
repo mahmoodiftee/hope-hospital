@@ -2,20 +2,20 @@
 export const hospitalConfig = {
     hospital: {
         name: process.env.EXPO_PUBLIC_HOSPITAL_NAME || 'Hope Hospital',
-        address: process.env.EXPO_PUBLIC_HOSPITAL_ADDRESS || 'Dhaka Medical College, Dhaka 1000, Bangladesh',
+        address: process.env.EXPO_PUBLIC_HOSPITAL_ADDRESS || 'Coxs Bazar - Teknaf highway, Ramu',
         coordinates: {
             lat: parseFloat(process.env.EXPO_PUBLIC_HOSPITAL_LAT || '23.7808875'),
             lng: parseFloat(process.env.EXPO_PUBLIC_HOSPITAL_LNG || '90.4184278'),
         },
     },
     contact: {
-        emergency24x7: process.env.EXPO_PUBLIC_EMERGENCY_24_7 || '+8801712345678',
-        emergencyLine: process.env.EXPO_PUBLIC_EMERGENCY_LINE || '+8801712345679',
-        appointments: process.env.EXPO_PUBLIC_APPOINTMENTS || '+8801712345680',
+        emergency24x7: process.env.EXPO_PUBLIC_EMERGENCY_24_7 || '+8801818928493',
+        emergencyLine: process.env.EXPO_PUBLIC_EMERGENCY_LINE || '+8801818928493',
+        appointments: process.env.EXPO_PUBLIC_APPOINTMENTS || '+8801818928493',
     },
     email: {
-        info: process.env.EXPO_PUBLIC_INFO_EMAIL || 'info@hospital.bd',
-        support: process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'support@hospital.bd',
+        info: process.env.EXPO_PUBLIC_INFO_EMAIL || 'info.hopehospital@gmail.com',
+        support: process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'info.hopehospital@gmail.com',
     },
     hours: {
         opd: process.env.EXPO_PUBLIC_OPD_HOURS || 'Monday - Sunday 9:00 AM - 8:00 PM',

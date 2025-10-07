@@ -1,3 +1,4 @@
+import { CARD_CONFIG } from '@/utils/constants';
 import {
     ChevronLeft,
     ChevronRight,
@@ -12,7 +13,6 @@ import React, { useRef, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
-    Dimensions,
     FlatList,
     Image,
     Modal,
@@ -22,7 +22,6 @@ import {
     View
 } from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export interface ImageViewerProps {
     images: string[];
@@ -87,7 +86,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
     };
 
     const onScroll = (event: any) => {
-        const slideSize = screenWidth;
+        const slideSize = CARD_CONFIG.width;
         const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
         if (index !== currentIndex) {
             setCurrentIndex(index);
@@ -96,16 +95,16 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
 
     const renderImageItem = ({ item }: { item: string }) => (
         <View style={{
-            width: screenWidth,
-            height: screenHeight,
+            width: CARD_CONFIG.width,
+            height: CARD_CONFIG.height,
             justifyContent: 'center',
             alignItems: 'center'
         }}>
             <Image
                 source={{ uri: item }}
                 style={{
-                    width: screenWidth,
-                    height: screenHeight * 0.8,
+                    width: CARD_CONFIG.width,
+                    height: CARD_CONFIG.height * 0.8,
                     transform: [{ scale: imageScale }]
                 }}
                 resizeMode="contain"
@@ -200,8 +199,8 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
                     scrollEventThrottle={16}
                     initialScrollIndex={initialIndex}
                     getItemLayout={(_, index) => ({
-                        length: screenWidth,
-                        offset: screenWidth * index,
+                        length: CARD_CONFIG.width,
+                        offset: CARD_CONFIG.width * index,
                         index
                     })}
                 />

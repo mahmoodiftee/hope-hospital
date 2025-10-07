@@ -1,84 +1,88 @@
-  {
-    "expo": {
-      "name": "Hope Hospital",
-      "slug": "hope-hopital",
-      "version": "1.0.0",
-      "orientation": "portrait",
-      "icon": "./assets/images/icon.png",
-      "scheme": "hopehopital",
-      "userInterfaceStyle": "automatic",
-      "newArchEnabled": true,
-      "ios": {
-        "supportsTablet": false
+{
+  "expo": {
+    "name": "Hope Hospital",
+    "slug": "hope-hopital",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "hopehospital",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false
+    },
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#000000"
+    },
+    "androidNavigationBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#000000"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       },
-      "androidStatusBar": {
-        "barStyle": "dark-content",
-        "backgroundColor": "#000000"
-      },
-      "androidNavigationBar": {
-        "barStyle": "dark-content",
-        "backgroundColor": "#000000"
-      },
-      "android": {
-        "adaptiveIcon": {
-          "foregroundImage": "./assets/images/adaptive-icon.png",
-          "backgroundColor": "#ffffff"
-        },
-        "package": "com.hope.hopehopital",
-        "googleServicesFile": "./google-services.json",
-        "edgeToEdgeEnabled": true,
-        "usesCleartextTraffic": true,
-        "permissions": [
-          "ACCESS_FINE_LOCATION",
-          "ACCESS_COARSE_LOCATION",
-          "INTERNET",
-          "ACCESS_NETWORK_STATE",
-          "android.permission.RECEIVE_BOOT_COMPLETED",
-          "android.permission.VIBRATE",
-          "android.permission.WAKE_LOCK",
-          "com.google.android.c2dm.permission.RECEIVE"
-        ],
-        "config": {
-          "googleMaps": {
-            "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
-          }
-        }
-      },
-      "web": {
-        "bundler": "metro",
-        "output": "static",
-        "favicon": "./assets/images/favicon.png"
-      },
-      "plugins": [
-        "expo-router",
-        [
-          "expo-splash-screen",
-          {
-            "image": "./assets/images/splash-icon.png",
-            "imageWidth": 200,
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-          }
-        ],
-        "expo-secure-store",
-        [
-          "expo-notifications",
-          {
-            "icon": "./assets/images/notification-icon.png",
-            "color": "#ffffff",
-            "defaultChannel": "default"
-          }
-        ]
+      "package": "com.hope.hopehopital",
+      "googleServicesFile": "./google-services.json",
+      "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.google.android.c2dm.permission.RECEIVE",
+        "android.permission.CALL_PHONE"
       ],
-      "experiments": {
-        "typedRoutes": false
-      },
-      "extra": {
-        "router": {},
-        "eas": {
-          "projectId": "0a9be857-9039-4488-a49a-ea2a37259acb"
+      "queries": [
+        "tel"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
         }
-      },
-      "owner": "mahmoodiftee"
-    }
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0a9be857-9039-4488-a49a-ea2a37259acb"
+      }
+    },
+    "owner": "mahmoodiftee"
   }
+}

@@ -78,7 +78,7 @@ export const logout = async () => {
     }
 };
 
-export const saveUserToDB = async ({ name, age, phone }: { name: string; age: number; phone: string;}) => {
+export const saveUserToDB = async ({ name, age, phone }: { name: string; age: number; phone: string; }) => {
     return await databases.createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.userCollectionId,
@@ -126,25 +126,43 @@ export const userExistCheck = async ({ phone }: { phone: string }) => {
     }
 };
 
-export const getAppointments = async ({ phone }: { phone: string }): Promise<Appointment[] | null> => {
+export const getAppointments = async (params: { phone?: string; userId?: string }): Promise<Appointment[] | null> => {
     try {
-        console.log('getAppointments called with phone:', phone);
+        const { phone, userId } = params;
 
-        if (!phone || phone.trim() === '') {
-            console.warn('getAppointments called with empty phone number');
+        if (!phone && !userId) {
+            console.warn('getAppointments called without phone or userId');
             return [];
         }
 
-        const normalizedPhone = normalizePhone(phone);
-        console.log('Normalized phone:', normalizedPhone);
+        let filters: any[] = [];
+
+        if (phone) {
+            console.log('getAppointments called with phone:', phone);
+
+            if (phone.trim() === '') {
+                console.warn('getAppointments called with empty phone number');
+                return [];
+            }
+
+            const normalizedPhone = normalizePhone(phone);
+            console.log('Normalized phone:', normalizedPhone);
+
+            filters.push(Query.equal("contactNumber", normalizedPhone));
+        }
+
+        if (userId) {
+            console.log('getAppointments called with userId:', userId);
+            filters.push(Query.equal("userId.$id", userId));
+        }
+
+        // Always order by latest created
+        filters.push(Query.orderDesc("$createdAt"));
 
         const response = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.appointmentsCollectionId,
-            [
-                Query.equal("contactNumber", normalizedPhone),
-                Query.orderDesc("$createdAt")
-            ]
+            filters
         );
 
         console.log('Database response:', response.documents.length, 'appointments found');
@@ -152,9 +170,10 @@ export const getAppointments = async ({ phone }: { phone: string }): Promise<App
 
     } catch (e: any) {
         console.error('Error in getAppointments:', e);
-        throw new Error(e.message || "Failed to query appointments by phone.");
+        throw new Error(e.message || "Failed to query appointments.");
     }
 };
+
 
 export const insertReview = async ({
     appointmentId,

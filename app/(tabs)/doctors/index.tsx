@@ -84,12 +84,12 @@ const DoctorsScreen: React.FC = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
-            <View className="mx-4 py-3">
+            <View className="mx-4 pt-3">
                 <View className="flex-row items-center justify-between mb-4">
                     <Text className="text-dark-100 text-3xl font-bold pl-1">Doctors</Text>
                     <TouchableOpacity
                         className="border-2 border-gray-200/10 rounded-full p-1 mr-1.5"
-                        onPress={() => router.push("/(tabs)/notifications" as any)}
+                        onPress={() => router.push("/notifications")}
                     >
                         <Bell color="rgba(0,0,0,0.8)" size={20} />
                     </TouchableOpacity>
@@ -103,7 +103,7 @@ const DoctorsScreen: React.FC = () => {
                         data={Array.from({ length: 4 })}
                         renderItem={renderSkeletonCard}
                         keyExtractor={(_, index) => `skeleton-${index}`}
-                        contentContainerStyle={{ paddingVertical: 10, paddingBottom: 100 }}
+                        contentContainerStyle={{ paddingVertical: 10, paddingBottom: 10 }}
                     />
                 ) : doctorList.length === 0 ? (
                     <View className="items-center justify-center mt-10">
@@ -114,7 +114,8 @@ const DoctorsScreen: React.FC = () => {
                         data={doctorList}
                         renderItem={renderDoctorCard}
                         keyExtractor={(item) => item.id}
-                        contentContainerStyle={{ paddingVertical: 10, paddingBottom: 100 }}
+                        // contentContainerStyle={{ paddingVertical: 10, paddingBottom: 100 }}
+                        contentContainerStyle={{ paddingTop: 17, paddingBottom: 80 }}
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     />

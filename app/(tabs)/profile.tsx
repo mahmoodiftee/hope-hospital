@@ -45,7 +45,6 @@ export default function Profile() {
         { title: "Help & Support", icon: HelpCircle, color: "#AF52DE" }
     ];
 
-    // Show loading only when actually loading
     if (isLoading) {
         return (
             <SafeAreaView className="flex-1 bg-gray-50 justify-center items-center">
@@ -61,14 +60,11 @@ export default function Profile() {
 
     const handleLogout = async () => {
         try {
-            // Immediately update the UI state
             setUser(null);
             setIsAuthenticated(false);
 
-            // Reset notification store to clear all notification data
             resetNotifications();
 
-            // Clear storage in the background
             await SecureStore.deleteItemAsync("user");
             await unregisterUserFromNotifications(user?.id || dbUser?.$id);
             toast.success('Signed Out');
@@ -84,7 +80,6 @@ export default function Profile() {
         router.push("/sign-in");
     };
 
-    // Show non-authenticated view if user is not logged in
     if (!isAuthenticated || !user) {
         return (
             <SafeAreaView className="flex-1 bg-gray-50 ">
@@ -144,7 +139,6 @@ export default function Profile() {
         );
     }
 
-    // Show authenticated user profile
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -301,7 +295,7 @@ export default function Profile() {
                             <ChevronRight size={16} color="#C7C7CC" />
                         </View>
                     </TouchableOpacity>
-                    <View className="h-32"></View>
+                    <View className="h-20"></View>
                 </View>
             </ScrollView>
         </SafeAreaView>
