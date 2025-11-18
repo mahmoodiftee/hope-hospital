@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Hope Hospital",
+    "name": "",
     "slug": "hope-hopital",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "androidStatusBar": {
       "barStyle": "dark-content",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#ffffff"
     },
     "androidNavigationBar": {
       "barStyle": "dark-content",

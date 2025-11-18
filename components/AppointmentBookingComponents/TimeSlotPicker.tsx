@@ -1,6 +1,6 @@
 import { TimeSlot } from '@/types';
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 
 interface TimeSlotPickerProps {
@@ -18,7 +18,7 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
     timeSlots,
     onTimeSelect,
 }) => {
-    // console.log(JSON.stringify(timeSlots, null, 2));
+    console.log(JSON.stringify(timeSlots, null, 2));
 
     return (
         <>
