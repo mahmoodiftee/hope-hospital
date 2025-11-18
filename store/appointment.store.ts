@@ -83,7 +83,7 @@ const useAppointmentStore = create<AppointmentState>()(
 
                         const result = await getAppointments(params);
 
-                        console.log('Fetched appointments:', result?.length || 0);
+                        // console.log('Fetched appointments:', result?.length || 0);
 
                         set({
                             appointments: result || [],
@@ -124,7 +124,7 @@ const useAppointmentStore = create<AppointmentState>()(
 
                         const result = await getAppointments(params);
 
-                        console.log('Refreshed appointments:', result?.length || 0);
+                        // console.log('Refreshed appointments:', result?.length || 0);
 
                         set({
                             appointments: result || [],

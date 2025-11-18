@@ -22,7 +22,7 @@ const NotificationTestButton = () => {
     const addLog = (message: string) => {
         const timestamp = new Date().toLocaleTimeString();
         const logEntry = `[${timestamp}] ${message}`;
-        console.log(logEntry);
+        // console.log(logEntry);
         setLogs(prev => [...prev, logEntry]);
     };
 

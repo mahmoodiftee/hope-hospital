@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
 import { Stethoscope } from 'lucide-react-native';
+import React from 'react';
+import { Image, Text, View } from 'react-native';
 
 interface DoctorInfoCardProps {
     doctor: {
@@ -13,7 +13,7 @@ interface DoctorInfoCardProps {
 
 const DoctorInfoCard: React.FC<DoctorInfoCardProps> = ({ doctor }) => {
     return (
-        <View className="bg-gray-50 h-32 rounded-3xl p-2.5 my-2 mx-4 shadow-sm">
+        <View className="bg-gray-50 h-32 rounded-3xl p-2.5 my-2 mx-4 ">
             <View className="flex-row gap-4 items-center justify-start">
                 <View className="w-16 items-center">
                     <Image

@@ -29,8 +29,8 @@ export default function Profile() {
     useEffect(() => {
         fetchAuthenticatedUser();
     }, []);
-    console.log("dbUser", JSON.stringify(dbUser, null, 2));
-    console.log("user", JSON.stringify(user, null, 2));
+    // console.log("dbUser", JSON.stringify(dbUser, null, 2));
+    // console.log("user", JSON.stringify(user, null, 2));
 
     const quickActions = [
         { id: 1, url: "/appointment", title: "Booked", subtitle: "Appointment", icon: Calendar, color: "#007AFF" },

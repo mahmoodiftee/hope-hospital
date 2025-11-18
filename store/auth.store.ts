@@ -41,7 +41,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
 
             if (userJson) {
                 user = JSON.parse(userJson);
-                console.log('Found user in SecureStore:', user);
+                // console.log('Found user in SecureStore:', user);
             }
 
             const phoneToUse = user?.phone || phone;

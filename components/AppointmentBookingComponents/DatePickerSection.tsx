@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 
 interface DatePickerSectionProps {
@@ -31,7 +31,7 @@ const DatePickerSection: React.FC<DatePickerSectionProps> = ({
 
     return (
         <>
-            <View className="px-4 py-3">
+            <View className="px-4 py-3 ">
                 <Text className="text-lg font-semibold text-dark-100 mb-4 px-2">Select Date</Text>
                 <Calendar
                     onDayPress={onDateSelect}
@@ -42,7 +42,7 @@ const DatePickerSection: React.FC<DatePickerSectionProps> = ({
                         borderWidth: 2,
                         borderColor: '#f2f3f4',
                         borderRadius: 16,
-                        height: 350,
+                        minHeight: 370
                     }}
                     theme={{
                         arrowColor: '#007AFF',
@@ -63,7 +63,7 @@ const DatePickerSection: React.FC<DatePickerSectionProps> = ({
             </View>
 
             {selectedDate && (
-                <View className="px-6 py-4 mx-4 bg-green-50 rounded-lg border border-green-100">
+                <View className="mt-3 px-6 py-4 mx-4 bg-green-50 rounded-lg border border-green-100">
                     <Text className="text-sm text-green-600 font-semibold mb-1">Selected Date</Text>
                     <Text className="text-base font-semibold text-green-900">{getFormattedDate()}</Text>
                 </View>

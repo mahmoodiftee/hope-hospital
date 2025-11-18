@@ -139,7 +139,7 @@ export const getAppointments = async (params: { phone?: string; userId?: string 
         let filters: any[] = [];
 
         if (phone) {
-            console.log('getAppointments called with phone:', phone);
+            // console.log('getAppointments called with phone:', phone);
 
             if (phone.trim() === '') {
                 console.warn('getAppointments called with empty phone number');
@@ -147,13 +147,13 @@ export const getAppointments = async (params: { phone?: string; userId?: string 
             }
 
             const normalizedPhone = normalizePhone(phone);
-            console.log('Normalized phone:', normalizedPhone);
+            // console.log('Normalized phone:', normalizedPhone);
 
             filters.push(Query.equal("contactNumber", normalizedPhone));
         }
 
         if (userId) {
-            console.log('getAppointments called with userId:', userId);
+            // console.log('getAppointments called with userId:', userId);
             filters.push(Query.equal("userId.$id", userId));
         }
 
@@ -166,7 +166,7 @@ export const getAppointments = async (params: { phone?: string; userId?: string 
             filters
         );
 
-        console.log('Database response:', response.documents.length, 'appointments found');
+        // console.log('Database response:', response.documents.length, 'appointments found');
         return response.documents as unknown as Appointment[];
 
     } catch (e: any) {
@@ -205,7 +205,7 @@ export const insertReview = async ({
                 userId
             }
         );
-        console.log('Review inserted:', response.$id);
+        // console.log('Review inserted:', response.$id);
         return response;
     } catch (error) {
         console.error('Error inserting review:', error);
@@ -519,7 +519,7 @@ export const createAppointmentConfirmationNotification = async (appointmentData:
             notification
         );
 
-        console.log('Appointment confirmation notification created:', response.$id);
+        // console.log('Appointment confirmation notification created:', response.$id);
         return response;
     } catch (error) {
         console.error('Error creating appointment confirmation notification:', error);
@@ -569,7 +569,7 @@ export const createAppointmentReminderNotifications = async (appointmentData: an
             reminder
         );
 
-        console.log('Appointment 2-hour reminder notification created:', response.$id);
+        // console.log('Appointment 2-hour reminder notification created:', response.$id);
         return [response];
     } catch (error) {
         console.error('Error creating appointment reminder notification:', error);
@@ -607,7 +607,7 @@ export const createAppointmentRescheduleConfirmationNotification = async (appoin
             notification
         );
 
-        console.log('Appointment reschedule notification created:', response.$id);
+        // console.log('Appointment reschedule notification created:', response.$id);
         return response;
     } catch (error) {
         console.error('Error creating appointment reschedule notification:', error);
@@ -644,7 +644,7 @@ export const createAppointmentCancelledNotification = async (appointmentData: an
             notification
         );
 
-        console.log('Appointment cancelled notification created:', response.$id);
+        // console.log('Appointment cancelled notification created:', response.$id);
         return response;
     } catch (error) {
         console.error('Error creating appointment cancelled notification:', error);
@@ -911,7 +911,7 @@ export const deleteNotification = async (notificationId: any) => {
             notificationId
         );
 
-        console.log('Notification deleted:', notificationId);
+        // console.log('Notification deleted:', notificationId);
         return true;
     } catch (error) {
         console.error('Error deleting notification:', error);
@@ -942,7 +942,7 @@ export const deleteOldNotifications = async (daysOld = 30) => {
         );
 
         await Promise.all(deletePromises);
-        console.log(`Deleted ${oldNotifications.documents.length} old notifications`);
+        // console.log(`Deleted ${oldNotifications.documents.length} old notifications`);
         return oldNotifications.documents.length;
     } catch (error) {
         console.error('Error deleting old notifications:', error);

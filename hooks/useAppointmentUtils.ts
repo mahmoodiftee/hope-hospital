@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 
 export const useAppointmentUtils = () => {
     const formatDate = useCallback((dateString: string) => {
@@ -12,11 +12,7 @@ export const useAppointmentUtils = () => {
         } else if (date.toDateString() === tomorrow.toDateString()) {
             return 'Tomorrow'
         } else {
-            return date.toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
-            })
+            return `${date.toLocaleDateString('en-US', { weekday: 'short' })}, ${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`
         }
     }, [])
 

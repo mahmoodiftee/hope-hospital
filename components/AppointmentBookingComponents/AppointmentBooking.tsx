@@ -19,13 +19,13 @@ import { X } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     ActivityIndicator,
-    SafeAreaView,
     ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
     View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { toast, Toaster } from 'sonner-native';
 import { Appointment, AppointmentBookingProps, PatientInfo, TimeSlot, ValidationErrors } from '../../types';
 import DatePickerSection from './DatePickerSection';
@@ -845,7 +845,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                             <X color="rgba(0,0,0,1)" size={24} />
                         </TouchableOpacity>
                     </View>
-                    <View className="h-2 bg-gray-50" />
+                    {/* <View className="h-2 bg-gray-50" /> */}
 
                     {reschedule && (
                         <View className="mx-6 mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">

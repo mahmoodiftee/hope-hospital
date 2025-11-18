@@ -4,7 +4,7 @@ import useAppwrite from '@/lib/useAppwrite'
 import useAuthStore from '@/store/auth.store'
 import useNotificationStore from '@/store/notification.store'
 import { Appointment } from '@/types'
-import { Calendar, Clock, Phone, User, XCircle } from 'lucide-react-native'
+import { Calendar, Clock, Phone, User, X, XCircle } from 'lucide-react-native'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
     Animated,
@@ -141,7 +141,14 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
             >
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
                     <View className="self-center w-10 h-1 bg-gray-300 rounded-full mb-4" />
-
+                    <View className="w-full flex items-end mb-2">
+                        <TouchableOpacity
+                            className="w-10 h-10 rounded-full bg-gray-50 justify-center items-center p-1"
+                            onPress={onClose}
+                        >
+                            <X color="rgba(0,0,0,1)" size={24} />
+                        </TouchableOpacity>
+                    </View>
                     {isCancelled && <CancelledBadge />}
 
                     <DoctorHeader appointment={appointment} />
@@ -211,7 +218,7 @@ const AppointmentDetails: React.FC<{
             <DetailCard
                 icon={<Calendar size={14} color="#9CA3AF" />}
                 label="Date"
-                value={`${formatDate(appointment.date)} • ${appointment.date}`}
+                value={`${formatDate(appointment.date)} `}
             />
         </View>
 

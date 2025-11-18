@@ -22,7 +22,7 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
 
     return (
         <>
-            <View className="p-5">
+            <View className="p-5 ">
                 <Text className="text-lg font-semibold text-dark-100 mb-4">Select Time</Text>
                 <View className="my-1 py-3 rounded-lg">
                     <View className="flex-row flex-wrap gap-4">

@@ -5,8 +5,8 @@ import { AlertCircle, BadgeCheck, ChevronRight, User } from 'lucide-react-native
 import React, { useMemo, useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { AppointmentBookingModal } from './AppointmentBookingModal'
-import { ReviewModal } from './ReviewModal'
 import { AppointmentDetailsModal } from './AppointmentDetailsModal'
+import { ReviewModal } from './ReviewModal'
 
 interface AppointmentCardProps {
   appointment: Appointment
@@ -46,14 +46,19 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
   const buttonConfig = getButtonConfig()
 
+
   const handleReschedule = () => {
     setModalVisible(false)
-    setBookingModalVisible(true)
+    setTimeout(() => {
+      setBookingModalVisible(true)
+    }, 300)
   }
 
   const handleWriteReview = () => {
     setModalVisible(false)
-    setReviewModalVisible(true)
+    setTimeout(() => {
+      setReviewModalVisible(true)
+    }, 300)
   }
 
   const handleModalClose = () => {

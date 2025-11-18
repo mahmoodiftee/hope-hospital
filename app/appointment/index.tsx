@@ -24,7 +24,8 @@ const Appointments = () => {
         refreshAppointments,
         retry
     } = useUserAppointments()
-
+    // console.log(JSON.stringify(appointments, null, 2))
+    // console.log(appointments);
     if (loading && appointments.length === 0) {
         return (
             <SafeAreaView className="flex-1 bg-white">
