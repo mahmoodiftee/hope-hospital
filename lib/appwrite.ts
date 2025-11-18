@@ -1,5 +1,5 @@
 import { Account, Avatars, Client, Databases, ID, Query, Storage } from "react-native-appwrite";
-import { Appointment, Doctor, DoctorAvailability, Review } from "../types";
+import { Appointment, Doctor, DoctorAvailability, DoctorTimeSlots, Review } from "../types";
 
 export const appwriteConfig = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
@@ -12,6 +12,7 @@ export const appwriteConfig = {
     appointmentsCollectionId: '687ceabe0022244f6e7d',
     availableSlotsCollectionId: '687e377a00203492fd21',
     notificationsCollectionId: '6885dcb70003c0ad4c75',
+    TimeSlotsCollectionId: 'timeslots',
 }
 
 export const client = new Client();
@@ -460,6 +461,29 @@ export const getSingleDoctorAvailableSlots = async ({ id }: { id: string; }): Pr
             availableDays: doc.availableDays,
             availableTimes: doc.availableTimes,
         } as DoctorAvailability;
+    } catch (error) {
+        console.error("Error fetching doctor's available slots:", error);
+        throw new Error("Failed to load doctor availability.");
+    }
+};
+export const getSingleDoctorTimeSlots = async ({ id }: { id: string; }): Promise<DoctorTimeSlots | null> => {
+    try {
+        const response = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.TimeSlotsCollectionId,
+            [Query.equal("docId", id)]
+        );
+
+        if (!response.total || response.documents.length === 0) {
+            return null;
+        }
+
+        const doc = response.documents[0];
+        return {
+            docId: doc.doctorId,
+            day: doc.day,
+            time: doc.time,
+        } as DoctorTimeSlots;
     } catch (error) {
         console.error("Error fetching doctor's available slots:", error);
         throw new Error("Failed to load doctor availability.");

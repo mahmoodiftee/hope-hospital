@@ -75,3 +75,9 @@ export interface DoctorAvailability {
     availableDays: string[];
     availableTimes: string[];
 }
+
+export interface DoctorTimeSlots {
+    docId: string;
+    day: string;
+    time: string[];
+}

@@ -18,7 +18,7 @@ const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
     timeSlots,
     onTimeSelect,
 }) => {
-    console.log(JSON.stringify(timeSlots, null, 2));
+    // console.log(JSON.stringify(timeSlots, null, 2));
 
     return (
         <>

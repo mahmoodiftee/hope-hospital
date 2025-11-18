@@ -5,7 +5,7 @@ import {
     deleteNotification,
     getAppointmentNotifications,
     getAppointments,
-    getSingleDoctorAvailableSlots,
+    getSingleDoctorTimeSlots,
     insertAppointment,
     saveUserToDB,
     updateAppointment
@@ -84,7 +84,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
     const inputRefs = useRef<(TextInput | null)[]>([]);
 
     const { data: slots, loading } = useAppwrite({
-        fn: getSingleDoctorAvailableSlots,
+        fn: getSingleDoctorTimeSlots,
         params: { id: doctor.id },
     });
 
@@ -126,7 +126,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
 
     const isTimeSlotAvailable = (timeString: string, dateString: string): boolean => {
         const normalizedTime = normalizeTimeFormat(timeString);
-        const isInDoctorSchedule = slots?.availableTimes?.some(availableTime =>
+        const isInDoctorSchedule = slots?.time?.some(availableTime =>
             normalizeTimeFormat(availableTime) === normalizedTime
         ) ?? false;
 
@@ -176,7 +176,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
 
     const getTimeSlotStatus = (timeString: string, dateString: string) => {
         const normalizedTime = normalizeTimeFormat(timeString);
-        const isInDoctorSchedule = slots?.availableTimes?.some(availableTime =>
+        const isInDoctorSchedule = slots?.time?.some(availableTime =>
             normalizeTimeFormat(availableTime) === normalizedTime
         ) ?? false;
 
@@ -783,7 +783,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 timeZone: 'UTC',
             });
 
-            const isAvailable = slots?.availableDays?.includes(dayName);
+            const isAvailable = slots?.day?.includes(dayName);
             const isToday = formatted === today;
 
             result[formatted] = {
