@@ -37,7 +37,6 @@
     "expo-web-browser": "~15.0.9",
     "lucide-react-native": "^0.525.0",
     "moti": "^0.30.0",
-    "native-notify": "^4.0.9",
     "nativewind": "^4.1.23",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "react": "19.1.0",

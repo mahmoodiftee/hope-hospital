@@ -1,10 +1,9 @@
-import { registerForPushNotificationsAsync, verifyNativeNotifyRegistration } from '@/lib/notifications';
-import { sendPushToUser } from '@/lib/sendNotification';
+import { registerForPushNotificationsAsync, registerPushTokenWithBackend, verifyPushTokenRegistration } from '@/lib/notifications';
+import { checkPushNotificationStatus, sendPushToUser, testDirectExpoPush } from '@/lib/sendNotification';
 import useAuthStore from '@/store/auth.store';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import registerNNPushToken from 'native-notify';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -13,16 +12,9 @@ const NotificationTestButton = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { user, dbUser } = useAuthStore();
 
-    const APP_ID = 31591;
-    const APP_TOKEN = 'CFKdEHY835MXsOap4DerLI';
-
-    // Register Native Notify hook at component level
-    registerNNPushToken(APP_ID, APP_TOKEN);
-
     const addLog = (message: string) => {
         const timestamp = new Date().toLocaleTimeString();
         const logEntry = `[${timestamp}] ${message}`;
-        // console.log(logEntry);
         setLogs(prev => [...prev, logEntry]);
     };
 
@@ -34,34 +26,55 @@ const NotificationTestButton = () => {
         setIsLoading(true);
         clearLogs();
 
-        addLog('🚀 Starting comprehensive notification test for EAS Build...');
+        addLog('🚀 Starting Expo Push Notification Test...');
 
         try {
             const currentUserId = user?.id || dbUser?.$id || '68958e6500298253aff8';
-            
-            // 1. Check device and build info
-            addLog(`📱 Device Info:`);
-            addLog(`- Is Device: ${Device.isDevice}`);
-            addLog(`- Platform: ${Device.osName} ${Device.osVersion}`);
-            addLog(`- App Ownership: ${Constants.appOwnership || 'null (EAS Build)'}`);
-            addLog(`- Is Dev: ${__DEV__}`);
-            addLog(`- Expo SDK Version: ${Constants.expoConfig?.sdkVersion || 'Unknown'}`);
-            addLog(`- Project ID: ${Constants.expoConfig?.extra?.eas?.projectId}`);
-            addLog(`- Current User ID: ${currentUserId}`);
-            addLog(`- Build Profile: ${Constants.appOwnership === null ? 'Standalone APK' : 'Expo Go'}`);
 
-            // 2. Check notification permissions and setup
-            addLog('🔐 Setting up notifications...');
-            const expoPushToken = await registerForPushNotificationsAsync();
-            
-            if (expoPushToken) {
-                addLog(`✅ Expo Push Token: ${expoPushToken.substring(0, 30)}...`);
-            } else {
-                addLog('❌ Failed to get push token');
+            // 1. Device and Build Info
+            addLog('📱 Device Information:');
+            addLog(`- Device: ${Device.isDevice ? 'Physical Device ✅' : 'Emulator/Simulator ❌'}`);
+            addLog(`- Platform: ${Device.osName} ${Device.osVersion}`);
+            addLog(`- Build Type: ${Constants.appOwnership === null ? 'Standalone APK ✅' : 'Expo Go ⚠️'}`);
+            addLog(`- Project ID: ${Constants.expoConfig?.extra?.eas?.projectId}`);
+            addLog(`- User ID: ${currentUserId}`);
+
+            if (!Device.isDevice) {
+                addLog('⚠️ Push notifications require a physical device');
                 return;
             }
 
-            // 3. Test local notification
+            // 2. Register for Push Notifications
+            addLog('');
+            addLog('🔐 Registering for push notifications...');
+            const expoPushToken = await registerForPushNotificationsAsync();
+
+            if (!expoPushToken) {
+                addLog('❌ Failed to get Expo Push Token');
+                return;
+            }
+
+            addLog(`✅ Expo Push Token: ${expoPushToken.substring(0, 40)}...`);
+
+            // 3. Register Token with Backend
+            addLog('');
+            addLog('📡 Registering token with backend...');
+            const registered = await registerPushTokenWithBackend(currentUserId, expoPushToken);
+
+            if (registered) {
+                addLog('✅ Token registered successfully');
+            } else {
+                addLog('❌ Failed to register token with backend');
+            }
+
+            // 4. Verify Registration
+            addLog('');
+            addLog('🔍 Verifying registration...');
+            const verified = await verifyPushTokenRegistration(currentUserId);
+            addLog(verified ? '✅ Registration verified' : '❌ Registration not found');
+
+            // 5. Test Local Notification
+            addLog('');
             addLog('📲 Testing local notification...');
             try {
                 await Notifications.scheduleNotificationAsync({
@@ -71,114 +84,94 @@ const NotificationTestButton = () => {
                         data: { test: true, type: 'local' },
                         sound: 'default',
                     },
-                    trigger: { 
-                        seconds: 1,
+                    trigger: {
+                        seconds: 2,
                         channelId: 'default'
                     },
                 });
-                addLog('✅ Local notification scheduled');
+                addLog('✅ Local notification scheduled (should appear in 2 seconds)');
             } catch (error: any) {
                 addLog(`❌ Local notification failed: ${error.message}`);
             }
 
-            // 4. Wait for Native Notify registration to complete
-            addLog('⏳ Waiting 3 seconds for Native Notify registration...');
-            await new Promise(resolve => setTimeout(resolve, 3000));
-
-            // 5. Verify Native Notify registration
-            addLog('🔍 Verifying Native Notify registration...');
-            await verifyNativeNotifyRegistration(currentUserId);
-
-            // 6. Test Native Notify push notification
-            addLog('📤 Testing Native Notify push notification...');
-            try {
-                addLog(`🎯 Sending push to user: ${currentUserId}`);
-                
-                const result = await sendPushToUser({
-                    userId: currentUserId,
-                    title: 'EAS Build Test 🧪',
-                    message: 'This is a test notification for your APK build',
-                    data: { test: true, buildType: 'eas-apk' }
-                });
-
-                if (result.success) {
-                    addLog('✅ Native Notify push sent successfully');
-                    addLog(`📨 Server Response: ${JSON.stringify(result.data)}`);
-                    addLog('⏰ Check your device for the notification in a few seconds');
-                } else {
-                    addLog(`❌ Native Notify push failed: ${result.error}`);
-                    if (result.details) {
-                        addLog(`🔍 Error details: ${JSON.stringify(result.details)}`);
-                    }
-                }
-            } catch (error: any) {
-                addLog(`❌ Push notification error: ${error.message}`);
+            // 6. Test Backend Health
+            addLog('');
+            addLog('🏥 Checking backend health...');
+            const healthCheck = await checkPushNotificationStatus();
+            if (healthCheck.success) {
+                addLog('✅ Backend is healthy');
+                addLog(`📊 Registered users: ${healthCheck.data?.registeredUsers || 0}`);
+            } else {
+                addLog(`❌ Backend health check failed: ${healthCheck.error}`);
             }
 
-            // 7. Check notification channels (Android only)
+            // 7. Send Push via Backend (using your existing sendPushToUser function)
+            addLog('');
+            addLog('📤 Sending push notification via backend...');
+            const result = await sendPushToUser({
+                userId: currentUserId,
+                title: 'Backend Test 🎉',
+                message: 'This notification was sent through your backend API',
+                data: { test: true, source: 'backend', timestamp: Date.now() }
+            });
+
+            if (result.success) {
+                addLog('✅ Backend push sent successfully');
+                addLog(`⏱️ Duration: ${result.duration}ms`);
+                addLog('📨 Check your device in a few seconds...');
+            } else {
+                addLog(`❌ Backend push failed: ${result.error}`);
+                if (result.details) {
+                    addLog(`🔍 Details: ${JSON.stringify(result.details)}`);
+                }
+            }
+
+            // 8. Test Direct Expo Push (for comparison)
+            addLog('');
+            addLog('🔄 Testing direct Expo push service...');
+            const directResult = await testDirectExpoPush(
+                expoPushToken,
+                'Direct Expo Test 🎯',
+                'This was sent directly to Expo push service'
+            );
+
+            if (directResult.success) {
+                addLog('✅ Direct Expo push sent successfully');
+            } else {
+                addLog(`❌ Direct Expo push failed: ${directResult.error}`);
+            }
+
+            // 9. Check Notification Channels (Android)
             if (Device.osName === 'Android') {
-                addLog('🔔 Checking Android notification channels...');
+                addLog('');
+                addLog('🔔 Android notification channels:');
                 try {
                     const channels = await Notifications.getNotificationChannelsAsync();
-                    addLog(`📋 Found ${channels.length} notification channels:`);
                     channels.forEach(channel => {
-                        addLog(`- ${channel.name} (${channel.id}): importance ${channel.importance}`);
+                        addLog(`- ${channel.name}: importance ${channel.importance}`);
                     });
                 } catch (error: any) {
                     addLog(`❌ Error checking channels: ${error.message}`);
                 }
             }
 
-            // 8. Test direct Expo push (for comparison)
-            addLog('🔄 Testing direct Expo push service...');
-            try {
-                const message = {
-                    to: expoPushToken,
-                    sound: 'default',
-                    title: 'Direct Expo Test 🎯',
-                    body: 'This is sent directly to Expo push service',
-                    data: { test: 'direct_expo' },
-                };
-
-                const response = await fetch('https://exp.host/--/api/v2/push/send', {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Accept-encoding': 'gzip, deflate',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(message),
-                });
-
-                const data = await response.json();
-                addLog(`📨 Direct Expo response: ${JSON.stringify(data)}`);
-
-                if (data.data?.[0]?.status === 'ok') {
-                    addLog('✅ Direct Expo push sent successfully');
-                } else {
-                    addLog(`❌ Direct Expo push failed: ${data.data?.[0]?.message || 'Unknown error'}`);
-                }
-            } catch (error: any) {
-                addLog(`❌ Direct Expo push error: ${error.message}`);
-            }
-
-            // 9. Final recommendations
-            addLog('🏁 Test completed!');
+            // 10. Summary
+            addLog('');
+            addLog('🏁 Test Completed!');
             addLog('');
             addLog('📝 Summary:');
-            addLog('✓ Native Notify hook registered at component level (fixed hook issue)');
-            addLog('✓ Push token obtained and registered');
-            addLog('✓ Local and push notifications tested');
+            addLog('✅ Migrated from native-notify to Expo Push Notifications');
+            addLog('✅ sendPushToUser() maintains same interface');
+            addLog('✅ All notifications route through your backend');
             addLog('');
-            addLog('🔧 If notifications still not working:');
-            addLog('1. Check that google-services.json is in your project root');
-            addLog('2. Ensure FCM is properly configured in Firebase Console');
-            addLog('3. Try logging out and back in to re-register');
-            addLog('4. Check device notification settings for your app');
+            addLog('💡 Next Steps:');
+            addLog('1. Uninstall native-notify: npm uninstall native-notify');
+            addLog('2. Deploy updated backend with new endpoints');
+            addLog('3. Test on production build');
 
         } catch (error: any) {
-            addLog(`💥 Test failed with error: ${error.message}`);
-            addLog(`🔍 Error stack: ${error.stack}`);
+            addLog(`💥 Test failed: ${error.message}`);
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
@@ -192,7 +185,7 @@ const NotificationTestButton = () => {
                 disabled={isLoading}
             >
                 <Text style={styles.buttonText}>
-                    {isLoading ? '🧪 Running EAS Build Tests...' : '🧪 Test EAS Build Notifications (Fixed)'}
+                    {isLoading ? '🧪 Running Tests...' : '🧪 Test Expo Push Notifications'}
                 </Text>
             </TouchableOpacity>
 
@@ -203,7 +196,7 @@ const NotificationTestButton = () => {
             {Constants.appOwnership === null && (
                 <View style={styles.infoBox}>
                     <Text style={styles.infoText}>
-                        📱 Running on EAS Build APK - FCM notifications should work
+                        ✅ Running on Standalone Build - Push notifications enabled
                     </Text>
                 </View>
             )}
@@ -211,7 +204,7 @@ const NotificationTestButton = () => {
             {Constants.appOwnership === 'expo' && (
                 <View style={styles.warningBox}>
                     <Text style={styles.warningText}>
-                        ⚠️ Running in Expo Go - Results may differ from APK
+                        ⚠️ Expo Go - Build standalone APK for full push notification support
                     </Text>
                 </View>
             )}

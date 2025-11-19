@@ -12,11 +12,9 @@ Notifications.setNotificationHandler({
     }),
 });
 
-const APP_ID = 31591;
-const APP_TOKEN = 'CFKdEHY835MXsOap4DerLI';
-
 export async function registerForPushNotificationsAsync(): Promise<string | undefined> {
     if (!Device.isDevice) {
+        console.log('⚠️ Must use physical device for push notifications');
         return;
     }
 
@@ -34,6 +32,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
             return;
         }
 
+        // Set up Android notification channel
         if (Platform.OS === 'android') {
             await Notifications.setNotificationChannelAsync('default', {
                 name: 'Default',
@@ -45,18 +44,15 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
             });
         }
 
+        const projectId =
+            Constants.easConfig?.projectId ??
+            Constants.expoConfig?.extra?.eas?.projectId ?? process.env.EXPO_PROJECT_ID;
+
         const tokenData = await Notifications.getExpoPushTokenAsync({
-            projectId: Constants.expoConfig?.extra?.eas?.projectId || '0a9be857-9039-4488-a49a-ea2a37259acb',
+            projectId,
         });
 
-        if (Platform.OS === 'android' && Constants.executionEnvironment === null) {
-            try {
-                const fcmTokenData = await Notifications.getDevicePushTokenAsync();
-                console.log('📱 FCM Token obtained:', fcmTokenData.data.substring(0, 30) + '...');
-            } catch (error) {
-                console.log('⚠️ FCM token not available, Native Notify will handle token conversion', error);
-            }
-        }
+        console.log('✅ Expo Push Token obtained:', tokenData.data.substring(0, 30) + '...');
 
         return tokenData.data;
 
@@ -66,27 +62,58 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
     }
 }
 
-export async function verifyNativeNotifyRegistration(userId?: string): Promise<any> {
+// Register push token with your backend
+export async function registerPushTokenWithBackend(
+    userId: string,
+    expoPushToken: string,
+    backendUrl: string = process.env.EXPO_PUBLIC_API_BASE_URL
+): Promise<boolean> {
     try {
-        const response = await fetch(`https://app.nativenotify.com/api/expo/indie/subs/${APP_ID}/${APP_TOKEN}`);
-        const users = await response.json();
+        const response = await fetch(`${backendUrl}/api/register-push-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId,
+                expoPushToken,
+                platform: Platform.OS,
+            }),
+        });
 
-        if (userId) {
-            const userRecord = users.find((user: any) =>
-                user.subID === userId || user.sub_id === userId
-            );
+        const data = await response.json();
 
-            if (userRecord) {
-                console.log(`✅ User ${userId} registered for notifications`);
-                return true;
-            } else {
-                console.log(`❌ User ${userId} NOT found in Native Notify registry`);
-                return false;
-            }
+        if (data.success) {
+            console.log(`✅ Push token registered for user ${userId}`);
+            return true;
+        } else {
+            console.log(`❌ Failed to register push token: ${data.message}`);
+            return false;
         }
-
     } catch (error) {
-        console.error('❌ Failed to verify Native Notify registration:', error);
+        console.error('❌ Error registering push token:', error);
+        return false;
+    }
+}
+
+// Verify token is registered on backend
+export async function verifyPushTokenRegistration(
+    userId: string,
+    backendUrl: string = process.env.EXPO_PUBLIC_API_BASE_URL
+): Promise<boolean> {
+    try {
+        const response = await fetch(`${backendUrl}/api/verify-push-token/${userId}`);
+        const data = await response.json();
+
+        if (data.success && data.registered) {
+            console.log(`✅ User ${userId} has registered push token`);
+            return true;
+        } else {
+            console.log(`❌ User ${userId} NOT registered for push notifications`);
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Failed to verify push token registration:', error);
         return false;
     }
 }

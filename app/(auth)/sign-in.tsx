@@ -116,13 +116,13 @@ const SignIn = () => {
                                     ? 'border-dark-100/10'
                                     : 'border-transparent'
                                     }`}>
-                                    <View className="flex-row items-center px-4">
+                                    <View className="flex-row items-center px-4 py-4">
                                         <Text className="text-dark-100 text-base font-medium mr-2">
                                             +88
                                         </Text>
                                         <View className="w-0.5 h-6 bg-gray-600 mr-3" />
                                         <TextInput
-                                            className="flex-1 py-4 text-dark-100 font-medium text-base"
+                                            className=""
                                             placeholder="Enter phone number"
                                             placeholderTextColor="#666666"
                                             keyboardType="phone-pad"

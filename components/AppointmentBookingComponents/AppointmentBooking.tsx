@@ -1,4 +1,3 @@
-import { registerUserForNotifications } from '@/hooks/nativeNotify';
 import {
     createAppointmentConfirmationNotification,
     createAppointmentRescheduleConfirmationNotification,
@@ -253,9 +252,12 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                     rescheduleDetails.time
                 );
             } else {
+                console.log('test iffty', tempAppointmentData, appointmentId, userId);
+                console.log('test iffty before fetch unread count & fetch notification', userIdCommon);
+
                 await createAppointmentConfirmationNotification(appointmentData, appointmentId, userId);
             }
-
+            console.log('test iffty before fetch unread count & fetch notification', userIdCommon);
             await fetchUnreadCount(userIdCommon);
             await fetchNotifications(userIdCommon);
 
@@ -478,12 +480,12 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 } catch (error) {
                     console.warn('Push notification failed, but appointment was booked successfully:', error);
                 }
+                // console.log('test iffty', tempAppointmentData, appointmentId, userId);
                 await handleNotifications(tempAppointmentData, appointmentId, userId);
                 refetchAppointments();
                 setShowOtpModal(false);
                 showSuccessMessage();
                 fetchAuthenticatedUser();
-                await registerUserForNotifications(userId);
             } else {
                 setShowOtpModal(false);
                 toast.error(result.message || 'Booking failed');

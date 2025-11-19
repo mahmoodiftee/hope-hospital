@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, TextInput } from 'react-native';
-import { User, Calendar as CalendarIcon, Phone } from 'lucide-react-native';
-import { PatientInfo } from '../../types';
 import useAuthStore from '@/store/auth.store';
+import { Calendar as CalendarIcon, Phone, User } from 'lucide-react-native';
+import React, { useEffect } from 'react';
+import { Text, TextInput, View } from 'react-native';
+import { PatientInfo } from '../../types';
 
 type PatientInfoFormProps = {
     patientInfo: {
@@ -44,7 +44,7 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
                 <View className={`flex-row items-center bg-white rounded-xl px-4 py-3 ${validationErrors.name ? 'border border-red-500' : ''}`}>
                     <User size={20} color="#6B7280" />
                     <TextInput
-                        className="flex-1 ml-3 text-base text-dark-100"
+                        className="pl-3"
                         placeholder="Enter patient name"
                         value={patientInfo.name}
                         editable={!disabled}
@@ -62,7 +62,7 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
                 <View className={`flex-row items-center bg-white rounded-xl px-4 py-3 ${validationErrors.age ? 'border border-red-500' : ''}`}>
                     <CalendarIcon size={20} color="#6B7280" />
                     <TextInput
-                        className="flex-1 ml-3 text-base text-dark-100"
+                        className="pl-3"
                         placeholder="Enter age"
                         value={patientInfo.age}
                         editable={!disabled}
@@ -83,13 +83,14 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
                 <View className={`flex-row items-center bg-white rounded-xl px-4 py-3 ${validationErrors.phone ? 'border border-red-500' : ''}`}>
                     <Phone size={20} color="#6B7280" />
                     <TextInput
-                        className="flex-1 ml-3 text-base text-dark-100"
+                        className="pl-3"
                         placeholder="Enter phone number"
                         value={patientInfo.phone} // Always use patientInfo.phone
                         editable={!userPhone || !disabled} // Disable if user is logged in AND form is disabled
                         onChangeText={(value) => onPatientInfoChange('phone', value)}
                         keyboardType="phone-pad"
                         placeholderTextColor="#9CA3AF"
+                        maxLength={11}
                     />
                 </View>
                 {validationErrors.phone && (

@@ -1,42 +1,70 @@
-// index.tsx - Simplified approach - let Native Notify hook handle everything
-import { setupBasicNotifications, verifyNativeNotifyRegistration } from '@/lib/notifications';
+import { registerForPushNotificationsAsync, registerPushTokenWithBackend } from '@/lib/notifications';
 import useAuthStore from '@/store/auth.store';
 import useNotificationStore from '@/store/notification.store';
+import * as Notifications from 'expo-notifications';
 import { Redirect } from 'expo-router';
-import registerNNPushToken from 'native-notify';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function Index() {
   const { user, dbUser, fetchAuthenticatedUser, isLoading } = useAuthStore();
   const { fetchUnreadCount } = useNotificationStore();
-
-  registerNNPushToken(31591, 'CFKdEHY835MXsOap4DerLI');
+  const notificationListener = useRef<Notifications.EventSubscription | null>(null);
+  const responseListener = useRef<Notifications.EventSubscription | null>(null);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        await setupBasicNotifications();
         await fetchAuthenticatedUser();
+
+        const expoPushToken = await registerForPushNotificationsAsync();
+
+        if (expoPushToken && (user?.id || dbUser?.$id)) {
+          const userId = user?.id || dbUser?.$id;
+
+          await registerPushTokenWithBackend(userId!, expoPushToken);
+          console.log('App initialization complete');
+        }
       } catch (error) {
-        console.error('❌ App initialization error:', error);
+        console.error('App initialization error:', error);
       }
     };
 
     initializeApp();
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log('Notification tapped:', response);
+      const data = response.notification.request.content.data;
+      console.log(data);
+    });
+
+    return () => {
+      notificationListener.current?.remove();
+      responseListener.current?.remove();
+    };
   }, []);
 
   useEffect(() => {
-    const verifyRegistration = async () => {
+    const reRegisterToken = async () => {
       if (user?.id || dbUser?.$id) {
         const userId = user?.id || dbUser?.$id;
-        setTimeout(async () => {
-          await verifyNativeNotifyRegistration(userId);
-        }, 3000);
+
+        try {
+          const expoPushToken = await registerForPushNotificationsAsync();
+          if (expoPushToken) {
+            await registerPushTokenWithBackend(userId!, expoPushToken);
+          }
+        } catch (error) {
+          console.error('❌ Error re-registering token:', error);
+        }
       }
     };
 
-    verifyRegistration();
+    reRegisterToken();
   }, [user?.id, dbUser?.$id]);
 
   useEffect(() => {

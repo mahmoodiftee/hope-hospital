@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "",
+    "name": " ",
     "slug": "hope-hopital",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -37,7 +37,9 @@
         "android.permission.VIBRATE",
         "android.permission.WAKE_LOCK",
         "com.google.android.c2dm.permission.RECEIVE",
-        "android.permission.CALL_PHONE"
+        "android.permission.CALL_PHONE",
+        "android.permission.POST_NOTIFICATIONS"
+
       ],
       "queries": [
         "tel"

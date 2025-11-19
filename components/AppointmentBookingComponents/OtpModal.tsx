@@ -44,28 +44,33 @@ const OtpModal: React.FC<OtpModalProps> = ({
             animationType="slide"
             onRequestClose={onClose}
         >
-            <View className="flex-1 bg-black/50 justify-center items-center px-6">
+            <View className="flex-1 bg-black/50 justify-center items-center px-6 mb-20">
                 <View className="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl">
-                    {/* Header */}
-                    <View className="flex-row justify-between items-center mb-6">
-                        <Text className="text-2xl font-bold text-dark-100">
-                            Enter Your OTP
-                        </Text>
-                        <TouchableOpacity
-                            onPress={onClose}
-                            className="p-1"
-                        >
-                            <X color="#6B7280" size={24} />
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                        onPress={onClose}
+                        className="p-1 absolute top-3 right-3"
+                    >
+                        <X color="#6B7280" size={24} />
+                    </TouchableOpacity>
+                    <Text className="text-2xl font-bold text-dark-100 text-center mb-1">
+                        Enter Your OTP
+                    </Text>
 
-                    {/* Description */}
-                    <Text className="text-dark-100/50 text-center mb-6 leading-5">
+                    <Text className="text-dark-100/50 text-center mb-2 leading-5">
                         Code sent to {phone}
                     </Text>
 
-                    {/* Individual OTP Input Boxes */}
-                    <View className="flex-row justify-center gap-1 mb-6">
+                    <View className="mb-3 px-6">
+                        <View className="bg-yellow-50 border border-yellow-200 rounded-xl py-2">
+                            <Text className="text-center text-dark-100 font-semibold">
+                                🎭 Demo Mode
+                            </Text>
+                            <Text className="text-center text-dark-100/70 mt-1">
+                                Use <Text className="text-red-500 font-bold">123456</Text> as OTP
+                            </Text>
+                        </View>
+                    </View>
+                    <View className="flex-row justify-center gap-1 mb-1">
                         {otp.map((digit, index) => (
                             <TextInput
                                 key={index}
@@ -93,7 +98,7 @@ const OtpModal: React.FC<OtpModalProps> = ({
                     )}
 
                     {/* Resend Timer */}
-                    <View className="items-center mb-6">
+                    <View className="items-center mb-3">
                         {canResend ? (
                             <TouchableOpacity
                                 onPress={onResendOtp}
@@ -124,7 +129,7 @@ const OtpModal: React.FC<OtpModalProps> = ({
 
                     {/* Verify Button */}
                     <TouchableOpacity
-                        className={`w-full py-4 rounded-xl items-center ${otpLoading || !isOtpComplete
+                        className={`w-full py-3 rounded-xl items-center ${otpLoading || !isOtpComplete
                             ? 'bg-gray-600'
                             : 'bg-blue'
                             }`}

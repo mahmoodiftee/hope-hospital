@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
+const BACKEND_URL = process.env.EXPO_PUBLIC_API_BASE_URL
+
 export const sendPushToUser = async ({
     userId,
     title,
@@ -12,23 +14,27 @@ export const sendPushToUser = async ({
     message: string;
     data?: Record<string, any>;
 }) => {
-
     try {
         const startTime = Date.now();
+
         const payload = {
-            subID: userId,
-            appId: 31591,
-            appToken: "CFKdEHY835MXsOap4DerLI",
+            userId,
             title,
             message,
-            ...(Object.keys(data).length > 0 && { data }),
+            data: {
+                ...data,
+                timestamp: Date.now(),
+                platform: Platform.OS,
+            },
         };
 
+        console.log(`📤 Sending push notification to user ${userId}: ${title}`);
+
         const response = await axios.post(
-            'https://app.nativenotify.com/api/indie/notification',
+            `${BACKEND_URL}/api/send-notification`,
             payload,
             {
-                timeout: 15000, // 15 second timeout
+                timeout: 15000,
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -38,7 +44,8 @@ export const sendPushToUser = async ({
 
         const endTime = Date.now();
         const duration = endTime - startTime;
-        console.log(`✅ Push notification sent to ${userId}: ${title}`);
+
+        console.log(`✅ Push notification sent to ${userId} in ${duration}ms`);
 
         return {
             success: true,
@@ -59,24 +66,27 @@ export const sendPushToUser = async ({
     }
 };
 
-export const checkNativeNotifyStatus = async () => {
 
+export const checkPushNotificationStatus = async () => {
     try {
-        const APP_ID = 31591;
-        const APP_TOKEN = 'CFKdEHY835MXsOap4DerLI';
-
         const response = await axios.get(
-            `https://app.nativenotify.com/api/expo/indie/subs/${APP_ID}/${APP_TOKEN}`,
+            `${BACKEND_URL}/health`,
             { timeout: 10000 }
         );
-        return { success: true, users: response.data };
+
+        console.log('✅ Backend health check passed');
+        return { success: true, data: response.data };
     } catch (error: any) {
-        console.log('❌ Native Notify service check failed:', error.message);
+        console.log('❌ Backend health check failed:', error.message);
         return { success: false, error: error.message };
     }
 };
 
-export const testDirectExpoPush = async (expoPushToken: string, title: string, body: string) => {
+export const testDirectExpoPush = async (
+    expoPushToken: string,
+    title: string,
+    body: string
+) => {
     const message = {
         to: expoPushToken,
         sound: 'default',
@@ -102,6 +112,13 @@ export const testDirectExpoPush = async (expoPushToken: string, title: string, b
         });
 
         const data = await response.json();
+
+        if (response.ok) {
+            console.log('✅ Direct Expo push successful');
+        } else {
+            console.log('❌ Direct Expo push failed:', data);
+        }
+
         return { success: response.ok, data };
     } catch (error: any) {
         console.log('❌ Direct Expo push error:', error.message);

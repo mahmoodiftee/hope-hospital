@@ -1,4 +1,3 @@
-import { registerUserForNotifications } from "@/hooks/nativeNotify";
 import { saveUserToDB } from "@/lib/appwrite";
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from "expo-router";
@@ -162,7 +161,6 @@ export default function OtpVerify() {
                     };
 
                     await saveUserToSecureStore(userForStore);
-                    await registerUserForNotifications(parsedUserData?.$id || parsedUserData?.id);
                     router.replace('/(tabs)');
                 } else {
                     try {
@@ -181,7 +179,6 @@ export default function OtpVerify() {
                             phone: cleanedUser.phone,
                             createdAt: new Date().toISOString(),
                         };
-                        await registerUserForNotifications(savedUser.$id);
                         await saveUserToSecureStore(userForStore);
                         router.replace('/(tabs)');
                     } catch (dbError) {
@@ -265,6 +262,17 @@ export default function OtpVerify() {
                         : `Code sent to +88${phone}`
                     }
                 </Text>
+            </View>
+            
+            <View className="mb-6 px-6">
+                <View className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                    <Text className="text-center text-dark-100 font-semibold">
+                        🎭 Demo Mode
+                    </Text>
+                    <Text className="text-center text-dark-100/70 mt-1">
+                        Use <Text className="text-red-500 font-bold">123456</Text> as OTP
+                    </Text>
+                </View>
             </View>
 
             {/* Enhanced OTP Input with better auto-fill support */}
@@ -393,16 +401,6 @@ export default function OtpVerify() {
                     </Text>
                 </View>
             )}
-
-            {/* Help Text */}
-            <View className="mt-6 p-4 bg-gray-100 rounded-xl">
-                <Text className="text-gray-600 text-sm text-center">
-                    💡 {Platform.OS === 'ios'
-                        ? 'Use "AutoFill" from your keyboard for instant OTP entry'
-                        : 'OTP should auto-fill from your SMS. Check your messages if needed.'
-                    }
-                </Text>
-            </View>
         </View>
     );
 }
