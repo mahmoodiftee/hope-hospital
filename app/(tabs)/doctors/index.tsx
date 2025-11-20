@@ -17,9 +17,11 @@ import Search from '@/components/Search';
 import { useDoctorBooking } from '@/hooks/useDoctorBooking';
 import { getAllDoctors } from '@/lib/appwrite';
 import useAppwrite from '@/lib/useAppwrite';
+import useNotificationStore from '@/store/notification.store';
 import { Doctor } from '@/types';
-
 const DoctorsScreen: React.FC = () => {
+    const { unreadCount } = useNotificationStore();
+
     const params = useLocalSearchParams<{ query?: string; filter?: string }>();
     const {
         showBookingModal,
@@ -88,10 +90,18 @@ const DoctorsScreen: React.FC = () => {
                 <View className="flex-row items-center justify-between mb-4">
                     <Text className="text-dark-100 text-3xl font-bold pl-1">Doctors</Text>
                     <TouchableOpacity
-                        className="border-2 border-gray-200/10 rounded-full p-1 mr-1.5"
+                        className="border-2 border-gray-200/10 rounded-full p-1 relative"
                         onPress={() => router.push("/notifications")}
                     >
                         <Bell color="rgba(0,0,0,0.8)" size={20} />
+
+                        {unreadCount > 0 && (
+                            <View className="absolute -top-2 -right-2 bg-red-500 rounded-full px-1.5 min-w-[16px] h-[16px] justify-center items-center">
+                                <Text className="text-[10px] text-white font-bold text-center">
+                                    {unreadCount}
+                                </Text>
+                            </View>
+                        )}
                     </TouchableOpacity>
                 </View>
                 <Search />

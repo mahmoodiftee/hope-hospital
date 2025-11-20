@@ -44,7 +44,7 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
                 <View className={`flex-row items-center bg-white rounded-xl px-4 py-3 ${validationErrors.name ? 'border border-red-500' : ''}`}>
                     <User size={20} color="#6B7280" />
                     <TextInput
-                        className="pl-3"
+                        className="pl-3 w-full h-8"
                         placeholder="Enter patient name"
                         value={patientInfo.name}
                         editable={!disabled}
@@ -62,7 +62,7 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
                 <View className={`flex-row items-center bg-white rounded-xl px-4 py-3 ${validationErrors.age ? 'border border-red-500' : ''}`}>
                     <CalendarIcon size={20} color="#6B7280" />
                     <TextInput
-                        className="pl-3"
+                        className="pl-3 w-full h-8"
                         placeholder="Enter age"
                         value={patientInfo.age}
                         editable={!disabled}
@@ -83,7 +83,7 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({
                 <View className={`flex-row items-center bg-white rounded-xl px-4 py-3 ${validationErrors.phone ? 'border border-red-500' : ''}`}>
                     <Phone size={20} color="#6B7280" />
                     <TextInput
-                        className="pl-3"
+                        className="pl-3 w-full h-8"
                         placeholder="Enter phone number"
                         value={patientInfo.phone} // Always use patientInfo.phone
                         editable={!userPhone || !disabled} // Disable if user is logged in AND form is disabled

@@ -29,7 +29,11 @@ export const sendPushToUser = async ({
         };
 
         console.log(`📤 Sending push notification to user ${userId}: ${title}`);
-
+        console.log('🔍 Debug Info:', {
+            backendUrl: BACKEND_URL,
+            fullEndpoint: `${BACKEND_URL}/api/send-notification`,
+            payload
+        });
         const response = await axios.post(
             `${BACKEND_URL}/api/send-notification`,
             payload,

@@ -1,7 +1,12 @@
 {
   "expo": {
-    "name": " ",
+    "name": ".",
     "slug": "hope-hopital",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,7 +27,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
       "package": "com.hope.hopehopital",
       "googleServicesFile": "./google-services.json",
@@ -39,7 +44,6 @@
         "com.google.android.c2dm.permission.RECEIVE",
         "android.permission.CALL_PHONE",
         "android.permission.POST_NOTIFICATIONS"
-
       ],
       "queries": [
         "tel"
@@ -62,8 +66,11 @@
         {
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "resizeMode": "cover",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#ffffff"
+          }
         }
       ],
       "expo-secure-store",

@@ -9,6 +9,7 @@ import {
     saveUserToDB,
     updateAppointment
 } from '@/lib/appwrite';
+import { registerForPushNotificationsAsync, registerPushTokenWithBackend } from '@/lib/notifications';
 import { sendPushToUser } from '@/lib/sendNotification';
 import useAppwrite from '@/lib/useAppwrite';
 import useAuthStore from '@/store/auth.store';
@@ -253,13 +254,13 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                 );
             } else {
                 console.log('test iffty', tempAppointmentData, appointmentId, userId);
-                console.log('test iffty before fetch unread count & fetch notification', userIdCommon);
+                console.log('test iffty before fetch unread count & fetch notification', userId);
 
                 await createAppointmentConfirmationNotification(appointmentData, appointmentId, userId);
             }
-            console.log('test iffty before fetch unread count & fetch notification', userIdCommon);
-            await fetchUnreadCount(userIdCommon);
-            await fetchNotifications(userIdCommon);
+            console.log('test iffty before fetch unread count & fetch notification', userId);
+            await fetchUnreadCount(userId);
+            await fetchNotifications(userId);
 
         } catch (error) {
             console.error("Error handling notifications:", error);
@@ -464,11 +465,29 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                     patientInfo,
                     tempAppointmentData,
                 );
-                userId = result.data?.user?.$id;
+                userId = result.data?.user?.$id || userIdCommon;
+                if (!userId) {
+                    console.warn("No user ID found. Push token registration skipped.");
+                    return;
+                }
+
+                try {
+                    const expoPushToken = await registerForPushNotificationsAsync();
+
+                    if (expoPushToken) {
+                        await registerPushTokenWithBackend(userId, expoPushToken);
+                        console.log('Push token registered for new user:', userId);
+                    } else {
+                        console.warn("No Expo push token received.");
+                    }
+                } catch (error) {
+                    console.warn("Failed to register push token:", error);
+                }
             }
 
             if (result.success) {
                 const appointmentId = result.data?.appointment?.$id || result.data?.$id;
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 try {
                     await sendPushToUser({
                         userId,
@@ -837,7 +856,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
         <>
             <SafeAreaView className="flex-1 bg-white">
                 <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
-                    {/* Header */}
                     <View className="flex-row justify-between items-center px-6 py-4">
                         <Text className="text-2xl font-semibold text-center text-dark-100">{headerTitle}</Text>
                         <TouchableOpacity
@@ -847,7 +865,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                             <X color="rgba(0,0,0,1)" size={24} />
                         </TouchableOpacity>
                     </View>
-                    {/* <View className="h-2 bg-gray-50" /> */}
 
                     {reschedule && (
                         <View className="mx-6 mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
@@ -860,10 +877,9 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                             </Text>
                         </View>
                     )}
-                    {/* Doctor Info */}
+
                     <DoctorInfoCard doctor={doctor} />
 
-                    {/* Patient Information Form */}
                     <PatientInfoForm
                         patientInfo={patientInfo}
                         validationErrors={validationErrors}
@@ -871,7 +887,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                         disabled={reschedule ? true : false}
                     />
 
-                    {/* Calendar */}
                     <DatePickerSection
                         selectedDate={selectedDate}
                         validationErrors={validationErrors}
@@ -880,7 +895,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                         onDateSelect={handleDateSelect}
                     />
 
-                    {/* Time Slots */}
                     {selectedDate && (
                         <TimeSlotPicker
                             selectedTime={selectedTime}
@@ -890,7 +904,6 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
                         />
                     )}
 
-                    {/* Book Button */}
                     <TouchableOpacity
                         className={`mx-6 py-4 rounded-xl items-center mt-6 ${!isFormValid() ? 'bg-blue' : 'bg-blue'
                             }`}
