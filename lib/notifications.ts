@@ -52,7 +52,7 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
             projectId,
         });
 
-        console.log('✅ Expo Push Token obtained:', tokenData.data.substring(0, 30) + '...');
+        console.log('✅ Expo Push Token obtained:', tokenData.data);
 
         return tokenData.data;
 

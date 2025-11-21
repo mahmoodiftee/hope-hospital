@@ -32,13 +32,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     };
 
     return (
-        <View className="">
+        <View className="shadow-[0_5px_10px_rgba(0,0,0,0.1)] mx-4 mb-2">
             <TouchableOpacity
                 onPress={() => onPress(notification)}
                 activeOpacity={0.98}
                 className="group"
             >
-                <View className="bg-white rounded-2xl mb-2 shadow-lg">
+                <View className="bg-white rounded-2xl">
                     {!notification.isRead && (
                         <View className="h-0.5 bg-gradient-to-r from-blue-500 to-purple-500" />
                     )}

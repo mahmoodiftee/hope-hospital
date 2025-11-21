@@ -125,7 +125,7 @@ export default function Prescriptions() {
                     <View className="flex-row items-center">
                         <TouchableOpacity
                             onPress={() => router.back()}
-                            className="mr-4 p-2 rounded-full bg-white shadow-sm"
+                            className="mr-4 p-2 rounded-full bg-white shadow-[0_10px_10px_rgba(0,0,0,0.1)]"
                         >
                             <Ionicons name="arrow-back" size={24} color="#374151" />
                         </TouchableOpacity>
@@ -170,7 +170,7 @@ export default function Prescriptions() {
                             return (
                                 <View
                                     key={prescription.id}
-                                    className="bg-white rounded-2xl p-3 shadow-lg"
+                                    className="bg-white rounded-2xl p-3 shadow-[0_5px_10px_rgba(0,0,0,0.1)]"
                                 >
                                     {/* Header Section */}
                                     <View className="flex-row justify-between items-start mb-4">

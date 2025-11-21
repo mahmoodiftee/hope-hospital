@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export const SkeletonCard: React.FC = () => (
-  <View style={styles.card} className="shadow-lg">
+  <View style={styles.card} className="shadow-[0_10px_15px_rgba(0,0,0,0.1)]">
     <View className="flex-row gap-4 items-start mb-2.5">
       <Skeleton colorMode="light" width={80} height={100} radius={16} />
       <View className="flex-1 gap-2 mt-2">

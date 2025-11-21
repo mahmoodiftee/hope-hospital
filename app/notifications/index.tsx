@@ -183,7 +183,7 @@ export default function Notifications() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50 px-4">
+        <SafeAreaView className="flex-1 bg-gray-50">
             <NotificationHeader
                 unreadCount={unreadCount}
                 onMarkAllAsRead={handleMarkAllAsRead}

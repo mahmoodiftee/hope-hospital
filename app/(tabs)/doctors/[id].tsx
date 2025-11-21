@@ -1,20 +1,20 @@
+import AppointmentBooking from '@/components/AppointmentBookingComponents/AppointmentBooking';
+import { ActionButtons } from '@/components/doctors/ActionButtons';
+import { DoctorExperience, DoctorInfo, DoctorReviews, DoctorSpecialties } from '@/components/doctors/DoctorDetailSections';
+import { LoadingSpinner } from '@/components/doctors/LoadingSpinner';
+import { getDoctor } from '@/lib/appwrite';
+import useAppwrite from '@/lib/useAppwrite';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-    View,
+    Modal,
+    ScrollView,
     Text,
     TouchableOpacity,
-    ScrollView,
-    Modal,
+    View,
 } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { X } from 'lucide-react-native';
-import AppointmentBooking from '@/components/AppointmentBookingComponents/AppointmentBooking';
-import useAppwrite from '@/lib/useAppwrite';
-import { getDoctor } from '@/lib/appwrite';
-import { LoadingSpinner } from '@/components/doctors/LoadingSpinner';
-import { DoctorExperience, DoctorInfo, DoctorReviews, DoctorSpecialties } from '@/components/doctors/DoctorDetailSections';
-import { ActionButtons } from '@/components/doctors/ActionButtons';
 
 interface RouteParams {
     id: string;
@@ -70,14 +70,21 @@ const DoctorDetailsScreen: React.FC = () => {
             <Modal
                 visible={showBookingModal}
                 animationType="slide"
-                presentationStyle="pageSheet"
+                transparent
                 onRequestClose={handleBookingClose}
             >
-                <AppointmentBooking
-                    doctor={doctor!}
-                    onClose={handleBookingClose}
-                />
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: 'flex-start', // Aligns to top
+                        marginTop: 50, // Adjust this value to move the modal down
+                        backgroundColor: 'rgba(0,0,0,0.5)', // Optional overlay
+                    }}
+                >
+                    <AppointmentBooking doctor={doctor!} onClose={handleBookingClose} />
+                </View>
             </Modal>
+
         </SafeAreaView>
     );
 };

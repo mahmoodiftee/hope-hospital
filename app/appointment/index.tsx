@@ -91,7 +91,7 @@ const Header = () => (
     <View className="flex-row items-center py-3 mx-4">
         <TouchableOpacity
             onPress={() => router.back()}
-            className="mr-4 p-2 rounded-full bg-white shadow-sm"
+            className="mr-4 p-2 rounded-full bg-white shadow-[0_5px_10px_rgba(0,0,0,0.1)]"
         >
             <Ionicons name="arrow-back" size={24} color="#374151" />
         </TouchableOpacity>

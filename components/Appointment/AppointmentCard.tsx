@@ -68,7 +68,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
   return (
     <>
-      <View className="bg-white rounded-2xl py-4 my-4 shadow-lg mx-4">
+      <View className="bg-white rounded-2xl py-4 my-4 shadow-[0_10px_15px_rgba(0,0,0,0.1)] mx-4">
         {/* Status Header */}
         <AppointmentStatusHeader
           appointmentStatus={appointmentStatus}

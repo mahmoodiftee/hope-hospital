@@ -53,7 +53,7 @@ const Search = () => {
 
             <View className="flex-row items-center w-full gap-2 px-1">
                 {/* Search Bar */}
-                <View className="flex-row items-center flex-1 bg-white border border-black/10 rounded-xl px-4 py-[12px] shadow-sm">
+                <View className="flex-row items-center flex-1 bg-white border border-black/10 rounded-xl px-4 py-[12px]">
                     <SearchIcon color="black" size={20} style={{ opacity: 0.8 }} />
                     <TextInput
                         value={search}
@@ -72,7 +72,7 @@ const Search = () => {
                 </View>
 
                 {/* Filter Button */}
-                <View className="flex-row items-center bg-white border border-black/10 rounded-xl p-[13px] shadow-sm">
+                <View className="flex-row items-center bg-white border border-black/10 rounded-xl p-[13px]">
 
                     <TouchableOpacity
                         onPress={() => setShowFilterDropdown(true)}
