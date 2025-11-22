@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": " ",
+    "name": "‎",
     "slug": "hope-hopital",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -36,6 +36,7 @@
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
         "android.permission.WAKE_LOCK",
+        "android.permission.USE_FULL_SCREEN_INTENT",
         "com.google.android.c2dm.permission.RECEIVE",
         "android.permission.CALL_PHONE",
         "android.permission.POST_NOTIFICATIONS"
@@ -47,7 +48,14 @@
         "googleMaps": {
           "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
         }
-      }
+      },
+      "useNextNotificationsApi": true
+    },
+    "notification": {
+      "icon": "./assets/images/notification-icon.png",
+      "color": "#ffffff",
+      "androidMode": "default",
+      "androidCollapsedTitle": "{{unread_count}} new notifications"
     },
     "web": {
       "bundler": "metro",
@@ -71,7 +79,9 @@
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#ffffff",
-          "defaultChannel": "default"
+          "defaultChannel": "default",
+          "sounds": [],
+          "mode": "production"
         }
       ]
     ],

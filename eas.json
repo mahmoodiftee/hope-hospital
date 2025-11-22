@@ -11,6 +11,7 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PROJECT_ID": "0a9be857-9039-4488-a49a-ea2a37259acb",
         "EXPO_PUBLIC_API_BASE_URL": "https://otp-backend-eight.vercel.app",
         "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "687534a40002a65f2150",
         "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1",
@@ -32,6 +33,7 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PROJECT_ID": "0a9be857-9039-4488-a49a-ea2a37259acb",
         "EXPO_PUBLIC_API_BASE_URL": "https://otp-backend-eight.vercel.app",
         "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "687534a40002a65f2150",
         "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1",
@@ -51,6 +53,7 @@
     "production": {
       "autoIncrement": true,
       "env": {
+        "EXPO_PROJECT_ID": "0a9be857-9039-4488-a49a-ea2a37259acb",
         "EXPO_PUBLIC_API_BASE_URL": "https://otp-backend-eight.vercel.app",
         "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "687534a40002a65f2150",
         "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1",
