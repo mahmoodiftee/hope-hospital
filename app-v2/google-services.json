@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "553097777259",
+    "project_id": "hope-hospital-af095",
+    "storage_bucket": "hope-hospital-af095.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553097777259:android:a887d3a7e6717a89dba12e",
+        "android_client_info": {
+          "package_name": "com.hope.hopehopital"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUHZR5n6oZ_F47CAHvkP0mBD-dY0wbV6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
