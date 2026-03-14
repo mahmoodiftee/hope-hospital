@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, Modal, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { HeaderText } from '@/shared/components';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/features/auth';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 // In our new architecture we get the doctor definition from the shared types or define it here
 export interface DoctorI {
@@ -22,6 +23,8 @@ interface TopDoctorsProps {
 }
 
 export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors }) => {
+    const { t } = useTranslation();
+    const router = useRouter();
     const flatListRef = useRef<FlatList>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const { dbUser, toggleFavorite, isAuthenticated } = useAuth();
@@ -57,41 +60,63 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
     };
 
     const renderTopDoctorCard = ({ item: topDoctor }: { item: DoctorI }) => (
-        <View className="bg-gray-50 rounded-2xl p-3 mb-2" style={{ width: cardWidth, marginRight: cardMargin, elevation: 1.5, shadowColor: '#000', shadowOpacity: 0.09, shadowRadius: 3, shadowOffset: { width: 0, height: 1 } }}>
-            <Image
-                source={{ uri: topDoctor.image }}
-                className="w-full h-32 rounded-lg mb-3"
-                resizeMode="cover"
-            />
-            <View className="flex-row justify-between items-start mb-1">
-                <View className="flex-1 mr-2">
-                    <Text className="text-gray-900 font-bold text-sm" numberOfLines={1}>
-                        {topDoctor.name}
-                    </Text>
-                    <Text className="text-gray-500 text-xs" numberOfLines={1}>
-                        {topDoctor.specialty}
-                    </Text>
-                </View>
+        <View
+            className="bg-white"
+            style={{
+                width: cardWidth,
+                marginRight: cardMargin,
+                borderRadius: 28,
+                padding: 12,
+                borderWidth: 1,
+                borderColor: '#EBF2FF',
+                shadowColor: '#3B82F6',
+                shadowOpacity: 0.10,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 6 },
+                elevation: 3
+            }}
+        >
+            <View className="relative">
+                <Image
+                    source={{ uri: topDoctor.image }}
+                    className="w-full h-36 rounded-2xl mb-3"
+                    resizeMode="cover"
+                />
+                {/* Rating Overlay */}
+                {/* <View className="absolute top-2 left-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex-row items-center gap-1 border border-white/20">
+                    <Ionicons name="star" size={12} color="#F59E0B" />
+                    <Text className="text-gray-900 font-bold text-[10px]">4.8</Text>
+                </View> */}
+
                 {topDoctor.$id && (
                     <TouchableOpacity
                         onPress={() => handleToggleFavorite(topDoctor.$id!)}
-                        className="p-1 -mt-1 -mr-1"
+                        className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full items-center justify-center border border-white/20"
                     >
                         <Ionicons
                             name={dbUser?.favorites?.includes(topDoctor.$id) ? "heart" : "heart-outline"}
-                            size={18}
+                            size={16}
                             color={dbUser?.favorites?.includes(topDoctor.$id) ? "#FF4D67" : "#9CA3AF"}
                         />
                     </TouchableOpacity>
                 )}
             </View>
 
+            <View className="mb-3 px-1">
+                <Text className="text-gray-900 font-bold text-sm mb-0.5" numberOfLines={1}>
+                    {topDoctor.name}
+                </Text>
+                <Text className="text-blue-500 font-bold text-[11px]" numberOfLines={1}>
+                    {topDoctor.specialty}
+                </Text>
+            </View>
+
             <TouchableOpacity
-                className="bg-blue-600 rounded-md py-2"
+                className="bg-blue-600 rounded-xl py-2.5 shadow-sm shadow-blue-400"
                 onPress={() => handleBookAppointment(topDoctor)}
             >
-                <Text className="text-white text-center text-xs font-bold">
-                    Book
+                <Text className="text-white text-center text-xs font-bold uppercase tracking-wider">
+                    {t('book')}
                 </Text>
             </TouchableOpacity>
         </View>
@@ -99,10 +124,11 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
 
     return (
         <View className="mb-5">
-            <View className="flex-row items-center justify-between mb-4 mt-2">
-                <HeaderText title="Top Doctors" />
-                <TouchableOpacity onPress={onViewAll}>
-                    <Text className="text-blue-600 font-bold">View All</Text>
+            <View className="flex-row items-center justify-between mb-4 mt-2 px-1">
+                <HeaderText title={t('topDoctors')} className="mb-0" />
+                <TouchableOpacity onPress={onViewAll} className="flex-row items-center">
+                    <Text className="text-blue-600 font-bold text-sm">{t('viewAll')}</Text>
+                    <Ionicons name="chevron-forward" size={16} color="#2563EB" className="ml-0.5" />
                 </TouchableOpacity>
             </View>
 
@@ -115,7 +141,11 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
                 showsHorizontalScrollIndicator={false}
                 onScroll={onScroll}
                 scrollEventThrottle={16}
-                contentContainerStyle={{ paddingHorizontal: 0 }}
+                contentContainerStyle={{
+                    paddingHorizontal: cardMargin,
+                    paddingBottom: 15,
+                    paddingTop: 10
+                }}
                 snapToInterval={cardWidth + cardMargin}
                 decelerationRate="fast"
                 bounces={false}
@@ -124,6 +154,8 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
                     offset: (cardWidth + cardMargin) * index,
                     index,
                 })}
+                style={{ marginHorizontal: -cardMargin }} // Pull back the padding to align with header
+                removeClippedSubviews={false} // Prevent shadow clipping
             />
 
             <View className="flex-row justify-center mt-4 gap-2">

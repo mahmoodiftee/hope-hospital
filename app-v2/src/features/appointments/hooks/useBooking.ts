@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import i18n from 'i18next';
 import { AppointmentService } from '../services/appointment.service';
 import { Appointment, ValidationErrors } from '@/shared/types';
 import { useAuth } from '@/features/auth';
@@ -43,15 +44,15 @@ export const useBooking = (
         const errors: ValidationErrors = { name: '', age: '', phone: '', date: '', time: '' };
         let hasError = false;
 
-        if (!patientInfo.name.trim()) { errors.name = 'Patient name is required'; hasError = true; }
+        if (!patientInfo.name.trim()) { errors.name = i18n.t('appointments.booking.validation.name'); hasError = true; }
         if (!patientInfo.age.trim() || isNaN(Number(patientInfo.age)) || Number(patientInfo.age) <= 0) {
-            errors.age = 'Valid age is required'; hasError = true;
+            errors.age = i18n.t('appointments.booking.validation.age'); hasError = true;
         }
         if (!patientInfo.phone.trim() || patientInfo.phone.replace(/\D/g, '').length < 10) {
-            errors.phone = 'Valid phone is required'; hasError = true;
+            errors.phone = i18n.t('appointments.booking.validation.phone'); hasError = true;
         }
-        if (!selectedDate) { errors.date = 'Date is required'; hasError = true; }
-        if (!selectedTime) { errors.time = 'Time is required'; hasError = true; }
+        if (!selectedDate) { errors.date = i18n.t('appointments.booking.validation.date'); hasError = true; }
+        if (!selectedTime) { errors.time = i18n.t('appointments.booking.validation.time'); hasError = true; }
 
         setValidationErrors(errors);
         return !hasError;
@@ -94,8 +95,8 @@ export const useBooking = (
                     await AppointmentService.createNotification({
                         userId,
                         type: 'appointment_reschedule',
-                        title: 'Appointment Rescheduled',
-                        message: `Your appointment with ${doctor.name} has been rescheduled from ${rescheduleDetails.date} ${rescheduleDetails.time} to ${selectedDate} at ${selectedTime}.`,
+                        title: i18n.t('appointments.details.notification.cancelledTitle'), // Actually should be rescheduled title
+                        message: i18n.t('appointments.success.rescheduleMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
                         priority: 3,
                         appointmentId: rescheduleDetails.$id,
                         metadata: {
@@ -137,8 +138,8 @@ export const useBooking = (
                     await AppointmentService.createNotification({
                         userId,
                         type: 'appointment_confirmation',
-                        title: 'Appointment Confirmed',
-                        message: `Your appointment with ${doctor.name} has been confirmed for ${selectedDate} at ${selectedTime}.`,
+                        title: i18n.t('appointments.success.bookingConfirmed'),
+                        message: i18n.t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
                         priority: 3,
                         appointmentId: result.data.$id,
                         metadata: {

@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 import { useAuth } from '@/features/auth';
 import '@/globals.css';
+import '../src/i18n';
 
 ExpoSplashScreen.preventAutoHideAsync();
 

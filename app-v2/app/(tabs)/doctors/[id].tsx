@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, StyleSheet, Dimensions, Platform, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Stack, router, useGlobalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -14,10 +15,11 @@ import { useAuth } from '@/features/auth';
 const { width } = Dimensions.get('window');
 
 const ReviewCarousel = ({ dbReviews }: { dbReviews?: { rating: number, review: string, patientName: string }[] }) => {
+    const { t } = useTranslation();
     const mockReviews = [
-        { id: '1', user: 'Sarah Johnson', rating: 5, comment: 'Dr. Akhter is incredibly professional and caring. She took the time to explain everything clearly.', date: '2 days ago' },
-        { id: '2', user: 'Michael Chen', rating: 4, comment: 'Very thorough checkup. The clinic was clean and the staff was very helpful.', date: '1 week ago' },
-        { id: '3', user: 'Emily Davis', rating: 5, comment: 'Best nephrologist I have visited. Highly recommend for any kidney-related issues.', date: '3 weeks ago' },
+        { id: '1', user: 'Sarah Johnson', rating: 5, comment: 'Dr. Akhter is incredibly professional and caring. She took the time to explain everything clearly.', date: t('doctors.daysAgo', { count: 2 }) },
+        { id: '2', user: 'Michael Chen', rating: 4, comment: 'Very thorough checkup. The clinic was clean and the staff was very helpful.', date: t('doctors.weekAgo') },
+        { id: '3', user: 'Emily Davis', rating: 5, comment: 'Best nephrologist I have visited. Highly recommend for any kidney-related issues.', date: t('doctors.weeksAgo', { count: 3 }) },
     ];
 
     const hasRealReviews = dbReviews && dbReviews.length > 0;
@@ -27,7 +29,7 @@ const ReviewCarousel = ({ dbReviews }: { dbReviews?: { rating: number, review: s
             user: r.patientName || 'Anonymous',
             rating: r.rating,
             comment: r.review,
-            date: 'Recent' // We don't have created at in the type definition explicitly, defaulting to Recent
+            date: t('doctors.recent')
         }))
         : mockReviews;
 
@@ -99,6 +101,7 @@ const HeaderRightActions = ({
 };
 
 export default function DoctorDetailScreen() {
+    const { t } = useTranslation();
     const { id } = useGlobalSearchParams<{ id: string }>();
     const { getDoctorById, isLoading } = useDoctorStore();
     const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -129,11 +132,11 @@ export default function DoctorDetailScreen() {
     const handleToggleFavorite = () => {
         if (!isAuthenticated) {
             Alert.alert(
-                "Login Required",
-                "Please login to save doctors to your favorites.",
+                t("doctors.loginRequired"),
+                t("doctors.saveDoctorLoginHint"),
                 [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Login", onPress: () => router.push('/(auth)/sign-in') }
+                    { text: t("doctors.cancel"), style: "cancel" },
+                    { text: t("doctors.login"), onPress: () => router.push('/(auth)/sign-in') }
                 ]
             );
             return;
@@ -164,7 +167,7 @@ export default function DoctorDetailScreen() {
     // Helper to extract years of experience from bio
     const getExperienceYears = (bio: string) => {
         const match = bio?.match(/(\d+)\s+years/i);
-        return match ? `${match[1]} Years` : '10+ Years';
+        return match ? `${match[1]} ${t('doctors.years')}` : `10+ ${t('doctors.years')}`;
     };
 
     return (
@@ -206,7 +209,7 @@ export default function DoctorDetailScreen() {
                     {/* Header Info */}
                     <View style={styles.headerInfo}>
                         <View style={styles.nameBlock}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                                 <Text style={styles.doctorName}>{doctor.name}</Text>
                                 <TouchableOpacity
                                     onPress={handleToggleFavorite}
@@ -214,11 +217,11 @@ export default function DoctorDetailScreen() {
                                 >
                                     <Ionicons
                                         name={isFavorited ? "bookmark" : "bookmark-outline"}
-                                        size={18}
+                                        size={14}
                                         color={isFavorited ? "#FF4D67" : "#6B7280"}
                                     />
                                     <Text style={[styles.saveText, { color: isFavorited ? "#FF4D67" : "#6B7280" }]}>
-                                        {isFavorited ? 'Saved' : 'Save'}
+                                        {isFavorited ? t('doctors.saved') : t('doctors.save')}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -260,14 +263,14 @@ export default function DoctorDetailScreen() {
 
                     {/* About Section */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>About Doctor</Text>
+                        <Text style={styles.sectionTitle}>{t('doctors.aboutDoctor')}</Text>
                         <Text style={styles.aboutText}>{doctor.experience}</Text>
                     </View>
 
                     {/* Review Carousel */}
                     <View style={styles.section}>
                         <View style={styles.sectionTitleRow}>
-                            <Text style={styles.sectionTitle}>Reviews</Text>
+                            <Text style={styles.sectionTitle}>{t('doctors.reviews')}</Text>
                             {/* <TouchableOpacity>
                                 <Text style={styles.seeAllText}>See All</Text>
                             </TouchableOpacity> */}
@@ -277,7 +280,7 @@ export default function DoctorDetailScreen() {
 
                     {/* Working Hours / Specialties */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Key Specialties</Text>
+                        <Text style={styles.sectionTitle}>{t('doctors.keySpecialties')}</Text>
                         <View style={styles.specialtiesList}>
                             {doctor?.specialties?.map((s, idx) => (
                                 <View key={idx} style={styles.specialtyChip}>
@@ -294,7 +297,7 @@ export default function DoctorDetailScreen() {
             <View style={[styles.footer, { paddingBottom: insets.bottom + (Platform.OS === 'ios' ? 70 : 80) }]}>
                 <View style={styles.footerContent}>
                     <View style={styles.priceBlock}>
-                        <Text style={styles.priceLabel}>Consultation</Text>
+                        <Text style={styles.priceLabel}>{t('doctors.consultation')}</Text>
                         <Text style={styles.priceValue}>৳{doctor.hourlyRate}</Text>
                     </View>
                     <TouchableOpacity
@@ -302,7 +305,7 @@ export default function DoctorDetailScreen() {
                         style={styles.bookButton}
                         activeOpacity={0.8}
                     >
-                        <Text style={styles.bookButtonText}>Book Now</Text>
+                        <Text style={styles.bookButtonText}>{t('doctors.bookNow')}</Text>
                         <Animated.View style={animatedArrowStyle}>
                             <Ionicons name="arrow-forward" size={20} color="#fff" />
                         </Animated.View>
@@ -403,7 +406,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontFamily: 'Quicksand-Bold',
         color: '#111827',
-        marginBottom: 8,
+        flex: 1,
     },
     specialtyBadge: {
         flexDirection: 'row',
@@ -643,7 +646,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         paddingVertical: 4,
         borderRadius: 12,
-        gap: 6,
+        gap: 4,
     },
     saveText: {
         fontSize: 13,

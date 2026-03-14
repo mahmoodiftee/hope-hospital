@@ -1,4 +1,4 @@
-import { router, useGlobalSearchParams } from 'expo-router';
+import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useMemo } from 'react';
 import { Dimensions, FlatList, Keyboard, Modal, Platform, StatusBar, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
@@ -17,6 +17,9 @@ import { useDoctorStore } from '../stores/doctor.store';
 import { useDoctorSearch } from '../hooks/useDoctorSearch';
 import { Doctor } from '@/shared/types';
 import { useAuth } from '@/features/auth';
+import { useTranslation } from 'react-i18next';
+
+import { DoctorCard } from './DoctorCard';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.95;
@@ -33,6 +36,8 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
     onClose,
     onDoctorSelect,
 }) => {
+    const { t } = useTranslation();
+    const router = useRouter();
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const opacity = useSharedValue(0);
     const { dbUser, toggleFavorite, isAuthenticated } = useAuth();
@@ -127,12 +132,12 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
         const handleToggleFavorite = () => {
             if (!isAuthenticated) {
                 Alert.alert(
-                    "Login Required",
-                    "Please login to save doctors to your favorites.",
+                    t("doctors.loginRequired"),
+                    t("doctors.saveDoctorLoginHint"),
                     [
-                        { text: "Cancel", style: "cancel" },
+                        { text: t("doctors.cancel"), style: "cancel" },
                         {
-                            text: "Login", onPress: () => {
+                            text: t("doctors.login"), onPress: () => {
                                 handleClose();
                                 router.push('/(auth)/sign-in');
                             }
@@ -145,70 +150,36 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
         };
 
         return (
-            <View className='bg-white rounded-[24px] p-2.5 mb-4 mx-4 border border-gray-100' style={{ elevation: 2, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } }}>
-                <View className="flex-row gap-4 items-center justify-start mb-3">
-                    <View className="w-24 h-32 relative">
-                        <Image
-                            source={{ uri: item.image || "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d" }}
-                            className="w-full h-full rounded-2xl"
-                            resizeMode="cover"
-                        />
-                        <TouchableOpacity
-                            onPress={handleToggleFavorite}
-                            className="absolute top-1.5 right-1.5 w-8 h-8 bg-black/30 rounded-full items-center justify-center border border-white/20"
-                        >
-                            <Ionicons
-                                name={dbUser?.favorites?.includes(item.id) ? "heart" : "heart-outline"}
-                                size={18}
-                                color={dbUser?.favorites?.includes(item.id) ? "#FF4D67" : "#fff"}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <View className="flex-1 py-1">
-                        <Text className="text-xl font-bold text-gray-900 mb-1">{item.name}</Text>
-                        <View className="flex-row gap-1.5 items-center mb-1">
-                            <Ionicons name="medkit" size={14} color="#3B82F6" />
-                            <Text className="text-gray-600 font-medium">{item.specialty}</Text>
-                        </View>
-                        <View className="flex-row gap-1.5 items-center">
-                            <Ionicons name="star" size={14} color="#F59E0B" />
-                            <Text className="text-gray-900 font-bold">4.8</Text>
-                            <Text className="text-gray-400 text-xs">(120 reviews)</Text>
-                        </View>
-                        <View className="mt-2 bg-blue-50 self-start px-2 py-1 rounded-lg">
-                            <Text className="text-blue-600 font-bold text-xs">৳{item.hourlyRate}/hr</Text>
-                        </View>
-                    </View>
-                </View>
-
-                <View className="flex-row items-center gap-2">
-                    <TouchableOpacity
-                        className="bg-blue-600 flex-1 py-3 rounded-xl"
-                        onPress={handleDoctorPress}
-                    >
-                        <Text className="text-center font-bold text-white">View Profile</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="p-3 bg-gray-50 border border-gray-100 rounded-xl">
-                        <Ionicons name="chatbubble-outline" size={20} color="#3B82F6" />
-                    </TouchableOpacity>
-                </View>
+            <View className="px-4 py-2">
+                <DoctorCard
+                    doctor={item}
+                    onPress={handleDoctorPress}
+                    isFavorite={dbUser?.favorites?.includes(item.id)}
+                    onToggleFavorite={handleToggleFavorite}
+                />
             </View>
         );
     };
 
     const renderSkeletonCard = () => (
-        <View className='bg-white rounded-[24px] p-2.5 mb-4 mx-4 border border-gray-100'>
-            <View className="flex-row gap-4 items-center mb-3">
-                <View className="w-24 h-32 rounded-2xl bg-gray-100" />
-                <View className="flex-1 py-1">
-                    <View className="w-32 h-6 rounded-lg bg-gray-100 mb-2" />
-                    <View className="w-24 h-4 rounded-lg bg-gray-100 mb-2" />
-                    <View className="w-20 h-4 rounded-lg bg-gray-100" />
+        <View className="px-5">
+            <View style={{
+                backgroundColor: '#fff',
+                borderRadius: 20,
+                padding: 14,
+                marginBottom: 14,
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: '#F3F4F6',
+            }}>
+                <View style={{ width: 76, height: 105, borderRadius: 16, backgroundColor: '#F9FAFB' }} />
+                <View style={{ flex: 1, marginLeft: 14 }}>
+                    <View style={{ width: '70%', height: 20, borderRadius: 6, backgroundColor: '#F9FAFB', marginBottom: 8 }} />
+                    <View style={{ width: '40%', height: 16, borderRadius: 6, backgroundColor: '#F9FAFB', marginBottom: 12 }} />
+                    <View style={{ width: '100%', height: 1, backgroundColor: '#F3F4F6', marginBottom: 8 }} />
+                    <View style={{ width: '90%', height: 14, borderRadius: 4, backgroundColor: '#F9FAFB' }} />
                 </View>
-            </View>
-            <View className="flex-row gap-2">
-                <View className="flex-1 h-12 bg-gray-100 rounded-xl" />
-                <View className="w-12 h-12 bg-gray-100 rounded-xl" />
             </View>
         </View>
     );
@@ -243,18 +214,12 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
                         </View>
 
                         {/* Search Section */}
-                        <View className="px-5 mb-5">
-                            <View className="flex-row items-center justify-between mb-4">
+                        <View className="px-4 mb-2">
+                            <View className="flex-row items-center justify-center mb-4 px-1">
                                 <View>
-                                    <Text className="text-2xl font-bold text-gray-900">Find Your Doctor</Text>
-                                    <Text className="text-gray-500 text-sm">Select from our expert panel</Text>
+                                    <Text className="text-2xl font-bold text-gray-900">{t('doctors.findYourDoctor')}</Text>
+                                    <Text className="text-gray-500 text-sm">{t('doctors.selectExpertPanel')}</Text>
                                 </View>
-                                <TouchableOpacity
-                                    className="bg-gray-100 h-10 w-10 rounded-full items-center justify-center"
-                                    onPress={handleClose}
-                                >
-                                    <Ionicons name="close" color="#4B5563" size={24} />
-                                </TouchableOpacity>
                             </View>
                             <Search />
                         </View>
@@ -273,9 +238,9 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
                                     <View className="bg-gray-100 p-6 rounded-full mb-4">
                                         <Ionicons name="search-outline" size={48} color="#9CA3AF" />
                                     </View>
-                                    <Text className="text-gray-900 text-lg font-bold text-center">No Doctors Found</Text>
+                                    <Text className="text-gray-900 text-lg font-bold text-center">{t('doctors.noDoctorsFound')}</Text>
                                     <Text className="text-gray-500 text-center mt-2">
-                                        Try searching with a different name or specialty.
+                                        {t('doctors.trySearchingDifferent')}
                                     </Text>
                                 </View>
                             ) : (

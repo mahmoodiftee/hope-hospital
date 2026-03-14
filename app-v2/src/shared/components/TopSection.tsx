@@ -1,7 +1,8 @@
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { BadgeCheck, Bell, MapPin, UserRound } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface TopSectionProps {
     user: any;
@@ -13,50 +14,48 @@ export const TopSection: React.FC<TopSectionProps> = ({
     user,
     unreadCount,
 }) => {
+    const router = useRouter();
 
     return (
-        <View className="flex-row items-center justify-between mb-4">
-            <View className="flex-row items-center pl-1">
-                <Image
-                    source={{ uri: user?.avatar || "https://i.ibb.co/gZNPsVsc/user.png" }}
-                    className="h-12 w-12 mr-3"
-                />
-                <View className="">
-                    <View className="flex-row items-center gap-1 ">
-                        <Text className="text-dark-100 font-bold text-lg font-quicksand-semibold pl-.5">
-                            {user?.name || "Johan Done"}
-                        </Text>
-                        <BadgeCheck color="#43B75D" size={15} />
+        <View className="flex-row items-center justify-between mb-6 px-1">
+            <View className="flex-row items-center">
+                <View className="relative">
+                    <Image
+                        source={{ uri: user?.avatar || "https://i.ibb.co/gZNPsVsc/user.png" }}
+                        className="h-10 w-10"
+                    />
+                    <View className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white items-center justify-center">
+                        <BadgeCheck color="#fff" size={10} />
                     </View>
-                    <View className="flex-row items-center gap-0.5 ">
-                        <MapPin color="rgba(0,0,0,0.6)" size={15} />
-                        <Text className="text-dark-100/80">Gulshan 1, Dhaka</Text>
+                </View>
+                <View className="ml-2">
+                    <Text className="text-gray-900 text-lg font-bold">
+                        {user?.name || "John Doe"}
+                    </Text>
+                    <View className="flex-row items-center gap-1 opacity-60">
+                        <MapPin color="#3B82F6" size={12} />
+                        <Text className="text-gray-900 font-semibold text-xs">Gulshan 1, Dhaka</Text>
                     </View>
-
                 </View>
             </View>
-            <View className="p-2 flex-row items-center justify-between mb-1 gap-3">
+            <View className="flex-row items-center gap-3">
                 <TouchableOpacity
-                    className="border-2 border-gray-200/10 rounded-full p-1 relative"
+                    className="bg-gray-50/80 w-11 h-11 rounded-2xl items-center justify-center border border-gray-100/50 relative"
                     onPress={() => router.push("/notifications")}
                 >
-                    <Bell color="rgba(0,0,0,0.8)" size={20} />
-
+                    <Bell color="#374151" size={22} />
                     {unreadCount > 0 && (
-                        <View className="absolute -top-2 -right-2 bg-red-500 rounded-full px-1.5 min-w-[16px] h-[16px] justify-center items-center">
-                            <Text className="text-[10px] text-white font-bold text-center">
+                        <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 justify-center items-center border-2 border-white">
+                            <Text className="text-[10px] text-white font-black">
                                 {unreadCount}
                             </Text>
                         </View>
                     )}
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    className="border-2 border-gray-200/10 rounded-full p-1"
-                    onPress={() => router.push("/profile")}
-                >
-                    <UserRound color="rgba(0,0,0,0.8)" size={20} />
-                </TouchableOpacity>
+                <View className="bg-blue-50 p-1 rounded-full border border-blue-100/50">
+                    <LanguageSwitcher />
+                </View>
             </View>
         </View>
     );

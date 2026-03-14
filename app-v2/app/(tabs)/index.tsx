@@ -1,22 +1,23 @@
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Search } from "lucide-react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View, RefreshControl } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Skeleton } from "moti/skeleton";
-
 import { useAuth } from "@/features/auth";
 import { useNotificationStore } from "@/features/notifications";
 import { useBooking, useAppointmentStore, AppointmentDetailsModal, ReviewModal, AppointmentBookingModal } from "@/features/appointments";
-import { HeaderText, TopSection, images, topDoctorList, UpcomingConsultations, HospitalServices } from "@/shared/components";
+import { HeaderText, TopSection, images, topDoctorList, UpcomingConsultations, HospitalServices, LanguageSwitcher } from "@/shared/components";
 import { TopDoctors, DoctorI, DoctorSearchModal } from "@/features/doctors";
 import { HospitalGallery } from "@/features/gallery";
+import { useTranslation } from 'react-i18next';
 
 const UserTopSection = () => {
-    // We are simulating fetchAuthenticatedUser with our generic useAuth
+    const { t } = useTranslation();
+    const router = useRouter();
     const { user, dbUser, isLoading } = useAuth();
-    // Assuming unreadCount exists or we mock it
     const unreadCount = useNotificationStore(state => state.unreadCount) || 0;
 
     if (isLoading) {
@@ -33,13 +34,46 @@ const UserTopSection = () => {
         );
     }
 
-    // Pass dbUser if it exists since it has the profile name
-    // We show TopSection if either user is logged in (account exists) or we want the guest identity
     if ((dbUser || user) && !isLoading) {
         return <TopSection user={dbUser || user} unreadCount={unreadCount} />;
-    }
+    } else {
+        return (
+            <View className="rounded-[32px] overflow-hidden mb-6 shadow-lg shadow-blue-500/20" style={{ elevation: 5 }}>
+                <LinearGradient
+                    colors={['#3B82F6', '#2563EB']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
+                    <View className="p-6 relative">
+                        <View className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
+                        <View className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/5 rounded-full" />
 
-    return null;
+                        <View className="flex-row items-center justify-between">
+                            <View className="flex-1 mr-4">
+                                <Text className="text-white/80 font-bold text-xs uppercase tracking-[2px] mb-1">
+                                    {t('home.welcome')}
+                                </Text>
+                                <Text className="text-white text-2xl font-black leading-tight">
+                                    {t('home.welcomeTagLine')}
+                                </Text>
+                            </View>
+                            <View className="bg-white/20 p-1 rounded-full border border-white/30 backdrop-blur-md">
+                                <LanguageSwitcher />
+                            </View>
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={() => router.push('/(auth)/sign-in')}
+                            className="mt-6 self-start flex-row items-center bg-white/20 px-5 py-2.5 rounded-2xl border border-white/20"
+                        >
+                            <Text className="text-white font-bold text-xs mr-2">{t('auth.login')}</Text>
+                            <Ionicons name="arrow-forward" size={12} color="white" />
+                        </TouchableOpacity>
+                    </View>
+                </LinearGradient>
+            </View>
+        );
+    }
 };
 
 const AppointmentsSection = ({
@@ -52,14 +86,11 @@ const AppointmentsSection = ({
 
     const { isLoading, getUpcomingAppointments, fetchAppointments, refreshAppointments } = useAppointmentStore();
 
-    // ── Details modal state ────────────────────────────────────────────────
     const [selectedAppointment, setSelectedAppointment] = useState<any | null>(null);
     const [showDetails, setShowDetails] = useState(false);
 
-    // ── Review modal state ─────────────────────────────────────────────────
     const [showReview, setShowReview] = useState(false);
 
-    // ── Reschedule / re-book modal state ───────────────────────────────────
     const [showBooking, setShowBooking] = useState(false);
     const [isRescheduleMode, setIsRescheduleMode] = useState(false);
 
@@ -75,26 +106,22 @@ const AppointmentsSection = ({
         }
     }, [phone, refreshAppointments]);
 
-    // ── Card press → Details modal ─────────────────────────────────────────
     const handleCardPress = (appointment: any) => {
         setSelectedAppointment(appointment);
         setShowDetails(true);
     };
 
-    // ── Details modal → Reschedule ─────────────────────────────────────────
     const handleReschedule = () => {
         setShowDetails(false);
         setIsRescheduleMode(selectedAppointment?.status !== 'Cancelled');
         setTimeout(() => setShowBooking(true), 300);
     };
 
-    // ── Details modal → Review ─────────────────────────────────────────────
     const handleWriteReview = () => {
         setShowDetails(false);
         setTimeout(() => setShowReview(true), 300);
     };
 
-    // ── Booking modal close ────────────────────────────────────────────────
     const handleBookingClose = () => {
         setShowBooking(false);
         setIsRescheduleMode(false);
@@ -124,7 +151,6 @@ const AppointmentsSection = ({
                     onPressCard={handleCardPress}
                 />
 
-                {/* ── Appointment Details Modal ── */}
                 {selectedAppointment && (
                     <AppointmentDetailsModal
                         appointment={selectedAppointment}
@@ -136,7 +162,6 @@ const AppointmentsSection = ({
                     />
                 )}
 
-                {/* ── Review Modal ── */}
                 {selectedAppointment && (
                     <ReviewModal
                         appointment={selectedAppointment}
@@ -146,7 +171,6 @@ const AppointmentsSection = ({
                     />
                 )}
 
-                {/* ── Booking / Reschedule Modal ── */}
                 {selectedAppointment && (
                     <AppointmentBookingModal
                         isVisible={showBooking}
@@ -171,8 +195,11 @@ const AppointmentsSection = ({
 };
 
 export default function HomeScreen() {
+    const { getUpcomingAppointments } = useAppointmentStore();
+    const { t } = useTranslation();
+    const router = useRouter();
     const [searchModalVisible, setSearchModalVisible] = useState(false);
-
+    const upcomingAppointments = getUpcomingAppointments();
     const { user, dbUser } = useAuth();
     const phone = user?.phone || dbUser?.phone;
     const { refreshAppointments, refreshing } = useAppointmentStore();
@@ -211,39 +238,35 @@ export default function HomeScreen() {
                 <View className="py-4 pb-20">
                     <View className="px-4">
                         <UserTopSection />
-
-                        <TouchableOpacity
-                            onPress={() => setSearchModalVisible(true)}
-                            className="flex-row items-center gap-3 bg-gray-50 rounded-2xl px-5 py-4 mb-6"
-                            activeOpacity={0.95}
-                        >
-                            <Search color="#8E8E93" size={22} />
-                            <Text className="flex-1 text-gray-400 font-medium text-base">
-                                Find a doctor or specialist...
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <AppointmentsSection setSearchModalVisible={setSearchModalVisible} />
-
-                    {/* <View className="mb-2 px-4">
-                        <View className="flex-row items-center justify-between mb-4">
-                            <HeaderText title="Service We Provide" />
-                        </View>
-                        <View className="flex-row justify-between px-3">
-                            {specialists.map((specialist) => (
-                                <TouchableOpacity key={specialist.id}>
-                                    <Image
-                                        source={images[specialist.name]}
-                                        className="size-[50px] rounded-full items-center justify-center mb-2"
-                                    />
-                                    <Text className="text-black/50 text-sm font-quicksand-bold text-center uppercase">
-                                        {specialist.name}
+                        {
+                            user && (
+                                <TouchableOpacity
+                                    onPress={() => setSearchModalVisible(true)}
+                                    className="flex-row items-center gap-3 bg-white rounded-2xl px-5 py-4 mb-6 border border-gray-100/50 shadow-sm shadow-black/5"
+                                    style={{ elevation: 2 }}
+                                    activeOpacity={0.95}
+                                >
+                                    <Search color="#3B82F6" size={20} />
+                                    <Text className="flex-1 text-gray-400 font-quicksand-medium text-base">
+                                        {t("searchDoctor")}
                                     </Text>
+                                    <View className="bg-blue-50 p-1.5 rounded-xl">
+                                        <Ionicons name="options-outline" size={18} color="#3B82F6" />
+                                    </View>
                                 </TouchableOpacity>
-                            ))}
-                        </View>
-                    </View> */}
+                            )
+                        }
+
+                    </View>
+                    {
+                        user && upcomingAppointments.length !== 0 ? (
+                            <View className="px-4">
+                                <AppointmentsSection setSearchModalVisible={setSearchModalVisible} />
+                            </View>
+                        ) : (
+                            <AppointmentsSection setSearchModalVisible={setSearchModalVisible} />
+                        )
+                    }
 
                     <View className="px-4">
                         {TopDoctors && topDoctors.length > 0 && (

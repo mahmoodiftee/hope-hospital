@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { BadgeCheck } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 interface PersonalInfoFormProps {
     name: string;
@@ -9,6 +10,7 @@ interface PersonalInfoFormProps {
 }
 
 export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ name, phone, onEditPress }) => {
+    const { t } = useTranslation();
     return (
         <View className="flex-row items-center px-6 py-6 bg-white mx-4 rounded-3xl shadow-sm/10 border border-gray-100">
             <View className="relative">
@@ -24,10 +26,10 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ name, phone,
             </View>
 
             <View className="flex-1 ml-4 justify-center">
-                <Text className="text-xl font-quicksand-bold text-gray-900 leading-tight">
-                    {name || 'Guest User'}
+                <Text className="text-xl font-bold text-gray-900 leading-tight">
+                    {name || t('profile.guestUser')}
                 </Text>
-                <Text className="text-gray-400 font-quicksand-medium text-sm mt-0.5">
+                <Text className="text-gray-400 font-medium text-sm mt-0.5">
                     {phone}
                 </Text>
 
@@ -36,7 +38,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ name, phone,
                     onPress={onEditPress}
                     activeOpacity={0.7}
                 >
-                    <Text className="text-blue-600 font-quicksand-bold text-xs">Edit Profile</Text>
+                    <Text className="text-blue-600 font-bold text-xs">{t('profile.editProfileButton')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

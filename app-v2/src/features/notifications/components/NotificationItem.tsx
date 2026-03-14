@@ -16,9 +16,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
 
     const getIcon = () => {
         switch (notification.type) {
-            case 'appointment_confirmation': return { name: 'calendar-check', color: '#3B82F6', bg: 'bg-blue-50' };
+            case 'appointment_confirmation': return { name: 'checkmark-done-outline', color: '#22C55E', bg: 'bg-green-50' };
             case 'appointment_reminder': return { name: 'alarm', color: '#FBBF24', bg: 'bg-yellow-50' };
-            case 'appointment_cancelled': return { name: 'calendar-outline', color: '#EF4444', bg: 'bg-red-50' };
+            case 'appointment_cancelled': return { name: 'close-circle-outline', color: '#EF4444', bg: 'bg-red-50' };
             default: return { name: 'notifications', color: '#6B7280', bg: 'bg-gray-50' };
         }
     };
@@ -28,26 +28,41 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
     return (
         <TouchableOpacity
             onPress={onPress}
-            activeOpacity={0.7}
-            className={`flex-row p-5 border-b border-gray-50 ${isRead ? 'bg-white' : 'bg-blue-50/30'}`}
+            activeOpacity={0.8}
+            className={`mx-4 mb-4 rounded-[28px] p-4 flex-row border ${isRead ? 'bg-white border-gray-100/50 shadow-sm shadow-black/5' : 'bg-blue-50/40 border-blue-100 shadow-md shadow-blue-500/10'}`}
         >
-            <View className={`w-12 h-12 rounded-2xl items-center justify-center mr-4 ${iconInfo.bg}`}>
-                <Ionicons name={iconInfo.name as any} size={24} color={iconInfo.color} />
+            <View className={`w-14 h-14 rounded-2xl items-center justify-center mr-4 ${iconInfo.bg} shadow-inner`}>
+                <Ionicons name={iconInfo.name as any} size={28} color={iconInfo.color} />
             </View>
 
-            <View className="flex-1">
+            <View className="flex-1 justify-center">
                 <View className="flex-row justify-between items-start mb-1">
-                    <Text className={`text-base flex-1 mr-2 ${isRead ? 'font-bold text-gray-800' : 'font-bold text-gray-900'}`}>
+                    <Text
+                        numberOfLines={1}
+                        className={`text-[17px] flex-1 mr-2 tracking-tight ${isRead ? 'font-bold text-gray-700' : 'font-black text-gray-900'}`}
+                    >
                         {notification.title}
                     </Text>
-                    {!isRead && <View className="w-2 h-2 bg-blue-500 rounded-full mt-2" />}
+                    {!isRead && (
+                        <View className="w-2.5 h-2.5 bg-blue-500 rounded-full mt-1.5 shadow-sm shadow-blue-500" />
+                    )}
                 </View>
-                <Text className="text-gray-500 font-medium text-sm leading-5 mb-2">
+                <Text
+                    numberOfLines={2}
+                    className={`text-sm leading-5 mb-2 ${isRead ? 'text-gray-500 font-medium' : 'text-gray-700 font-bold'}`}
+                >
                     {notification.message}
                 </Text>
-                <Text className="text-gray-400 font-medium text-xs">
-                    {new Date(notification.$createdAt!).toLocaleDateString()}
-                </Text>
+                <View className="flex-row items-center">
+                    <Ionicons name="time-outline" size={12} color="#9CA3AF" />
+                    <Text className="text-gray-400 font-bold text-[10px] ml-1 uppercase tracking-wider">
+                        {new Date(notification.$createdAt!).toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        })}
+                    </Text>
+                </View>
             </View>
         </TouchableOpacity>
     );

@@ -3,6 +3,7 @@ import { Dimensions, FlatList, ImageBackground, Linking, Text, TouchableOpacity,
 import { LinearGradient } from 'expo-linear-gradient';
 import { Calendar, Clock, Heart, Phone, Siren, Stethoscope } from 'lucide-react-native';
 import { toast } from 'sonner-native';
+import { useTranslation, Trans } from 'react-i18next';
 import { images } from './mockData';
 
 type ServiceType = {
@@ -17,45 +18,6 @@ type ServiceType = {
     status: string;
     statusColor: string;
 };
-
-const hospitalServices: ServiceType[] = [
-    {
-        id: 1,
-        title: "24/7 Emergency",
-        subtitle: "We are here to help you",
-        description: "Immediate medical attention available anytime",
-        icon: Siren,
-        bgGradient: ['#DC2626', '#B91C1C'],
-        accentColor: "#FEE2E2",
-        time: "Available 24/7",
-        status: "ACTIVE NOW",
-        statusColor: "#10B981"
-    },
-    {
-        id: 2,
-        title: "OPD Services",
-        subtitle: "Outpatient Department",
-        description: "Comprehensive consultation services",
-        icon: Stethoscope,
-        bgGradient: ['#059669', '#047857'],
-        accentColor: "#D1FAE5",
-        time: "9:00 AM - 8:00 PM",
-        status: "OPEN TODAY",
-        statusColor: "#059669"
-    },
-    {
-        id: 3,
-        title: "Specialized Care",
-        subtitle: "Expert medical specialists",
-        description: "Advanced treatment by certified specialists",
-        icon: Heart,
-        bgGradient: ['#7C3AED', '#6D28D9'],
-        accentColor: "#EDE9FE",
-        time: "By Appointment",
-        status: "BOOK NOW",
-        statusColor: "#F59E0B"
-    }
-];
 
 type HospitalServicesProps = {
     setSearchModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -210,8 +172,48 @@ const DotIndicator = ({
 };
 
 export const HospitalServices: React.FC<HospitalServicesProps> = ({ setSearchModalVisible }) => {
+    const { t } = useTranslation();
     const flatListRef = useRef<FlatList>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    const hospitalServices: ServiceType[] = [
+        {
+            id: 1,
+            title: t("emergency"),
+            subtitle: t("emergencySub"),
+            description: t("emergencyDesc"),
+            icon: Siren,
+            bgGradient: ['#DC2626', '#B91C1C'],
+            accentColor: "#FEE2E2",
+            time: t("available24_7"),
+            status: t("activeNow"),
+            statusColor: "#10B981"
+        },
+        {
+            id: 2,
+            title: t("opd"),
+            subtitle: t("opdSub"),
+            description: t("opdDesc"),
+            icon: Stethoscope,
+            bgGradient: ['#059669', '#047857'],
+            accentColor: "#D1FAE5",
+            time: t("opdTime"),
+            status: t("openToday"),
+            statusColor: "#059669"
+        },
+        {
+            id: 3,
+            title: t("specializedCare"),
+            subtitle: t("specializedCareSub"),
+            description: t("specializedCareDesc"),
+            icon: Heart,
+            bgGradient: ['#7C3AED', '#6D28D9'],
+            accentColor: "#EDE9FE",
+            time: t("byAppointment"),
+            status: t("bookNow"),
+            statusColor: "#F59E0B"
+        }
+    ];
 
     useEffect(() => {
         const interval = setInterval(() => {

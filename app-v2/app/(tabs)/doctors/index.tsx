@@ -3,11 +3,13 @@ import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from
 import { AppTextInput } from '@/shared/components/AppTextInput';
 import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useDoctorStore, DoctorCard, useDoctorSearch, useDoctorFilters } from '@/features/doctors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth';
 
 export default function DoctorsListingScreen() {
+    const { t } = useTranslation();
     const { fetchDoctors, isLoading } = useDoctorStore();
     const { searchQuery, search, filteredDoctors: searchFilteredDoctors } = useDoctorSearch();
     const { specialties, selectedSpecialty, toggleSpecialty, filteredDoctors } = useDoctorFilters(searchFilteredDoctors);
@@ -16,11 +18,11 @@ export default function DoctorsListingScreen() {
     const handleToggleFavorite = (doctorId: string) => {
         if (!isAuthenticated) {
             Alert.alert(
-                "Login Required",
-                "Please login to save doctors to your favorites.",
+                t("doctors.loginRequired"),
+                t("doctors.saveDoctorLoginHint"),
                 [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Login", onPress: () => router.push('/(auth)/sign-in') }
+                    { text: t("doctors.cancel"), style: "cancel" },
+                    { text: t("doctors.login"), onPress: () => router.push('/(auth)/sign-in') }
                 ]
             );
             return;
@@ -37,13 +39,13 @@ export default function DoctorsListingScreen() {
             <Stack.Screen options={{ headerShown: false }} />
 
             <View className="px-5 pt-4 pb-2">
-                <Text className="text-3xl font-quicksand-bold text-gray-900 mb-6">Find Your Doctor</Text>
+                <Text className="text-3xl py-1 font-quicksand-bold text-gray-900 mb-4 px-1">{t("doctors.findYourDoctor")}</Text>
 
                 {/* Search Bar */}
                 <View className="flex-row items-center bg-gray-50 border border-gray-100 rounded-2xl gap-2 px-4 py-3 mb-6">
                     <Ionicons name="search-outline" size={20} color="#9CA3AF" />
                     <AppTextInput
-                        placeholder="Search doctor by name or specialty..."
+                        placeholder={t("doctors.searchPrompt")}
                         value={searchQuery}
                         onChangeText={search}
                         containerStyle={{ flex: 1, height: 40 }}
@@ -54,19 +56,19 @@ export default function DoctorsListingScreen() {
                 {/* Filter Chips */}
                 <View className="flex-row mb-6">
                     <FlatList
-                        data={['All', ...specialties]}
+                        data={[t('doctors.all'), ...specialties]}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         keyExtractor={(item) => item}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => item === 'All' ? toggleSpecialty('') : toggleSpecialty(item)}
-                                className={`px-6 py-3 rounded-full mr-3 ${(item === 'All' && !selectedSpecialty) || selectedSpecialty === item
+                                onPress={() => item === t('doctors.all') ? toggleSpecialty('') : toggleSpecialty(item)}
+                                className={`px-6 py-3 rounded-full mr-3 ${(item === t('doctors.all') && !selectedSpecialty) || selectedSpecialty === item
                                     ? 'bg-blue-500 '
                                     : 'bg-gray-100'
                                     }`}
                             >
-                                <Text className={`font-quicksand-bold ${(item === 'All' && !selectedSpecialty) || selectedSpecialty === item
+                                <Text className={`font-quicksand-bold ${(item === t('doctors.all') && !selectedSpecialty) || selectedSpecialty === item
                                     ? 'text-white'
                                     : 'text-gray-500'
                                     }`}>
@@ -98,10 +100,10 @@ export default function DoctorsListingScreen() {
                         ListEmptyComponent={
                             <View className="flex-1 items-center justify-center pt-20">
                                 <Ionicons name="search" size={60} color="#E5E7EB" />
-                                <Text className="text-gray-400 font-quicksand-bold mt-4">No doctors found</Text>
+                                <Text className="text-gray-400 font-quicksand-bold mt-4">{t("doctors.noDoctorsFound")}</Text>
                             </View>
                         }
-                        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
+                        contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 10, paddingBottom: 20 }}
                         showsVerticalScrollIndicator={false}
                     />
                 )}

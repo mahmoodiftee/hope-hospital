@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from "react";
 import { FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
 import { AppTextInput } from "@/shared/components/AppTextInput";
+import { useTranslation } from 'react-i18next';
 import { useDebouncedCallback } from "use-debounce";
 
 const SPECIALTIES = [
@@ -15,7 +16,11 @@ const SPECIALTIES = [
     { id: "kidney", label: "Kidney", value: "kidney" },
 ];
 
+// Move translating labels inside component or use keys in label and t() in render
+
+
 export const Search = () => {
+    const { t } = useTranslation();
     const params = useGlobalSearchParams<{ query?: string; filter?: string }>();
     const [search, setSearch] = useState(params.query ?? "");
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -53,13 +58,14 @@ export const Search = () => {
 
             <View className="flex-row items-center w-full gap-2 px-1">
                 {/* Search Bar */}
-                <View className="flex-row items-center flex-1 bg-gray-100/50 rounded-2xl px-4 py-3">
+                <View className="flex-row items-center flex-1 bg-gray-100/50 border-2 border-gray-200/50 rounded-2xl px-4 py-3">
                     <Ionicons name="search" color="#6B7280" size={20} />
                     <AppTextInput
                         value={search}
                         onChangeText={handleSearch}
-                        placeholder="Search doctor or specialty..."
-                        containerStyle={{ flex: 1, height: 48 }}
+                        placeholder={t('doctors.searchPlaceholder')}
+                        containerStyle={{ flex: 1, height: 30 }}
+                        style={{ fontSize: 15, marginLeft: 8 }}
                         placeholderTextColor="#9CA3AF"
                     />
                     {search?.length > 0 && (
@@ -72,7 +78,7 @@ export const Search = () => {
                 {/* Filter Button */}
                 <TouchableOpacity
                     onPress={() => setShowFilterDropdown(true)}
-                    className="bg-gray-100/50 rounded-2xl p-3"
+                    className="bg-gray-100/50 border-2 border-gray-200/50 rounded-2xl p-3"
                 >
                     <Ionicons name="options-outline" color="#3B82F6" size={20} />
                 </TouchableOpacity>
@@ -83,7 +89,7 @@ export const Search = () => {
                 <View className="flex-row items-center mt-2 px-2">
                     <View className="bg-blue-100 px-3 py-1 rounded-full flex-row items-center">
                         <Text className="text-blue-600 text-sm font-medium">
-                            {selectedFilter.label}
+                            {t(`doctors.specialties.${selectedFilter.id.toLowerCase().replace(/\s+/g, '')}`) || selectedFilter.label}
                         </Text>
                         <TouchableOpacity
                             onPress={() => handleFilterSelect(SPECIALTIES[0])}
@@ -113,7 +119,7 @@ export const Search = () => {
                         onPress={(e) => e.stopPropagation()}
                     >
                         <Text className="text-center text-lg font-semibold text-gray-900 mb-3">
-                            Choose a Specialty
+                            {t('doctors.chooseSpecialty')}
                         </Text>
 
                         <FlatList
@@ -128,7 +134,7 @@ export const Search = () => {
                                         } flex-row items-center justify-between`}
                                 >
                                     <Text className="text-gray-900 text-base">
-                                        {item.label}
+                                        {item.id === 'all' ? t('doctors.all') : t(`doctors.specialties.${item.id.toLowerCase().replace(/\s+/g, '')}`)}
                                     </Text>
                                     {selectedFilter.id === item.id && (
                                         <Ionicons name="checkmark" color="#007AFF" size={20} />

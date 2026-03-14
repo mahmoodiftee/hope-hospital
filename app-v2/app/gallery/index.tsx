@@ -1,6 +1,7 @@
 import { demoGalleryImages } from '@/features/gallery/components/HospitalGallery';
 import { ImageViewer } from '@/features/gallery/components/ImageViewer';
 import { SkeletonImage } from '@/features/gallery/components/SkeletonImage';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -48,6 +49,7 @@ const SkeletonItem: React.FC<{ height: number }> = ({ height }) => (
 );
 
 const GalleryScreen: React.FC = () => {
+    const { t } = useTranslation();
     const [viewerVisible, setViewerVisible] = useState(false);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const [masonryItems, setMasonryItems] = useState<MasonryItem[]>([]);
@@ -141,7 +143,7 @@ const GalleryScreen: React.FC = () => {
             }
 
         } catch (error: any) {
-            setError(error.message || 'Failed to load images');
+            setError(error.message || t('gallery.errorLoad'));
         } finally {
             setLoading(false);
         }
@@ -247,11 +249,11 @@ const GalleryScreen: React.FC = () => {
                 </TouchableOpacity>
 
                 <Text className="text-xl font-bold text-gray-800 flex-1">
-                    Gallery
+                    {t('gallery.title')}
                 </Text>
 
                 <Text className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded-xl">
-                    {allLoadedImages.length} / {demoGalleryImages.length} Photos
+                    {t('gallery.photosCount', { current: allLoadedImages.length, total: demoGalleryImages.length })}
                 </Text>
             </View>
 
@@ -302,7 +304,7 @@ const GalleryScreen: React.FC = () => {
                     <View className="py-8 items-center">
                         <ActivityIndicator size="large" color="#3B82F6" />
                         <Text className="mt-2 text-gray-600 text-sm">
-                            Loading more images...
+                            {t('gallery.loadingMore')}
                         </Text>
                     </View>
                 )}
@@ -320,7 +322,7 @@ const GalleryScreen: React.FC = () => {
                             className="bg-blue-500 px-5 py-2 rounded-full"
                         >
                             <Text className="text-white text-sm">
-                                Retry
+                                {t('gallery.retry')}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -329,7 +331,7 @@ const GalleryScreen: React.FC = () => {
                 {!hasMore && allLoadedImages.length > 0 && (
                     <View className="py-8 items-center">
                         <Text className="text-gray-600 text-sm text-center">
-                            You've seen all the photos
+                            {t('gallery.allPhotosSeen')}
                         </Text>
                     </View>
                 )}

@@ -8,6 +8,7 @@ import {
     ActivityIndicator,
     TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AppTextInput } from '@/shared/components/AppTextInput';
 import { Calendar } from 'react-native-calendars';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,6 +37,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
     reschedule = false,
     rescheduleDetails,
 }) => {
+    const { t } = useTranslation();
     // ── Hooks ──────────────────────────────────────────────────────────────
     const {
         patientInfo: authPatientInfo,
@@ -133,7 +135,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
     const oldDateLabel = rescheduleDetails?.date
         ? (() => {
             try {
-                return new Date(rescheduleDetails.date + 'T00:00:00').toLocaleDateString('en-US', {
+                return new Date(rescheduleDetails.date + 'T00:00:00').toLocaleDateString(undefined, {
                     weekday: 'short', month: 'short', day: 'numeric',
                 });
             } catch { return rescheduleDetails.date; }
@@ -149,7 +151,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                         {/* Header */}
                         <View className="flex-row justify-between items-center mb-4">
                             <Text className="text-2xl font-bold text-gray-900">
-                                {isReschedule ? 'Reschedule Appointment' : 'Book Appointment'}
+                                {isReschedule ? t('appointments.booking.rescheduleTitle') : t('appointments.booking.title')}
                             </Text>
                             <TouchableOpacity onPress={onClose}>
                                 <Ionicons name="close" size={28} color="#374151" />
@@ -161,24 +163,24 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                             <View className="bg-blue-50 p-4 rounded-2xl mb-5">
                                 <Text className="text-gray-900 font-bold">{doctor.name}</Text>
                                 <Text className="text-gray-500 font-medium">{doctor.specialty}</Text>
-                                <Text className="text-blue-600 font-bold mt-1">৳{doctor.hourlyRate} / session</Text>
+                                <Text className="text-blue-600 font-bold mt-1">{t('appointments.booking.doctorRate', { rate: doctor.hourlyRate })}</Text>
                             </View>
 
                             {/* Reschedule Banner */}
                             {isReschedule && rescheduleDetails && (
                                 <View className="bg-amber-50 border border-amber-200 p-3 rounded-xl mb-5">
                                     <Text className="text-amber-800 font-bold text-sm mb-1">
-                                        Rescheduling from:
+                                        {t('appointments.booking.reschedulingFrom')}
                                     </Text>
                                     <Text className="text-amber-700 font-medium text-sm">
-                                        {oldDateLabel} at {rescheduleDetails.time}
+                                        {oldDateLabel} {t('appointments.booking.at')} {rescheduleDetails.time}
                                     </Text>
                                 </View>
                             )}
 
                             {/* ── Calendar ── */}
                             <Text className="text-gray-900 font-bold mb-3">
-                                {isReschedule ? 'Select New Date' : 'Select Date'}
+                                {isReschedule ? t('appointments.booking.selectNewDate') : t('appointments.booking.selectDate')}
                             </Text>
                             <View className="mb-5 rounded-2xl overflow-hidden border border-gray-100">
                                 <Calendar
@@ -210,7 +212,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                             {selectedDate ? (
                                 <>
                                     <Text className="text-gray-900 font-bold mb-3">
-                                        {isReschedule ? 'Select New Time' : 'Select Time'}
+                                        {isReschedule ? t('appointments.booking.selectNewTime') : t('appointments.booking.selectTime')}
                                     </Text>
                                     {isSlotsLoading ? (
                                         <ActivityIndicator color="#3B82F6" className="my-4" />
@@ -252,22 +254,22 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                                 <View className="bg-gray-50 rounded-xl p-4 items-center mb-5">
                                     <Ionicons name="calendar-outline" size={24} color="#9CA3AF" />
                                     <Text className="text-gray-400 font-medium mt-2 text-sm">
-                                        Select a date to view available time slots
+                                        {t('appointments.booking.selectDateHint')}
                                     </Text>
                                 </View>
                             )}
 
                             {/* ── Patient Info ── */}
-                            <Text className="text-gray-900 font-bold mb-3">Patient Information</Text>
+                            <Text className="text-gray-900 font-bold mb-3">{t('appointments.booking.patientInformation')}</Text>
 
                             <View className="mb-4">
                                 <Text className="text-gray-700 font-medium text-sm mb-2 ml-1">
-                                    Full Name
+                                    {t('appointments.booking.fullName')}
                                 </Text>
                                 <View className={`bg-white rounded-2xl border-2 h-14 justify-center ${focusedField === 'name' ? 'border-blue-500' : 'border-gray-100'
                                     } ${validationErrors.name ? 'border-red-500' : ''}`}>
                                     <AppTextInput
-                                        placeholder="Patient's Full Name"
+                                        placeholder={t('appointments.booking.namePlaceholder')}
                                         placeholderTextColor="#9CA3AF"
                                         value={patientInfo.name}
                                         onChangeText={(t: any) => setPatientInfo({ ...patientInfo, name: t })}
@@ -287,12 +289,12 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                             <View className="flex-row gap-4 mb-4">
                                 <View style={{ width: '35%' }}>
                                     <Text className="text-gray-700 font-medium text-sm mb-2 ml-1">
-                                        Age
+                                        {t('appointments.booking.age')}
                                     </Text>
                                     <View className={`bg-white rounded-2xl border-2 h-14 ${focusedField === 'age' ? 'border-blue-500' : 'border-gray-100'
                                         } ${validationErrors.age ? 'border-red-500' : ''}`}>
                                         <TextInput
-                                            placeholder="Age"
+                                            placeholder={t('appointments.booking.agePlaceholder')}
                                             placeholderTextColor="#9CA3AF"
                                             value={patientInfo.age}
                                             onChangeText={(t: any) => setPatientInfo({ ...patientInfo, age: t.replace(/[^0-9]/g, '') })}
@@ -322,7 +324,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                                 </View>
                                 <View className="flex-1">
                                     <Text className="text-gray-700 font-medium text-sm mb-2 ml-1">
-                                        Phone Number
+                                        {t('appointments.booking.phoneNumber')}
                                     </Text>
                                     <View className={`bg-white rounded-2xl border-2 h-14 ${focusedField === 'phone' ? 'border-blue-500' : 'border-gray-100'
                                         } ${validationErrors.phone ? 'border-red-500' : ''}`}>
@@ -370,7 +372,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
 
                             {/* ── Book Button ── */}
                             <CustomButton
-                                title={isReschedule ? 'Reschedule Appointment' : 'Confirm Booking'}
+                                title={isReschedule ? t('appointments.booking.rescheduleButton') : t('appointments.booking.confirmBooking')}
                                 onPress={handleBook}
                                 isLoading={isLoading}
                                 className="mt-6 shadow-lg shadow-blue-200"
@@ -387,9 +389,9 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                     <Modal visible={showOtp} transparent animationType="fade">
                         <View className="flex-1 bg-black/60 justify-center p-6">
                             <View className="bg-white rounded-3xl p-8 items-center">
-                                <Text className="text-2xl font-bold mb-2">Verify Phone</Text>
+                                <Text className="text-2xl font-bold mb-2">{t('appointments.booking.verifyPhone')}</Text>
                                 <Text className="text-gray-400 font-medium text-center mb-6">
-                                    We've sent a 6-digit code to {patientInfo.phone}
+                                    {t('appointments.booking.otpSent', { phone: patientInfo.phone })}
                                 </Text>
 
                                 <OtpInput
@@ -406,12 +408,12 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                                     {canResend ? (
                                         <TouchableOpacity onPress={resendOtp}>
                                             <Text className="text-blue-500 font-bold text-sm">
-                                                Resend Code
+                                                {t('appointments.booking.resendCode')}
                                             </Text>
                                         </TouchableOpacity>
                                     ) : (
                                         <Text className="text-gray-400 font-medium text-sm">
-                                            Resend in {countdown}s
+                                            {t('appointments.booking.resendIn', { seconds: countdown })}
                                         </Text>
                                     )}
                                 </View>
@@ -425,12 +427,12 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                                     {isGuestBookingLoading ? (
                                         <ActivityIndicator color="#3B82F6" />
                                     ) : (
-                                        <Text className="text-white font-bold">Verify & Book</Text>
+                                        <Text className="text-white font-bold">{t('appointments.booking.verifyAndBook')}</Text>
                                     )}
                                 </TouchableOpacity>
 
                                 <TouchableOpacity onPress={closeOtp} className="mt-4">
-                                    <Text className="text-gray-400 font-bold">Cancel</Text>
+                                    <Text className="text-gray-400 font-bold">{t('appointments.booking.cancel')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -442,11 +444,11 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
             <SuccessModal
                 visible={showSuccess}
                 onClose={handleSuccessDismiss}
-                title={isReschedule ? 'Rescheduled!' : 'Booking Confirmed!'}
+                title={isReschedule ? t('appointments.success.rescheduled') : t('appointments.success.bookingConfirmed')}
                 message={
                     isReschedule
-                        ? `Your appointment with ${doctor.name} has been rescheduled to ${selectedDate} at ${selectedTime}.`
-                        : `Your appointment with ${doctor.name} has been confirmed for ${selectedDate} at ${selectedTime}. You will receive a notification with your appointment details.`
+                        ? t('appointments.success.rescheduleMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime })
+                        : t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime })
                 }
             />
         </>

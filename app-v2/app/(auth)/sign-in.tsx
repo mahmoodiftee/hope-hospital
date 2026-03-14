@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, 
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { toast } from 'sonner-native';
+import { useTranslation } from 'react-i18next';
 import { AuthService } from '@/features/auth/services/auth.service';
 
 const SignInScreen = () => {
+    const { t } = useTranslation();
     const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string>('');
@@ -15,7 +17,7 @@ const SignInScreen = () => {
 
     const handlePhoneSubmit = async () => {
         if (!phone.trim() || phone.length < 10) {
-            toast.error('Error! Please enter a valid phone number');
+            toast.error(t('auth.invalidPhone'));
             return;
         }
 
@@ -39,7 +41,7 @@ const SignInScreen = () => {
                 const data = await response.json();
 
                 if (data.success) {
-                    toast.success('OTP sent for login verification!');
+                    toast.success(t('auth.otpSent'));
                     router.push({
                         pathname: '/(auth)/otp-verify',
                         params: {
@@ -50,10 +52,10 @@ const SignInScreen = () => {
                     });
 
                 } else {
-                    toast.error(`Error! ${data.message || 'Failed to process request'}`);
+                    toast.error(`${t('auth.failedRequest')}! ${data.message || ''}`);
                 }
             } else {
-                toast.info('Please register first');
+                toast.info(t('auth.pleaseRegister'));
                 router.push({
                     pathname: "/(auth)/register",
                     params: {
@@ -63,7 +65,7 @@ const SignInScreen = () => {
             }
         } catch (error) {
             console.error('[SignIn] Error:', error);
-            toast.error('Network Error! Could not connect to server.');
+            toast.error(t('auth.networkError'));
         } finally {
             setLoading(false);
         }
@@ -93,19 +95,19 @@ const SignInScreen = () => {
                                 <Ionicons name="chevron-back" size={24} color="#3B82F6" />
                             </TouchableOpacity>
 
-                            <Text className="text-3xl font-quicksand-bold text-gray-900 mb-3">
-                                Welcome Back
+                            <Text className="text-3xl font-bold text-gray-900 mb-3">
+                                {t('auth.welcomeBack')}
                             </Text>
-                            <Text className="text-gray-500 font-quicksand-medium text-base leading-6">
-                                Enter your phone number to login{'\n'}or create a new account.
+                            <Text className="text-gray-500 font-medium text-base leading-6">
+                                {t('auth.signInSub')}
                             </Text>
                         </View>
 
                         {/* Phone Input */}
                         <View className="flex-1">
                             <View className="mb-8">
-                                <Text className="text-gray-700 font-quicksand-medium text-sm mb-3 ml-1">
-                                    Phone Number
+                                <Text className="text-gray-700 font-medium text-sm mb-3 ml-1">
+                                    {t('auth.phoneNumber')}
                                 </Text>
                                 <View className={`bg-white rounded-2xl border-2 ${focusedField === 'phone' ? 'border-blue-500' : 'border-gray-50'
                                     }`}>
@@ -116,11 +118,11 @@ const SignInScreen = () => {
                                             color: '#111827',
                                             lineHeight: 20,
                                         }}>
-                                            +88
+                                            {t('auth.countryCode')}
                                         </Text>
                                         <View style={{ width: 1, height: 24, backgroundColor: '#E5E7EB', marginHorizontal: 12 }} />
                                         <TextInput
-                                            placeholder="01XXXXXXXXX"
+                                            placeholder={t('auth.phonePlaceholder')}
                                             placeholderTextColor="#9CA3AF"
                                             keyboardType="phone-pad"
                                             value={phone}
@@ -143,8 +145,8 @@ const SignInScreen = () => {
                                         />
                                     </View>
                                 </View>
-                                <Text className="text-gray-400 font-quicksand-medium text-xs mt-2 ml-1">
-                                    We'll send an OTP to verify your number
+                                <Text className="text-gray-400 font-medium text-xs mt-2 ml-1">
+                                    {t('auth.otpHint')}
                                 </Text>
                             </View>
 
@@ -157,9 +159,9 @@ const SignInScreen = () => {
                                             <Ionicons name="checkmark" size={12} color="white" />
                                         )}
                                     </View>
-                                    <Text className={`font-quicksand-medium text-sm ${isPhoneValid ? 'text-blue-600' : 'text-gray-400'
+                                    <Text className={`font-medium text-sm ${isPhoneValid ? 'text-blue-600' : 'text-gray-400'
                                         }`}>
-                                        Valid phone number required
+                                        {t('auth.validPhoneRequired')}
                                     </Text>
                                 </View>
                             </View>
@@ -179,20 +181,20 @@ const SignInScreen = () => {
                                     {loading ? (
                                         <>
                                             <ActivityIndicator color="#ffffff" size="small" />
-                                            <Text className="text-white font-quicksand-bold text-lg ml-3">
-                                                Processing...
+                                            <Text className="text-white font-bold text-lg ml-3">
+                                                {t('auth.processing')}
                                             </Text>
                                         </>
                                     ) : (
-                                        <Text className="text-white font-quicksand-bold text-lg">
-                                            Continue
+                                        <Text className="text-white font-bold text-lg">
+                                            {t('auth.continue')}
                                         </Text>
                                     )}
                                 </View>
                             </TouchableOpacity>
 
-                            <Text className="text-gray-400 font-quicksand-medium text-sm text-center mt-6">
-                                By continuing, you agree to our Terms of Service and Privacy Policy
+                            <Text className="text-gray-400 font-medium text-sm text-center mt-6">
+                                {t('auth.terms')}
                             </Text>
                         </View>
                     </ScrollView>

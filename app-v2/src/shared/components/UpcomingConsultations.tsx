@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { FlatList, Image, Text, View, Dimensions, Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { transformAppointmentToDoctorType } from '../utils/formatters';
 import { HeaderText } from './HeaderText';
 import EmptyAppointmentCard from './EmptyAppointmentCard';
@@ -25,6 +26,7 @@ export const UpcomingConsultations = ({
     loading = false,
     onPressCard
 }: UpcomingConsultationsProps) => {
+    const { t } = useTranslation();
     const flatListRef = useRef<FlatList<DoctorType>>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -52,38 +54,61 @@ export const UpcomingConsultations = ({
                     styles.cardContainer,
                     {
                         marginRight: isLast ? 0 : SPACING,
-                        width: effectiveCardWidth
+                        width: effectiveCardWidth,
+                        backgroundColor: '#fff',
+                        borderRadius: 28,
+                        padding: 14,
+                        borderWidth: 1,
+                        borderColor: '#EBF2FF',
+                        shadowColor: '#3B82F6',
+                        shadowOpacity: 0.10,
+                        shadowRadius: 8,
+                        shadowOffset: { width: 0, height: 6 },
+                        elevation: 3,
                     }
                 ]}
             >
                 {/* Header: Time and Status */}
-                <View style={styles.cardHeader}>
-                    <View style={styles.timeBadge}>
-                        <Ionicons name="time" size={16} color="#3B82F6" />
-                        <Text style={styles.timeText} numberOfLines={1}>{doctor.time}</Text>
+                <View className="flex-row justify-between items-center mb-3">
+                    <View className="flex-row items-center bg-blue-50 px-3 py-1.5 rounded-2xl border border-blue-100/30">
+                        <View className="mr-2">
+                            <Ionicons name="calendar-outline" size={10} color="#3B82F6" />
+                        </View>
+                        <Text className="text-blue-700 font-bold text-xs">{doctor.time}</Text>
                     </View>
-                    <View style={styles.statusBadge}>
-                        <View style={styles.statusDot} />
-                        <Text style={styles.statusText}>Confirmed</Text>
+                    <View className="bg-emerald-50 px-3 py-[6.5px] rounded-xl flex-row items-center border border-emerald-100/50">
+                        <View className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 shadow-sm shadow-emerald-400" />
+                        <Text className="text-emerald-700 font-bold text-[10px] uppercase tracking-widest">{t("confirmed")}</Text>
                     </View>
                 </View>
 
-                {/* Body: Doctor Info & Location */}
-                <View style={styles.cardBody}>
-                    <Image source={{ uri: doctor.image }} style={styles.doctorImage} />
-                    <View style={styles.doctorInfo}>
-                        <Text style={styles.doctorName} numberOfLines={1}>{doctor.name}</Text>
-                        <Text style={styles.specialtyText} numberOfLines={1}>{doctor.specialization}</Text>
-
-                        <View style={styles.locationContainer}>
-                            <Ionicons name="location" size={13} color="#9CA3AF" />
-                            <Text style={styles.locationText} numberOfLines={1}>{doctor.location}</Text>
+                {/* Body: Doctor Info */}
+                <View className="flex-row items-center mb-3">
+                    <View className="relative">
+                        <Image source={{ uri: doctor.image }} className="w-16 h-16 rounded-[20px] bg-gray-100 border-2 border-white shadow-sm" />
+                        <View className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full ">
+                            <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />
+                        </View>
+                    </View>
+                    <View className="flex-1 ml-4 justify-center">
+                        <Text className="text-gray-900 font-bold text-lg leading-tight mb-1" numberOfLines={1}>{doctor.name}</Text>
+                        <View className="bg-blue-50 self-start px-2 py-0.5 rounded-lg ">
+                            <Text className="text-blue-600 font-semibold text-[11px]" numberOfLines={1}>{doctor.specialization}</Text>
                         </View>
                     </View>
 
-                    {/* Action Icon */}
-                    <View style={styles.actionButton}>
-                        <Ionicons name="call" size={20} color="#fff" />
+                </View>
+
+                {/* Footer: Location */}
+                <View className="flex-row items-center justify-between border-t border-gray-50 pt-4">
+                    <View className="flex-row items-center flex-1 mr-2">
+                        <View className="bg-blue-50 p-1 px-1.5 rounded-lg mr-2.5">
+                            <Ionicons name="location-sharp" size={12} color="#3B82F6" />
+                        </View>
+                        <Text className="text-gray-500 font-medium text-sm flex-1" numberOfLines={1}>{doctor.location}</Text>
+                    </View>
+                    <View className="bg-gray-50 p-1 px-1.5 rounded-lg">
+                        <Ionicons name="chevron-forward" size={12} color="#9CA3AF" />
                     </View>
                 </View>
             </TouchableOpacity>
@@ -94,7 +119,7 @@ export const UpcomingConsultations = ({
         return (
             <View style={styles.container}>
                 <View style={styles.headerRow}>
-                    <HeaderText title="Upcoming Consultation" />
+                    <HeaderText title={t("upcomingConsultation")} />
                 </View>
                 <View style={[styles.cardContainer, styles.skeletonCard]}>
                     <View style={styles.skeletonHeader} />
@@ -108,7 +133,7 @@ export const UpcomingConsultations = ({
         return (
             <View style={styles.container}>
                 <View style={styles.headerRow}>
-                    <HeaderText title="Upcoming Consultation" />
+                    <HeaderText title={t("upcomingConsultation")} />
                 </View>
                 <EmptyAppointmentCard />
             </View>
@@ -118,7 +143,7 @@ export const UpcomingConsultations = ({
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
-                <HeaderText title="Upcoming Consultation" />
+                <HeaderText title={t("upcomingConsultation")} />
             </View>
 
             <FlatList
@@ -134,10 +159,12 @@ export const UpcomingConsultations = ({
                 decelerationRate="fast"
                 contentContainerStyle={{
                     paddingHorizontal: 16,
-                    paddingBottom: 12,
-                    paddingTop: 8,
+                    paddingBottom: 24,
+                    paddingTop: 10,
                 }}
+                style={{ marginHorizontal: -16 }}
                 bounces={Platform.OS === 'ios'}
+                removeClippedSubviews={false}
             />
 
             {doctors.length > 1 && (

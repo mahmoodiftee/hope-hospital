@@ -12,6 +12,7 @@ import {
     Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
@@ -132,6 +133,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
     visible,
     onClose
 }) => {
+    const { t } = useTranslation();
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [loading, setLoading] = useState(false);
     const flatListRef = useRef<FlatList>(null);
@@ -246,7 +248,7 @@ export const ImageViewer: React.FC<ImageViewerProps> = ({
                             fontSize: 16,
                             fontWeight: '600'
                         }}>
-                            {currentIndex + 1} of {images.length}
+                            {t('gallery.photosCount', { current: currentIndex + 1, total: images.length })}
                         </Text>
                     </View>
 

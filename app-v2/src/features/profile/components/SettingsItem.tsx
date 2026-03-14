@@ -62,9 +62,9 @@ export const SettingsItem: React.FC<SettingsItemProps> = ({
             </View>
 
             <View className="flex-1">
-                <Text className={`font-quicksand-bold text-base ${titleClass}`}>{title}</Text>
+                <Text className={`font-bold text-base ${titleClass}`}>{title}</Text>
                 {subtitle && (
-                    <Text className="text-gray-400 font-quicksand-medium text-xs mt-0.5" numberOfLines={1}>
+                    <Text className="text-gray-400 font-medium text-xs mt-0.5" numberOfLines={1}>
                         {subtitle}
                     </Text>
                 )}

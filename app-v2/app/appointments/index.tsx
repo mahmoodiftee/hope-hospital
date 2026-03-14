@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/features/auth';
@@ -15,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { parseAppointmentDateTime } from '@/shared/utils/timeUtils';
 
 const AppointmentsScreen = () => {
+    const { t } = useTranslation();
     const { filter } = useLocalSearchParams<{ filter?: string }>();
     const { user, dbUser } = useAuth();
     const {
@@ -102,7 +104,7 @@ const AppointmentsScreen = () => {
         <SafeAreaView className="flex-1 bg-gray-50">
             <Stack.Screen
                 options={{
-                    title: filter === 'Completed' ? 'Total Visits' : filter === 'Upcoming' ? 'Upcoming Visits' : 'My Appointments',
+                    title: filter === 'Completed' ? t('appointments.totalVisits') : filter === 'Upcoming' ? t('appointments.upcomingVisits') : t('appointments.title'),
                     headerTitleStyle: { fontFamily: 'Quicksand-Bold', fontSize: 20 },
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: '#F9FAFB' },
@@ -124,7 +126,7 @@ const AppointmentsScreen = () => {
                                 onPress={() => handleCardPress(item)}
                             />
                         )}
-                        refreshControl={
+                        refreshControl= {
                             <RefreshControl
                                 refreshing={refreshing}
                                 onRefresh={onRefresh}
@@ -138,10 +140,10 @@ const AppointmentsScreen = () => {
                                     <Ionicons name="calendar-outline" size={40} color="#9CA3AF" />
                                 </View>
                                 <Text className="text-gray-500 font-bold text-lg">
-                                    {filter === 'Completed' ? 'No completed visits' : filter === 'Upcoming' ? 'No upcoming appointments' : 'No appointments yet'}
+                                    {filter === 'Completed' ? t('appointments.noCompleted') : filter === 'Upcoming' ? t('appointments.noUpcoming') : t('appointments.noAppointments')}
                                 </Text>
                                 <Text className="text-gray-400 font-medium text-center px-10 mt-2">
-                                    {filter === 'Completed' ? "You haven't completed any appointments yet." : filter === 'Upcoming' ? "You don't have any upcoming appointments scheduled." : "When you book an appointment, it will appear here."}
+                                    {filter === 'Completed' ? t("appointments.noCompletedSub") : filter === 'Upcoming' ? t("appointments.noUpcomingSub") : t("appointments.noAppointmentsSub")}
                                 </Text>
                             </View>
                         }

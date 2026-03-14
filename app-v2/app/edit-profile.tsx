@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Pressable, Keyboard } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AppTextInput } from '@/shared/components/AppTextInput';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +11,7 @@ import { AuthService } from '@/features/auth/services/auth.service';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 
 export default function EditProfileScreen() {
+    const { t } = useTranslation();
     const { user, dbUser, isAuthenticated } = useAuth();
     const setSession = useAuthStore(state => state.setSession);
 
@@ -20,12 +22,12 @@ export default function EditProfileScreen() {
 
     const handleSave = async () => {
         if (!name.trim() || !age.trim()) {
-            toast.error('Please fill in all fields');
+            toast.error(t('editProfile.fillAll'));
             return;
         }
 
         if (parseInt(age) < 1 || parseInt(age) > 120) {
-            toast.error('Please enter a valid age');
+            toast.error(t('editProfile.validAge'));
             return;
         }
 
@@ -42,11 +44,11 @@ export default function EditProfileScreen() {
                 await setSession({ ...user, name: updatedDbUser.name, age: updatedDbUser.age }, updatedDbUser);
             }
 
-            toast.success('Profile updated successfully!');
+            toast.success(t('editProfile.success'));
             router.back();
         } catch (error) {
             console.error('[EditProfile] Error:', error);
-            toast.error('Failed to update profile.');
+            toast.error(t('editProfile.error'));
         } finally {
             setLoading(false);
         }
@@ -82,10 +84,10 @@ export default function EditProfileScreen() {
                             </TouchableOpacity>
 
                             <Text className="text-3xl font-bold text-gray-900 mb-3">
-                                Edit Profile
+                                {t('editProfile.title')}
                             </Text>
                             <Text className="text-gray-500 font-medium text-base leading-6">
-                                Update your personal information to{'\n'}keep your records accurate.
+                                {t('editProfile.subtitle')}
                             </Text>
                         </View>
 
@@ -93,7 +95,7 @@ export default function EditProfileScreen() {
                         <View className="flex-1">
                             <View className="mb-6">
                                 <Text className="text-gray-700 font-medium text-sm mb-3 ml-1">
-                                    Full Name
+                                    {t('editProfile.fullName')}
                                 </Text>
                                 <View className={`bg-white rounded-2xl border-2 h-16 ${focusedField === 'name'
                                     ? 'border-blue-500'
@@ -101,7 +103,7 @@ export default function EditProfileScreen() {
                                     }`}>
                                     <AppTextInput
                                         className="flex-1 px-4 text-gray-900 font-bold text-base"
-                                        placeholder="Enter your full name"
+                                        placeholder={t('editProfile.namePlaceholder')}
                                         placeholderTextColor="#9CA3AF"
                                         value={name}
                                         onChangeText={setName}
@@ -115,7 +117,7 @@ export default function EditProfileScreen() {
 
                             <View className="mb-8">
                                 <Text className="text-gray-700 font-medium text-sm mb-3 ml-1">
-                                    Age
+                                    {t('editProfile.age')}
                                 </Text>
                                 <View className={`bg-white rounded-2xl border-2 h-16 ${focusedField === 'age'
                                     ? 'border-blue-500'
@@ -123,7 +125,7 @@ export default function EditProfileScreen() {
                                     }`}>
                                     <TextInput
                                         className="flex-1 px-4 text-gray-900 font-bold text-base"
-                                        placeholder="XX"
+                                        placeholder={t('auth.agePlaceholder')}
                                         placeholderTextColor="#9CA3AF"
                                         keyboardType="numeric"
                                         value={age}
@@ -143,20 +145,20 @@ export default function EditProfileScreen() {
 
                             <View className="mb-8">
                                 <Text className="text-gray-700 font-medium text-sm mb-3 ml-1">
-                                    Phone Number
+                                    {t('editProfile.phoneNumber')}
                                 </Text>
                                 <View className="bg-gray-50 rounded-2xl border-2 border-transparent">
                                     <View className="px-4 py-4 flex-row items-center">
                                         <Text className="text-gray-400 font-bold text-base">
-                                            +88{user?.phone || dbUser?.phone}
+                                            {t('auth.countryCode')}{user?.phone || dbUser?.phone}
                                         </Text>
                                         <View className="ml-auto bg-gray-100 px-3 py-1 rounded-full">
-                                            <Text className="text-gray-400 font-bold text-[10px] uppercase">Verified</Text>
+                                            <Text className="text-gray-400 font-bold text-[10px] uppercase">{t('editProfile.verified')}</Text>
                                         </View>
                                     </View>
                                 </View>
                                 <Text className="text-gray-400 font-medium text-xs mt-2 ml-1">
-                                    Phone number cannot be changed for security reasons.
+                                    {t('editProfile.phoneChangeNotice')}
                                 </Text>
                             </View>
                         </View>
@@ -176,12 +178,12 @@ export default function EditProfileScreen() {
                                         <>
                                             <ActivityIndicator color="#ffffff" size="small" />
                                             <Text className="text-white font-bold text-lg ml-3">
-                                                Saving Changes...
+                                                {t('editProfile.saving')}
                                             </Text>
                                         </>
                                     ) : (
                                         <Text className="text-white font-bold text-lg">
-                                            Save Changes
+                                            {t('editProfile.save')}
                                         </Text>
                                     )}
                                 </View>

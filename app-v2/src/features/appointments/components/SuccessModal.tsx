@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Modal, Animated, Easing, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 
 interface SuccessModalProps {
@@ -12,9 +13,15 @@ interface SuccessModalProps {
 export const SuccessModal: React.FC<SuccessModalProps> = ({
     visible,
     onClose,
-    title = 'Booking Confirmed!',
-    message = 'Your appointment has been booked successfully. You will receive a notification with your appointment details.',
+    title,
+    message,
 }) => {
+    const { t } = useTranslation();
+    const displayTitle = title || t('appointments.success.bookingConfirmed');
+    const displayMessage = message || t('appointments.success.bookingMessage', { doctorName: 'the doctor', date: '', time: '' }); // Fallback
+
+    // Note: SuccessModal is usually called with specific title/message from AppointmentsScreen.
+    // If not, it uses these defaults.
     const scaleAnim = useRef(new Animated.Value(0)).current;
     const opacityAnim = useRef(new Animated.Value(0)).current;
 
@@ -56,10 +63,10 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
                     </View>
 
                     <Text className="text-2xl font-bold text-gray-900 text-center mb-3">
-                        {title}
+                        {displayTitle}
                     </Text>
                     <Text className="text-gray-500 font-medium text-center mb-8 leading-6">
-                        {message}
+                        {displayMessage}
                     </Text>
 
                     <TouchableOpacity
@@ -67,7 +74,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
                         className="bg-blue-500 w-full py-4 rounded-2xl items-center"
                         activeOpacity={0.8}
                     >
-                        <Text className="text-white font-bold text-lg">Done</Text>
+                        <Text className="text-white font-bold text-lg">{useTranslation().t('appointments.success.done')}</Text>
                     </TouchableOpacity>
                 </Animated.View>
             </Animated.View>

@@ -1,8 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { HeaderText } from '@/shared/components';
+import { useTranslation } from 'react-i18next';
 
 export const demoGalleryImages = [
     'https://plus.unsplash.com/premium_photo-1681843126728-04eab730febe?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -20,16 +21,18 @@ export const demoGalleryImages = [
 ];
 
 export const HospitalGallery: React.FC = () => {
+    const { t } = useTranslation();
+    const router = useRouter();
     const navigateToGallery = () => router.push('/gallery' as any);
 
     return (
         <View className="">
-            <HeaderText title="Our Gallery" />
+            <HeaderText title={t('gallery.title')} />
 
             <View className="">
                 {/* Top Landscape Image */}
                 <TouchableOpacity
-                    className="w-full h-40 rounded-xl overflow-hidden bg-gray-100 mb-2 shadow-md"
+                    className="w-full h-44 rounded-[24px] overflow-hidden bg-gray-100 mb-3 shadow-md shadow-blue-500/10 border border-gray-100/50"
                     onPress={navigateToGallery}
                     activeOpacity={0.9}
                 >
@@ -39,7 +42,7 @@ export const HospitalGallery: React.FC = () => {
                         resizeMode="cover"
                     />
                     <LinearGradient
-                        colors={['rgba(0,0,0,0.3)', 'transparent']}
+                        colors={['rgba(0,0,0,0.2)', 'transparent']}
                         className="absolute top-0 left-0 right-0 h-1/2"
                     />
                 </TouchableOpacity>
@@ -49,13 +52,13 @@ export const HospitalGallery: React.FC = () => {
                     {demoGalleryImages.slice(1, 4).map((img, index) => (
                         <TouchableOpacity
                             key={`row1-${index}`}
-                            className="w-[32%] h-24 rounded-lg overflow-hidden bg-gray-100 shadow-sm"
+                            className="w-[32%] h-24 rounded-2xl overflow-hidden bg-gray-100 shadow-sm shadow-blue-500/10 border border-gray-100/50"
                             onPress={navigateToGallery}
                             activeOpacity={0.9}
                         >
                             <Image source={{ uri: img }} className="w-full h-full" resizeMode="cover" />
                             <LinearGradient
-                                colors={['rgba(0,0,0,0.2)', 'transparent']}
+                                colors={['rgba(0,0,0,0.15)', 'transparent']}
                                 className="absolute top-0 left-0 right-0 h-1/2"
                             />
                         </TouchableOpacity>
@@ -67,21 +70,22 @@ export const HospitalGallery: React.FC = () => {
                     {demoGalleryImages.slice(4, 7).map((img, index) => (
                         <TouchableOpacity
                             key={`row2-${index}`}
-                            className="w-[32%] h-24 rounded-lg overflow-hidden bg-gray-100 shadow-sm"
+                            className="w-[32%] h-24 rounded-2xl overflow-hidden bg-gray-100 shadow-sm shadow-blue-500/10 border border-gray-100/50"
                             onPress={navigateToGallery}
                             activeOpacity={0.9}
                         >
                             <Image source={{ uri: img }} className="w-full h-full" resizeMode="cover" />
                             <LinearGradient
-                                colors={['rgba(0,0,0,0.2)', 'transparent']}
+                                colors={['rgba(0,0,0,0.15)', 'transparent']}
                                 className="absolute top-0 left-0 right-0 h-1/2"
                             />
                             {index === 2 && (
-                                <View className="absolute inset-0 bg-black/60 justify-center items-center">
-                                    <Text className="text-white text-base font-bold">
-                                        +{demoGalleryImages.length - 7}
-                                    </Text>
-                                    <Text className="text-white text-xs mt-1">more</Text>
+                                <View className="absolute inset-0 bg-blue-600/40 backdrop-blur-sm justify-center items-center">
+                                    <View className="bg-white/90 px-3 py-1.5 rounded-xl border border-white/50">
+                                        <Text className="text-blue-600 text-xs font-black">
+                                            {t('gallery.more', { count: demoGalleryImages.length - 7 })}
+                                        </Text>
+                                    </View>
                                 </View>
                             )}
                         </TouchableOpacity>

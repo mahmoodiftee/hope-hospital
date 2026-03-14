@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { hospitalConfig } from '@/config/hospitalConfig';
@@ -11,10 +12,11 @@ import {
 } from '@/features/contact';
 
 const ContactScreen: React.FC = () => {
+    const { t } = useTranslation();
     const contactData = [
         {
             icon: (props: any) => <Ionicons name="alert-circle" {...props} />,
-            title: '24/7 Emergency',
+            title: t('contact.emergency247'),
             subtitle: `${hospitalConfig.contact.emergency24x7} • ${hospitalConfig.hours.emergency}`,
             onPress: () => contactUtils.handlePhoneCall(hospitalConfig.contact.emergency24x7),
             bgColor: 'bg-red-500',
@@ -24,25 +26,25 @@ const ContactScreen: React.FC = () => {
         },
         {
             icon: (props: any) => <Ionicons name="call" {...props} />,
-            title: 'Emergency',
+            title: t('contact.emergency'),
             subtitle: hospitalConfig.contact.emergencyLine,
             onPress: () => contactUtils.handlePhoneCall(hospitalConfig.contact.emergencyLine),
         },
         {
             icon: (props: any) => <Ionicons name="calendar" {...props} />,
-            title: 'Appointments',
+            title: t('contact.appointments'),
             subtitle: hospitalConfig.contact.appointments,
             onPress: () => contactUtils.handlePhoneCall(hospitalConfig.contact.appointments),
         },
         {
             icon: (props: any) => <Ionicons name="mail" {...props} />,
-            title: 'Email',
+            title: t('contact.email'),
             subtitle: hospitalConfig.email.info,
             onPress: () => contactUtils.handleEmailPress(hospitalConfig.email.info),
         },
         {
             icon: (props: any) => <Ionicons name="chatbubble-ellipses" {...props} />,
-            title: 'Support',
+            title: t('contact.support'),
             subtitle: hospitalConfig.email.support,
             onPress: () => contactUtils.handleEmailPress(hospitalConfig.email.support),
         },
@@ -103,10 +105,10 @@ const ContactScreen: React.FC = () => {
             <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
                 <View className="py-6">
                     <Text className="text-dark-100 text-3xl font-bold mb-1 text-center">
-                        Contact Us
+                        {t('contact.title')}
                     </Text>
                     <Text className="text-gray-500 text-base text-center">
-                        We're here to help you 24/7
+                        {t('contact.subtitle')}
                     </Text>
                 </View>
 

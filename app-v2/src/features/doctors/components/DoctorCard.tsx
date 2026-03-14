@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Doctor } from '@/shared/types';
 import { images } from '@/shared/components';
+import { useTranslation } from 'react-i18next';
 
 interface DoctorCardProps {
     doctor: Doctor;
@@ -40,6 +41,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
     isFavorite = false,
     onToggleFavorite
 }) => {
+    const { t } = useTranslation();
     return (
         <TouchableOpacity
             onPress={onPress}
@@ -60,7 +62,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                     </View>
                 )}
                 {/* Available dot */}
-                <View style={styles.availableDot} />
+                {/* <View style={styles.availableDot} /> */}
 
                 {onToggleFavorite && (
                     <TouchableOpacity
@@ -71,8 +73,8 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                         style={styles.cardFavoriteButton}
                     >
                         <Ionicons
-                            name={isFavorite ? "heart" : "heart-outline"}
-                            size={18}
+                            name={isFavorite ? "bookmark" : "bookmark-outline"}
+                            size={15}
                             color={isFavorite ? "#FF4D67" : "#fff"}
                         />
                     </TouchableOpacity>
@@ -86,7 +88,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                     <Text style={styles.name} numberOfLines={1}>{doctor.name}</Text>
                     <View style={styles.stat}>
                         <Ionicons name="cash-outline" size={13} color="#9CA3AF" />
-                        <Text style={styles.statText}>৳{doctor.hourlyRate}/hr</Text>
+                        <Text style={styles.statText}>৳{doctor.hourlyRate}{t('doctors.perHour')}</Text>
                     </View>
                 </View>
 
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 20,
         padding: 14,
-        marginBottom: 14,
+        marginBottom: 5,
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
@@ -224,11 +226,11 @@ const styles = StyleSheet.create({
     },
     cardFavoriteButton: {
         position: 'absolute',
-        top: 6,
-        right: 6,
+        bottom: 3,
+        right: 3,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        width: 32,
-        height: 32,
+        width: 25,
+        height: 25,
         borderRadius: 16,
         alignItems: 'center',
         justifyContent: 'center',

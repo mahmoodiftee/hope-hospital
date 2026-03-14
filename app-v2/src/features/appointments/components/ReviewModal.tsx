@@ -10,6 +10,7 @@ import {
     Platform,
     Keyboard,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AppTextInput } from '@/shared/components/AppTextInput';
 import { Star, X } from 'lucide-react-native';
 import { toast } from 'sonner-native';
@@ -30,6 +31,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     onClose,
     onSuccess,
 }) => {
+    const { t } = useTranslation();
     const { user, dbUser } = useAuth();
     const userId = user?.id || dbUser?.$id || '';
 
@@ -39,15 +41,15 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
     const handleSubmit = async () => {
         if (rating === 0) {
-            toast.error('Please select a rating');
+            toast.error(t('appointments.review.errors.selectRating'));
             return;
         }
         if (!reviewText.trim()) {
-            toast.error('Please write a review');
+            toast.error(t('appointments.review.errors.writeReview'));
             return;
         }
         if (!appointment.$id || !userId) {
-            toast.error('Missing appointment or user information');
+            toast.error(t('appointments.review.errors.missingInfo'));
             return;
         }
 
@@ -59,7 +61,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                 userId
             );
             if (alreadyReviewed) {
-                toast.error('You have already reviewed this appointment');
+                toast.error(t('appointments.review.errors.alreadyReviewed'));
                 onClose();
                 return;
             }
@@ -75,7 +77,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                 userId,
             });
 
-            toast.success('Review submitted successfully!');
+            toast.success(t('appointments.review.success'));
             onSuccess?.();
             onClose();
 
@@ -83,7 +85,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
             setRating(0);
             setReviewText('');
         } catch (error: any) {
-            toast.error(error.message || 'Failed to submit review');
+            toast.error(error.message || t('appointments.review.errors.submitFailed'));
         } finally {
             setIsSubmitting(false);
         }
@@ -100,7 +102,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                         {/* Header */}
                         <View className="flex-row justify-between items-center mb-6">
                             <Text className="text-xl font-bold text-gray-900">
-                                Write a Review
+                                {t('appointments.review.title')}
                             </Text>
                             <TouchableOpacity
                                 onPress={onClose}
@@ -122,7 +124,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
                         {/* Star Rating */}
                         <Text className="text-sm font-bold text-gray-700 mb-3">
-                            Rate your experience
+                            {t('appointments.review.rateExperience')}
                         </Text>
                         <View className="flex-row justify-center gap-2 mb-6">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -142,11 +144,11 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
 
                         {/* Review Text */}
                         <Text className="text-sm font-bold text-gray-700 mb-2">
-                            Your Review
+                            {t('appointments.review.yourReview')}
                         </Text>
                         <AppTextInput
-                            containerStyle={{ minHeight: 120, height: 'auto', textAlignVertical: 'top', paddingVertical: 12 }}
-                            placeholder="Share your experience with the doctor..."
+                            containerStyle={{ minHeight: 120, height: 'auto', textAlignVertical: 'top', paddingVertical: 12, borderColor: '#E5E7EB', borderWidth: 1, borderRadius: 12 }}
+                            placeholder={t('appointments.review.placeholder')}
                             placeholderTextColor="#9CA3AF"
                             multiline
                             textAlignVertical="top"
@@ -170,7 +172,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                                 <ActivityIndicator color="#3B82F6" />
                             ) : (
                                 <Text className="text-white font-bold text-lg">
-                                    Submit Review
+                                    {t('appointments.review.submit')}
                                 </Text>
                             )}
                         </TouchableOpacity>

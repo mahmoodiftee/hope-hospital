@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/features/auth';
 import { useNotificationStore, NotificationItem } from '@/features/notifications';
 
 export default function NotificationsScreen() {
+    const { t } = useTranslation();
     const { dbUser } = useAuth();
     const { notifications, isLoading, isLoadingMore, hasMore, fetchNotifications, loadMoreNotifications, markAsRead } = useNotificationStore();
 
@@ -28,7 +31,7 @@ export default function NotificationsScreen() {
     return (
         <SafeAreaView className="flex-1 bg-white">
             <Stack.Screen options={{
-                title: 'Notifications',
+                title: t('notifications.title'),
                 headerTitleStyle: { fontFamily: 'Quicksand-Bold', fontSize: 20 },
                 headerShadowVisible: false,
                 headerLeft: () => null, // Hide back button if it's a tab child
@@ -67,9 +70,9 @@ export default function NotificationsScreen() {
                                 <View className="w-20 h-20 bg-gray-50 rounded-full items-center justify-center mb-4">
                                     <Ionicons name="notifications-off-outline" size={40} color="#9CA3AF" />
                                 </View>
-                                <Text className="text-gray-500 font-bold text-lg">No notifications</Text>
+                                <Text className="text-gray-500 font-bold text-lg">{t('notifications.noNotifications')}</Text>
                                 <Text className="text-gray-400 font-medium text-center px-10 mt-2">
-                                    We'll notify you here when there's an update on your appointments.
+                                    {t('notifications.noNotificationsSub')}
                                 </Text>
                             </View>
                         }

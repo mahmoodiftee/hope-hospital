@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Prescription } from '../types';
 
 interface PrescriptionCardProps {
@@ -14,6 +15,7 @@ export const PrescriptionCard: React.FC<PrescriptionCardProps> = ({
     onViewPress,
     onDownloadPress
 }) => {
+    const { t } = useTranslation();
     return (
         <View className="border border-gray-100 bg-white rounded-xl p-4 shadow-sm mb-3">
             <View className="flex-row items-start">
@@ -54,7 +56,7 @@ export const PrescriptionCard: React.FC<PrescriptionCardProps> = ({
                         >
                             <Ionicons name="download-outline" color={prescription.iconColor} size={16} className="mr-1" />
                             <Text style={{ color: prescription.iconColor }} className="text-sm font-medium ml-1">
-                                Download
+                                {t('records.download')}
                             </Text>
                         </TouchableOpacity>
                     </View>

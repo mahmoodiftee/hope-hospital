@@ -77,7 +77,7 @@ const UpcomingConsultations = ({ upcomingAppointments, loading = false }: Upcomi
                         className="w-12 h-12 rounded-full mr-3"
                     />
                     <View className="flex-1">
-                        <Text className="text-white font-bold text-lg font-quicksand-semibold">
+                        <Text className="text-white font-bold text-lg font-semibold">
                             {doctor.name}
                         </Text>
                         <Text className="text-blue-100 font-medium text-sm">

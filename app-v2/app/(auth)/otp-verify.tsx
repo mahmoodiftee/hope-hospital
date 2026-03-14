@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator, Platform, TextInput, P
 import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import { toast } from "sonner-native";
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from "@/features/auth/stores/auth.store";
 import { AuthService } from "@/features/auth/services/auth.service";
 import { User, DbUser } from "@/shared/types";
@@ -17,6 +18,7 @@ export default function OtpVerifyScreen() {
     }>();
 
     const setSession = useAuthStore(state => state.setSession);
+    const { t } = useTranslation();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
@@ -85,7 +87,7 @@ export default function OtpVerifyScreen() {
     const handleVerify = async () => {
         const otpString = otp.join('');
         if (otpString.length !== 6) {
-            toast.error("Please enter a valid 6-digit OTP");
+            toast.error(t("auth.invalidOtp"));
             return;
         }
 
@@ -101,7 +103,7 @@ export default function OtpVerifyScreen() {
             const data = await response.json();
 
             if (data.success) {
-                toast.success(isLoginFlow ? 'Welcome back!' : 'Account created successfully!');
+                toast.success(isLoginFlow ? t('auth.welcomeBackToast') : t('auth.accountCreated'));
 
                 let dbUser: DbUser;
                 if (isLoginFlow) {
@@ -140,11 +142,11 @@ export default function OtpVerifyScreen() {
                 await setSession(user, dbUser);
                 router.replace('/(tabs)');
             } else {
-                toast.error(data.message || 'Invalid or expired OTP');
+                toast.error(data.message || t('auth.otpInvalidOrExpired'));
             }
         } catch (error) {
             console.error('[OtpVerify] Error:', error);
-            toast.error('Verification failed. Please try again.');
+            toast.error(t('auth.verificationFailed'));
         } finally {
             setLoading(false);
         }
@@ -163,17 +165,17 @@ export default function OtpVerifyScreen() {
 
             const data = await response.json();
             if (data.success) {
-                toast.success('New OTP sent!');
+                toast.success(t('auth.newOtpSent'));
                 setOtp(['', '', '', '', '', '']);
                 setCountdown(60);
                 setCanResend(false);
                 inputRefs.current[0]?.focus();
             } else {
-                toast.error(data.message || 'Failed to resend OTP');
+                toast.error(data.message || t('auth.failedResend'));
             }
         } catch (error) {
             console.error('[OtpVerify] Resend error:', error);
-            toast.error('Could not resend OTP.');
+            toast.error(t('auth.networkError'));
         } finally {
             setResendLoading(false);
         }
@@ -192,12 +194,12 @@ export default function OtpVerifyScreen() {
                         <Ionicons name="chevron-back" size={24} color="#3B82F6" />
                     </TouchableOpacity>
 
-                    <Text className="text-3xl font-quicksand-bold text-gray-900 mb-3 text-center">
-                        {isLoginFlow ? 'Welcome Back!' : 'Verify Number'}
+                    <Text className="text-3xl font-bold text-gray-900 mb-3 text-center py-1">
+                        {isLoginFlow ? t('auth.welcomeBack') : t('auth.verifyNumber')}
                     </Text>
-                    <Text className="text-gray-500 font-quicksand-medium text-base text-center">
-                        We've sent a 6-digit code to{'\n'}
-                        <Text className="text-blue-600 font-quicksand-bold">+88{phone}</Text>
+                    <Text className="text-gray-500 font-medium text-base text-center">
+                        {t('auth.sentCodeTo')}{'\n'}
+                        <Text className="text-blue-600 font-bold">{t('auth.countryCode')}{phone}</Text>
                     </Text>
                 </View>
 
@@ -212,7 +214,7 @@ export default function OtpVerifyScreen() {
                             onKeyPress={(e) => handleKeyPress(e, index)}
                             keyboardType="number-pad"
                             maxLength={Platform.OS === 'ios' ? 1 : 6}
-                            className={`w-12 h-16 border-2 rounded-2xl text-center text-2xl font-quicksand-bold bg-gray-50 text-gray-900 ${digit ? 'border-blue-500 bg-white' : 'border-gray-50'
+                            className={`w-12 h-16 border-2 rounded-2xl text-center text-2xl font-bold bg-gray-50 text-gray-900 ${digit ? 'border-blue-500 bg-white' : 'border-gray-50'
                                 } ${isAutoFilling ? 'border-green-500' : ''}`}
                             selectionColor="#3B82F6"
                             autoFocus={index === 0}
@@ -227,10 +229,10 @@ export default function OtpVerifyScreen() {
                     <View className="bg-blue-50/50 border border-blue-100 rounded-3xl p-6 items-center">
                         <View className="flex-row items-center mb-1">
                             <Ionicons name="bulb" size={18} color="#3B82F6" />
-                            <Text className="text-blue-600 font-quicksand-bold ml-2">Demo Mode</Text>
+                            <Text className="text-blue-600 font-bold ml-2">{t('auth.demoMode')}</Text>
                         </View>
-                        <Text className="text-gray-600 font-quicksand-medium text-center">
-                            Use <Text className="text-blue-600 font-quicksand-bold">123456</Text> to skip verification
+                        <Text className="text-gray-600 font-medium text-center">
+                            {t('auth.demoHint', { code: '123456' })}
                         </Text>
                     </View>
                 </View>
@@ -242,14 +244,14 @@ export default function OtpVerifyScreen() {
                             {resendLoading ? (
                                 <ActivityIndicator size="small" color="#3B82F6" />
                             ) : (
-                                <Text className="text-gray-500 font-quicksand-medium">
-                                    Didn't receive the code? <Text className="text-blue-600 font-quicksand-bold">Resend</Text>
+                                <Text className="text-gray-500 font-medium">
+                                    {t('auth.resendCode')}
                                 </Text>
                             )}
                         </TouchableOpacity>
                     ) : (
-                        <Text className="text-gray-400 font-quicksand-medium">
-                            Resend code in <Text className="text-gray-600 font-quicksand-bold">{countdown}s</Text>
+                        <Text className="text-gray-400 font-medium">
+                            {t('auth.resendIn', { countdown: countdown })}
                         </Text>
                     )}
                 </View>
@@ -264,8 +266,8 @@ export default function OtpVerifyScreen() {
                     {loading ? (
                         <ActivityIndicator color="#fff" />
                     ) : (
-                        <Text className="text-white font-quicksand-bold text-lg">
-                            {isLoginFlow ? 'Login' : 'Verify & Continue'}
+                        <Text className="text-white font-bold text-lg">
+                            {isLoginFlow ? t('auth.login') : t('auth.verifyAndContinue')}
                         </Text>
                     )}
                 </TouchableOpacity>

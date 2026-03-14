@@ -4,9 +4,11 @@ import { AppTextInput } from '@/shared/components/AppTextInput';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { toast } from 'sonner-native';
+import { useTranslation } from 'react-i18next';
 import { AuthService } from '@/features/auth/services/auth.service';
 
 const RegisterScreen = () => {
+    const { t } = useTranslation();
     const { phone } = useLocalSearchParams<{ phone: string }>();
 
     const [name, setName] = useState('');
@@ -18,12 +20,12 @@ const RegisterScreen = () => {
 
     const handleRegister = async () => {
         if (!name.trim() || !age.trim()) {
-            toast.error('Please fill in all fields');
+            toast.error(t('auth.fillAllFields'));
             return;
         }
 
         if (parseInt(age) < 1 || parseInt(age) > 120) {
-            toast.error('Please enter a valid age');
+            toast.error(t('auth.invalidAge'));
             return;
         }
 
@@ -33,7 +35,7 @@ const RegisterScreen = () => {
             // Check if user somehow already exists (e.g. direct navigation or race condition)
             const { exists } = await AuthService.checkUserExists(phone!);
             if (exists) {
-                toast.error('You already have an account. Please sign in.');
+                toast.error(t('auth.alreadyHasAccount'));
                 router.replace('/(auth)/sign-in');
                 return;
             }
@@ -51,7 +53,7 @@ const RegisterScreen = () => {
             const data = await response.json();
 
             if (data.success) {
-                toast.success('OTP sent for verification!');
+                toast.success(t('auth.otpSentRegister'));
                 router.push({
                     pathname: '/(auth)/otp-verify',
                     params: {
@@ -62,11 +64,11 @@ const RegisterScreen = () => {
                     }
                 });
             } else {
-                toast.error(`Error! ${data.message || 'Failed to process request'}`);
+                toast.error(`${t('auth.failedRequest')}! ${data.message || ''}`);
             }
         } catch (error) {
             console.error('[Register] Error sending OTP:', error);
-            toast.error('Could not connect to server.');
+            toast.error(t('auth.networkError'));
         } finally {
             setLoading(false);
         }
@@ -96,16 +98,16 @@ const RegisterScreen = () => {
                                 <Ionicons name="chevron-back" size={24} color="#3B82F6" />
                             </TouchableOpacity>
 
-                            <Text className="text-3xl font-quicksand-bold text-gray-900 mb-3">
-                                Create Account
+                            <Text className="text-3xl font-bold text-gray-900 mb-3 py-1">
+                                {t('auth.createAccount')}
                             </Text>
-                            <Text className="text-gray-500 font-quicksand-medium text-base leading-6">
-                                Complete your profile to finish{'\n'}setting up your account.
+                            <Text className="text-gray-500 font-medium text-base leading-6">
+                                {t('auth.registerSub')}
                             </Text>
 
                             <View className="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                                <Text className="text-blue-600 font-quicksand-bold text-sm">
-                                    Phone: +88{phone}
+                                <Text className="text-blue-600 font-bold text-sm">
+                                    {t('auth.phone')}: {t('auth.countryCode')}{phone}
                                 </Text>
                             </View>
                         </View>
@@ -113,13 +115,13 @@ const RegisterScreen = () => {
                         {/* Form */}
                         <View className="flex-1">
                             <View className="mb-6">
-                                <Text className="text-gray-700 font-quicksand-medium text-sm mb-3 ml-1">
-                                    Full Name
+                                <Text className="text-gray-700 font-medium text-sm mb-3 ml-1">
+                                    {t('auth.fullName')}
                                 </Text>
                                 <View className={`bg-white rounded-2xl border-2 h-16 justify-center ${focusedField === 'name' ? 'border-blue-500' : 'border-gray-100'
                                     }`}>
                                     <AppTextInput
-                                        placeholder="Enter your full name"
+                                        placeholder={t('auth.enterFullName')}
                                         placeholderTextColor="#9CA3AF"
                                         value={name}
                                         onChangeText={setName}
@@ -133,13 +135,13 @@ const RegisterScreen = () => {
                             </View>
 
                             <View className="mb-8">
-                                <Text className="text-gray-700 font-quicksand-medium text-sm mb-3 ml-1">
-                                    Age
+                                <Text className="text-gray-700 fontmedium text-sm mb-3 ml-1">
+                                    {t('auth.age')}
                                 </Text>
                                 <View className={`bg-white rounded-2xl border-2 h-16 justify-center ${focusedField === 'age' ? 'border-blue-500' : 'border-gray-100'
                                     }`}>
                                     <TextInput
-                                        placeholder="XX"
+                                        placeholder={t('auth.agePlaceholder')}
                                         placeholderTextColor="#9CA3AF"
                                         keyboardType="numeric"
                                         value={age}
@@ -171,9 +173,8 @@ const RegisterScreen = () => {
                                             <Ionicons name="checkmark" size={12} color="white" />
                                         )}
                                     </View>
-                                    <Text className={`font-quicksand-medium text-sm ${name.trim() ? 'text-blue-600' : 'text-gray-400'
-                                        }`}>
-                                        Name is required
+                                    <Text className="text-gray-400 font-medium text-sm">
+                                        {t('auth.nameRequired')}
                                     </Text>
                                 </View>
 
@@ -184,9 +185,9 @@ const RegisterScreen = () => {
                                             <Ionicons name="checkmark" size={12} color="white" />
                                         )}
                                     </View>
-                                    <Text className={`font-quicksand-medium text-sm ${parseInt(age) >= 1 && parseInt(age) <= 120 ? 'text-blue-600' : 'text-gray-400'
+                                    <Text className={`font-medium text-sm ${parseInt(age) >= 1 && parseInt(age) <= 120 ? 'text-blue-600' : 'text-gray-400'
                                         }`}>
-                                        Valid age required (1-120)
+                                        {t('auth.validAgeRequired')}
                                     </Text>
                                 </View>
                             </View>
@@ -206,13 +207,13 @@ const RegisterScreen = () => {
                                     {loading ? (
                                         <>
                                             <ActivityIndicator color="#ffffff" size="small" />
-                                            <Text className="text-white font-quicksand-bold text-lg ml-3">
-                                                Sending OTP...
+                                            <Text className="text-white font-bold text-lg ml-3">
+                                                {t('auth.sendingOtp')}
                                             </Text>
                                         </>
                                     ) : (
-                                        <Text className="text-white font-quicksand-bold text-lg">
-                                            Continue
+                                        <Text className="text-white font-bold text-lg">
+                                            {t('auth.continue')}
                                         </Text>
                                     )}
                                 </View>
