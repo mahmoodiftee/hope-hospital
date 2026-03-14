@@ -61,9 +61,9 @@ const ServiceCard = ({
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                     <View style={{ flex: 1 }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>
+                        {/* <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>
                             {service.status}
-                        </Text>
+                        </Text> */}
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginTop: 4 }}>
                             {service.title}
                         </Text>

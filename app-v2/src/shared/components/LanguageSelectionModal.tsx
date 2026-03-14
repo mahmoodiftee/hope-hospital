@@ -17,12 +17,12 @@ const LANGUAGE_SELECTED_KEY = 'language_selected';
 
 export const LanguageSelectionModal = () => {
     const { i18n } = useTranslation();
-    const [isVisible, setIsVisible] = useState(true);
+    const [isVisible, setIsVisible] = useState(false);
     const [selected, setSelected] = useState<'en' | 'bn' | null>(null);
     const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
-        // checkIfLanguageSelected();
+        checkIfLanguageSelected();
     }, []);
 
     const checkIfLanguageSelected = async () => {

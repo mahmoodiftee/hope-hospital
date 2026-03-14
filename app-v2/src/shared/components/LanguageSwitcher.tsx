@@ -12,7 +12,7 @@ export const LanguageSwitcher = () => {
     const isBn = i18n.language === 'bn';
 
     return (
-        <View className="flex-row bg-gray-100 rounded-full p-1 px-2 self-start">
+        <View className="flex-row bg-gray-100 rounded-full p-1 px-2">
             <TouchableOpacity
                 onPress={() => changeLanguage('en')}
                 className={`px-3 py-1 rounded-full ${!isBn ? 'bg-blue-500' : 'bg-transparent'}`}

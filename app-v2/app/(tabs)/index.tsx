@@ -38,41 +38,43 @@ const UserTopSection = () => {
         return <TopSection user={dbUser || user} unreadCount={unreadCount} />;
     } else {
         return (
-            <View className="rounded-[32px] overflow-hidden mb-6" style={{ elevation: 5, shadowColor: '#3B82F6', shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
-                <LinearGradient
-                    colors={['#3B82F6', '#2563EB']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                >
-                    <View className="p-6 relative">
-                        <View className="absolute -top-10 -right-10 w-40 h-40 rounded-full" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
-                        <View className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }} />
+            <View style={{ width: '100%' }}>
+                <View style={{ width: '100%', paddingHorizontal: 8, alignItems: 'flex-end', marginBottom: 16 }}>
+                    <LanguageSwitcher />
+                </View>
+                <View className="rounded-[32px] overflow-hidden mb-6" style={{ elevation: 5, shadowColor: '#3B82F6', shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
+                    <LinearGradient
+                        colors={['#3B82F6', '#2563EB']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                    >
+                        <View className="p-6 relative">
+                            <View className="absolute -top-10 -right-10 w-40 h-40 rounded-full" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
+                            <View className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }} />
 
-                        <View className="flex-row items-center justify-between">
-                            <View className="flex-1 mr-4">
-                                <Text className="font-bold text-xs uppercase tracking-[2px] mb-1" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                                    {t('home.welcome')}
-                                </Text>
-                                <Text className="text-white text-2xl font-black leading-tight">
-                                    {t('home.welcomeTagLine')}
-                                </Text>
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-1 mr-4">
+                                    <Text className="font-bold text-xs uppercase tracking-[2px] mb-1" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                                        {t('home.welcome')}
+                                    </Text>
+                                    <Text className="text-white text-2xl font-black leading-tight">
+                                        {t('home.welcomeTagLine')}
+                                    </Text>
+                                </View>
                             </View>
-                            <View className="p-1 rounded-full border backdrop-blur-md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.3)' }}>
-                                <LanguageSwitcher />
-                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => router.push('/(auth)/sign-in')}
+                                className="mt-6 self-start flex-row items-center px-5 py-2.5 rounded-2xl border"
+                                style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.2)' }}
+                            >
+                                <Text className="text-white font-bold text-xs mr-2">{t('auth.login')}</Text>
+                                <Ionicons name="arrow-forward" size={12} color="white" />
+                            </TouchableOpacity>
                         </View>
-
-                        <TouchableOpacity
-                            onPress={() => router.push('/(auth)/sign-in')}
-                            className="mt-6 self-start flex-row items-center px-5 py-2.5 rounded-2xl border"
-                            style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.2)' }}
-                        >
-                            <Text className="text-white font-bold text-xs mr-2">{t('auth.login')}</Text>
-                            <Ionicons name="arrow-forward" size={12} color="white" />
-                        </TouchableOpacity>
-                    </View>
-                </LinearGradient>
-            </View>
+                    </LinearGradient>
+                </View>
+            </View >
         );
     }
 };
