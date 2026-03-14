@@ -126,7 +126,7 @@ const AppointmentsScreen = () => {
                                 onPress={() => handleCardPress(item)}
                             />
                         )}
-                        refreshControl= {
+                        refreshControl={
                             <RefreshControl
                                 refreshing={refreshing}
                                 onRefresh={onRefresh}
@@ -185,7 +185,9 @@ const AppointmentsScreen = () => {
                             ? selectedAppointment.doctorId
                             : (selectedAppointment.doctorId as any)?.$id || '',
                         name: selectedAppointment.doctor_name,
+                        name_bn: selectedAppointment.doctor_name_bn,
                         specialty: selectedAppointment.specialty,
+                        specialty_bn: selectedAppointment.specialty_bn,
                         hourlyRate: selectedAppointment.amount,
                     }}
                     reschedule={isRescheduleMode}

@@ -5,6 +5,7 @@ import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useDoctorStore, DoctorCard, useDoctorSearch, useDoctorFilters } from '@/features/doctors';
+import { translateSpecialty } from '@/shared/utils/specialtyUtils';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth';
 
@@ -56,23 +57,29 @@ export default function DoctorsListingScreen() {
                 {/* Filter Chips */}
                 <View className="flex-row mb-6">
                     <FlatList
-                        data={[t('doctors.all'), ...specialties]}
+                        data={[
+                            { label: t('doctors.all'), value: '' },
+                            ...specialties.map(s => ({
+                                label: translateSpecialty(s, t),
+                                value: s
+                            }))
+                        ]}
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        keyExtractor={(item) => item}
+                        keyExtractor={(item) => item.value || 'all'}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => item === t('doctors.all') ? toggleSpecialty('') : toggleSpecialty(item)}
-                                className={`px-6 py-3 rounded-full mr-3 ${(item === t('doctors.all') && !selectedSpecialty) || selectedSpecialty === item
+                                onPress={() => toggleSpecialty(item.value)}
+                                className={`px-6 py-3 rounded-full mr-3 ${(item.value === '' && !selectedSpecialty) || selectedSpecialty === item.value
                                     ? 'bg-blue-500 '
                                     : 'bg-gray-100'
                                     }`}
                             >
-                                <Text className={`font-quicksand-bold ${(item === t('doctors.all') && !selectedSpecialty) || selectedSpecialty === item
+                                <Text className={`font-quicksand-bold ${(item.value === '' && !selectedSpecialty) || selectedSpecialty === item.value
                                     ? 'text-white'
                                     : 'text-gray-500'
                                     }`}>
-                                    {item}
+                                    {item.label}
                                 </Text>
                             </TouchableOpacity>
                         )}

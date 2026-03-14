@@ -19,7 +19,22 @@ export class NotificationService {
                 ]
             );
 
-            return response.documents as unknown as Notification[];
+            return response.documents.map(doc => ({
+                $id: doc.$id,
+                userId: doc.userId,
+                type: doc.type,
+                title: doc.title,
+                title_bn: doc.title_bn,
+                message: doc.message,
+                message_bn: doc.message_bn,
+                isRead: doc.isRead,
+                appointmentId: doc.appointmentId,
+                scheduledAt: doc.scheduledAt,
+                isPushed: doc.isPushed,
+                priority: doc.priority,
+                metadata: doc.metadata,
+                $createdAt: doc.$createdAt,
+            })) as unknown as Notification[];
         } catch (error: any) {
             console.error('[NotificationService] getNotifications error:', error);
             throw new Error(error.message || 'Failed to fetch notifications');

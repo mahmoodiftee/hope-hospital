@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 import en from './locales/en.json';
 import bn from './locales/bn.json';
@@ -14,7 +14,7 @@ const languageDetectorPlugin = {
     init: () => { },
     detect: async function (callback: (lang: string) => void) {
         try {
-            const language = await AsyncStorage.getItem(STORE_LANGUAGE_KEY);
+            const language = await SecureStore.getItemAsync(STORE_LANGUAGE_KEY);
             if (language) {
                 return callback(language);
             }
@@ -29,7 +29,7 @@ const languageDetectorPlugin = {
     cacheUserLanguage: async function (language: string) {
         try {
             // Save a user's language choice
-            await AsyncStorage.setItem(STORE_LANGUAGE_KEY, language);
+            await SecureStore.setItemAsync(STORE_LANGUAGE_KEY, language);
         } catch (error) {
             console.log('Error caching language', error);
         }

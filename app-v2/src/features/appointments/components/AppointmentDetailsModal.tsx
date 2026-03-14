@@ -21,8 +21,10 @@ import { useAppointmentStore } from '../stores/appointment.store';
 import { useNotificationStore } from '@/features/notifications';
 import { AppointmentService } from '../services/appointment.service';
 import { parseAppointmentDateTime } from '@/shared/utils/timeUtils';
+import { getTranslatedField, formatLocalizedNumber, formatLocalizedTime, getTranslatedSpecialties } from '@/shared/utils/translation';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { images } from '@/shared/components';
+
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const DRAG_CLOSE_THRESHOLD = 120;
@@ -44,7 +46,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
     onWriteReview,
     onRefresh,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { user, dbUser } = useAuth();
     const { cancelAppointment } = useAppointmentStore();
     const { refreshUnreadCount, fetchNotifications } = useNotificationStore();
@@ -110,7 +112,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
     const formatDate = (dateStr: string) => {
         try {
             const d = new Date(dateStr + 'T00:00:00');
-            return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            return d.toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
         } catch { return dateStr; }
     };
 
@@ -124,12 +126,19 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                     userId,
                     type: 'appointment_cancelled',
                     title: t('appointments.details.notification.cancelledTitle'),
-                    message: t('appointments.details.notification.cancelledMessage', { doctorName: appointment.doctor_name }),
+                    title_bn: t('appointments.details.notification.cancelledTitle', { lng: 'bn' }),
+                    message: t('appointments.details.notification.cancelledMessage', { doctorName: getTranslatedField(appointment, 'doctor_name', 'en') }),
+                    message_bn: t('appointments.details.notification.cancelledMessage', {
+                        lng: 'bn',
+                        doctorName: getTranslatedField(appointment, 'doctor_name', 'bn')
+                    }),
                     priority: 3,
                     appointmentId: appointment.$id,
                     metadata: {
                         doctorName: appointment.doctor_name,
+                        doctorName_bn: appointment.doctor_name_bn,
                         specialty: appointment.specialty,
+                        specialty_bn: appointment.specialty_bn,
                         date: appointment.date,
                         time: appointment.time,
                         amount: appointment.amount,
@@ -265,17 +274,15 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                         )}
 
                         <Text style={{ fontSize: 22, fontFamily: 'Quicksand-Bold', color: '#111827', textAlign: 'center' }}>
-                            {appointment.doctor_name}
+                            {getTranslatedField(appointment, 'doctor_name', i18n.language)}
                         </Text>
-                        {/* <Text style={{ fontSize: 14, fontFamily: 'Quicksand-Medium', color: '#6366F1', marginTop: 4 }}>
-                            {appointment.specialty}
-                        </Text> */}
                         <View style={styles.specialtyRow}>
                             <View style={styles.specialtyBadge}>
                                 <SpecialtyIcon specialty={appointment.specialty} />
-                                <Text style={styles.specialtyText}>{appointment.specialty}</Text>
+                                <Text style={styles.specialtyText}>
+                                    {getTranslatedField(appointment, 'specialty', i18n.language)}
+                                </Text>
                             </View>
-
                         </View>
 
                     </View>
@@ -294,7 +301,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                 icon={<Clock size={14} color="#000000" />}
                                 iconBg="#f2f2f2"
                                 label={t('appointments.details.time')}
-                                value={appointment.time}
+                                value={formatLocalizedTime(appointment.time, i18n.language)}
                             />
                         </View>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -302,7 +309,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                 icon={<User size={14} color="#000000" />}
                                 iconBg="#f2f2f2"
                                 label={t('appointments.details.patient')}
-                                value={`${appointment.patient_name}, ${appointment.patient_age}`}
+                                value={`${appointment.patient_name}, ${formatLocalizedNumber(appointment.patient_age, i18n.language)}`}
                             />
                             <DetailCard
                                 icon={<Phone size={14} color="#000000" />}
@@ -325,7 +332,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                 {t('appointments.details.consultationFee')}
                             </Text>
                             <Text style={{ fontSize: 22, fontFamily: 'Quicksand-Bold', color: '#111827' }}>
-                                ৳{appointment.amount}
+                                ৳{formatLocalizedNumber(appointment.amount, i18n.language)}
                             </Text>
                         </View>
                         <View style={{
@@ -350,7 +357,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                             <SectionLabel>{t('appointments.details.specializations')}</SectionLabel>
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                                 {/* @ts-ignore */}
-                                {appointment.doctorId.specialties.map((s: string, i: number) => (
+                                {getTranslatedSpecialties(appointment.doctorId, i18n.language).map((s: string, i: number) => (
                                     <View key={i} style={{
                                         backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 6,
                                         borderRadius: 20, borderWidth: 1, borderColor: '#BFDBFE',
@@ -371,7 +378,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                             <SectionLabel>{t('appointments.details.aboutDoctor')}</SectionLabel>
                             <Text style={{ fontSize: 14, fontFamily: 'Quicksand-Medium', color: '#6B7280', lineHeight: 22 }}>
                                 {/* @ts-ignore */}
-                                {appointment.doctorId.experience}
+                                {getTranslatedField(appointment.doctorId, 'experience', i18n.language)}
                             </Text>
                         </View>
                     )}

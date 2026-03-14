@@ -177,7 +177,7 @@
         "booking": {
             "title": "Book Appointment",
             "rescheduleTitle": "Reschedule Appointment",
-            "doctorRate": "৳{{rate}} / session",
+            "doctorRate": "৳ {{rate}} / session",
             "reschedulingFrom": "Rescheduling from:",
             "selectDate": "Select Date",
             "selectNewDate": "Select New Date",

@@ -17,7 +17,7 @@ import { sendPushToUser } from '@/shared/services/sendNotification.service';
  * - Notifications are typed as 'appointment_reschedule'
  */
 export const useBooking = (
-    doctor: { id: string; name: string; specialty: string; hourlyRate: number },
+    doctor: { id: string; name: string; name_bn?: string; specialty: string; specialty_bn?: string; hourlyRate: number },
     rescheduleDetails?: Appointment
 ) => {
     const { dbUser, user, isAuthenticated } = useAuth();
@@ -66,7 +66,9 @@ export const useBooking = (
             const appointmentData: Appointment = {
                 doctorId: doctor.id,
                 doctor_name: doctor.name,
+                doctor_name_bn: doctor.name_bn || doctor.name,
                 specialty: doctor.specialty,
+                specialty_bn: doctor.specialty_bn || doctor.specialty,
                 amount: doctor.hourlyRate,
                 date: selectedDate,
                 time: selectedTime,
@@ -74,6 +76,7 @@ export const useBooking = (
                 patient_name: patientInfo.name.trim(),
                 patient_age: Number(patientInfo.age.trim()),
                 contactNumber: patientInfo.phone.trim(),
+                status: 'Upcoming'
             };
 
             let result: { status: number; data?: Appointment };
@@ -96,7 +99,14 @@ export const useBooking = (
                         userId,
                         type: 'appointment_reschedule',
                         title: i18n.t('appointments.details.notification.cancelledTitle'), // Actually should be rescheduled title
+                        title_bn: i18n.t('appointments.details.notification.cancelledTitle', { lng: 'bn' }),
                         message: i18n.t('appointments.success.rescheduleMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
+                        message_bn: i18n.t('appointments.success.rescheduleMessage', {
+                            lng: 'bn',
+                            doctorName: doctor.name_bn || doctor.name,
+                            date: selectedDate,
+                            time: selectedTime
+                        }),
                         priority: 3,
                         appointmentId: rescheduleDetails.$id,
                         metadata: {
@@ -139,7 +149,14 @@ export const useBooking = (
                         userId,
                         type: 'appointment_confirmation',
                         title: i18n.t('appointments.success.bookingConfirmed'),
+                        title_bn: i18n.t('appointments.success.bookingConfirmed', { lng: 'bn' }),
                         message: i18n.t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
+                        message_bn: i18n.t('appointments.success.bookingMessage', {
+                            lng: 'bn',
+                            doctorName: doctor.name_bn || doctor.name,
+                            date: selectedDate,
+                            time: selectedTime
+                        }),
                         priority: 3,
                         appointmentId: result.data.$id,
                         metadata: {

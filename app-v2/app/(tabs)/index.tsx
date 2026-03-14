@@ -38,33 +38,34 @@ const UserTopSection = () => {
         return <TopSection user={dbUser || user} unreadCount={unreadCount} />;
     } else {
         return (
-            <View className="rounded-[32px] overflow-hidden mb-6 shadow-lg shadow-blue-500/20" style={{ elevation: 5 }}>
+            <View className="rounded-[32px] overflow-hidden mb-6" style={{ elevation: 5, shadowColor: '#3B82F6', shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
                 <LinearGradient
                     colors={['#3B82F6', '#2563EB']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                 >
                     <View className="p-6 relative">
-                        <View className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
-                        <View className="absolute -bottom-8 -left-8 w-24 h-24 bg-white/5 rounded-full" />
+                        <View className="absolute -top-10 -right-10 w-40 h-40 rounded-full" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
+                        <View className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }} />
 
                         <View className="flex-row items-center justify-between">
                             <View className="flex-1 mr-4">
-                                <Text className="text-white/80 font-bold text-xs uppercase tracking-[2px] mb-1">
+                                <Text className="font-bold text-xs uppercase tracking-[2px] mb-1" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                                     {t('home.welcome')}
                                 </Text>
                                 <Text className="text-white text-2xl font-black leading-tight">
                                     {t('home.welcomeTagLine')}
                                 </Text>
                             </View>
-                            <View className="bg-white/20 p-1 rounded-full border border-white/30 backdrop-blur-md">
+                            <View className="p-1 rounded-full border backdrop-blur-md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.3)' }}>
                                 <LanguageSwitcher />
                             </View>
                         </View>
 
                         <TouchableOpacity
                             onPress={() => router.push('/(auth)/sign-in')}
-                            className="mt-6 self-start flex-row items-center bg-white/20 px-5 py-2.5 rounded-2xl border border-white/20"
+                            className="mt-6 self-start flex-row items-center px-5 py-2.5 rounded-2xl border"
+                            style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.2)' }}
                         >
                             <Text className="text-white font-bold text-xs mr-2">{t('auth.login')}</Text>
                             <Ionicons name="arrow-forward" size={12} color="white" />
@@ -242,8 +243,15 @@ export default function HomeScreen() {
                             user && (
                                 <TouchableOpacity
                                     onPress={() => setSearchModalVisible(true)}
-                                    className="flex-row items-center gap-3 bg-white rounded-2xl px-5 py-4 mb-6 border border-gray-100/50 shadow-sm shadow-black/5"
-                                    style={{ elevation: 2 }}
+                                    className="flex-row items-center gap-3 bg-white rounded-2xl px-5 py-4 mb-6 border"
+                                    style={{
+                                        elevation: 2,
+                                        borderColor: 'rgba(243, 244, 246, 0.5)',
+                                        shadowColor: '#000',
+                                        shadowOpacity: 0.05,
+                                        shadowOffset: { width: 0, height: 1 },
+                                        shadowRadius: 2
+                                    }}
                                     activeOpacity={0.95}
                                 >
                                     <Search color="#3B82F6" size={20} />

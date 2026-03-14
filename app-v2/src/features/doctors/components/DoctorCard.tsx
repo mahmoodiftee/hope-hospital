@@ -5,6 +5,8 @@ import { Doctor } from '@/shared/types';
 import { images } from '@/shared/components';
 import { useTranslation } from 'react-i18next';
 
+import { getTranslatedField, formatLocalizedNumber } from '@/shared/utils/translation';
+
 interface DoctorCardProps {
     doctor: Doctor;
     onPress: () => void;
@@ -41,7 +43,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
     isFavorite = false,
     onToggleFavorite
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     return (
         <TouchableOpacity
             onPress={onPress}
@@ -85,10 +87,12 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
             <View style={styles.info}>
                 {/* Name */}
                 <View style={styles.nameRow}>
-                    <Text style={styles.name} numberOfLines={1}>{doctor.name}</Text>
+                    <Text style={styles.name} numberOfLines={1}>
+                        {getTranslatedField(doctor, 'name', i18n.language)}
+                    </Text>
                     <View style={styles.stat}>
                         <Ionicons name="cash-outline" size={13} color="#9CA3AF" />
-                        <Text style={styles.statText}>৳{doctor.hourlyRate}{t('doctors.perHour')}</Text>
+                        <Text style={styles.statText}>৳ {formatLocalizedNumber(doctor.hourlyRate, i18n.language)}{t('doctors.perHour')}</Text>
                     </View>
                 </View>
 
@@ -96,9 +100,10 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 <View style={styles.specialtyRow}>
                     <View style={styles.specialtyBadge}>
                         <SpecialtyIcon specialty={doctor.specialty} />
-                        <Text style={styles.specialtyText}>{doctor.specialty}</Text>
+                        <Text style={styles.specialtyText}>
+                            {getTranslatedField(doctor, 'specialty', i18n.language)}
+                        </Text>
                     </View>
-
                 </View>
 
                 {/* Divider */}
@@ -108,8 +113,8 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 <View style={styles.statsRow}>
                     <View style={styles.stat}>
                         <Text style={styles.statText} numberOfLines={2}>
-                            {doctor.experience?.slice(0, 100)}
-                            {doctor.experience?.length > 100 ? "..." : ""}
+                            {getTranslatedField(doctor, 'experience', i18n.language)?.slice(0, 100)}
+                            {getTranslatedField(doctor, 'experience', i18n.language)?.length > 100 ? "..." : ""}
                         </Text>
                     </View>
                 </View>

@@ -177,7 +177,7 @@
         "booking": {
             "title": "অ্যাপয়েন্টমেন্ট বুক করুন",
             "rescheduleTitle": "অ্যাপয়েন্টমেন্ট পুনঃনির্ধারণ করুন",
-            "doctorRate": "৳{{rate}} / সেশন",
+            "doctorRate": "৳ {{rate}} / সেশন",
             "reschedulingFrom": "পুনঃনির্ধারণ করা হচ্ছে:",
             "selectDate": "তারিখ নির্বাচন করুন",
             "selectNewDate": "নতুন তারিখ নির্বাচন করুন",

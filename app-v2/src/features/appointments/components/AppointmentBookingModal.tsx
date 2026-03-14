@@ -20,12 +20,13 @@ import { CustomButton } from '@/shared/components';
 import { TimeSlot, Appointment } from '@/shared/types';
 import { SuccessModal } from './SuccessModal';
 import { getTodayDateString } from '@/shared/utils/timeUtils';
+import { getTranslatedField } from '@/shared/utils/translation';
 import { OTP_RESEND_COUNTDOWN_SECONDS } from '@/shared/constants';
 
 interface AppointmentBookingModalProps {
     isVisible: boolean;
     onClose: () => void;
-    doctor: { id: string; name: string; specialty: string; hourlyRate: number };
+    doctor: { id: string; name: string; name_bn?: string; specialty: string; specialty_bn?: string; hourlyRate: number };
     reschedule?: boolean;
     rescheduleDetails?: Appointment;
 }
@@ -37,7 +38,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
     reschedule = false,
     rescheduleDetails,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // ── Hooks ──────────────────────────────────────────────────────────────
     const {
         patientInfo: authPatientInfo,
@@ -135,7 +136,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
     const oldDateLabel = rescheduleDetails?.date
         ? (() => {
             try {
-                return new Date(rescheduleDetails.date + 'T00:00:00').toLocaleDateString(undefined, {
+                return new Date(rescheduleDetails.date + 'T00:00:00').toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', {
                     weekday: 'short', month: 'short', day: 'numeric',
                 });
             } catch { return rescheduleDetails.date; }
@@ -161,8 +162,8 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                         <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
                             {/* Doctor Info */}
                             <View className="bg-blue-50 p-4 rounded-2xl mb-5">
-                                <Text className="text-gray-900 font-bold">{doctor.name}</Text>
-                                <Text className="text-gray-500 font-medium">{doctor.specialty}</Text>
+                                <Text className="text-gray-900 font-bold">{getTranslatedField(doctor, 'name', i18n.language)}</Text>
+                                <Text className="text-gray-500 font-medium">{getTranslatedField(doctor, 'specialty', i18n.language)}</Text>
                                 <Text className="text-blue-600 font-bold mt-1">{t('appointments.booking.doctorRate', { rate: doctor.hourlyRate })}</Text>
                             </View>
 
@@ -447,8 +448,8 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                 title={isReschedule ? t('appointments.success.rescheduled') : t('appointments.success.bookingConfirmed')}
                 message={
                     isReschedule
-                        ? t('appointments.success.rescheduleMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime })
-                        : t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime })
+                        ? t('appointments.success.rescheduleMessage', { doctorName: getTranslatedField(doctor, 'name', i18n.language), date: selectedDate, time: selectedTime })
+                        : t('appointments.success.bookingMessage', { doctorName: getTranslatedField(doctor, 'name', i18n.language), date: selectedDate, time: selectedTime })
                 }
             />
         </>

@@ -32,7 +32,22 @@ export class AppointmentService {
                 filters
             );
 
-            return response.documents as unknown as Appointment[];
+            return response.documents.map(doc => ({
+                $id: doc.$id,
+                doctorId: doc.doctorId,
+                doctor_name: doc.doctor_name,
+                doctor_name_bn: doc.doctor_name_bn,
+                specialty: doc.specialty,
+                specialty_bn: doc.specialty_bn,
+                amount: doc.amount,
+                date: doc.date,
+                time: doc.time,
+                userId: doc.userId,
+                patient_name: doc.patient_name,
+                patient_age: doc.patient_age,
+                contactNumber: doc.contactNumber,
+                status: doc.status,
+            })) as unknown as Appointment[];
         } catch (error: any) {
             console.error('[AppointmentService] getAppointments error:', error);
             throw new Error(error.message || 'Failed to fetch appointments');
@@ -207,7 +222,9 @@ export class AppointmentService {
         userId: string;
         type: NotificationType;
         title: string;
+        title_bn?: string;
         message: string;
+        message_bn?: string;
         priority?: 1 | 2 | 3;
         appointmentId?: string;
         scheduledAt?: string;
@@ -218,7 +235,9 @@ export class AppointmentService {
                 userId: payload.userId,
                 type: payload.type,
                 title: payload.title,
+                title_bn: payload.title_bn || payload.title,
                 message: payload.message,
+                message_bn: payload.message_bn || payload.message,
                 isRead: false,
                 isPushed: false,
                 priority: payload.priority ?? 3,

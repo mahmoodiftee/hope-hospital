@@ -16,7 +16,7 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
  * Validate → Send OTP → Verify OTP → Check/Create User → Book → Notify
  */
 export const useGuestBooking = (
-    doctor: { id: string; name: string; specialty: string; hourlyRate: number }
+    doctor: { id: string; name: string; name_bn?: string; specialty: string; specialty_bn?: string; hourlyRate: number }
 ) => {
     const { setSession } = useAuthStore();
     const { refreshUnreadCount, fetchNotifications } = useNotificationStore();
@@ -195,7 +195,9 @@ export const useGuestBooking = (
             const appointmentData: Appointment = {
                 doctorId: doctor.id,
                 doctor_name: doctor.name,
+                doctor_name_bn: doctor.name_bn || doctor.name,
                 specialty: doctor.specialty,
+                specialty_bn: doctor.specialty_bn || doctor.specialty,
                 amount: doctor.hourlyRate,
                 date: selectedDate,
                 time: selectedTime,
@@ -203,6 +205,7 @@ export const useGuestBooking = (
                 patient_name: patientInfo.name.trim(),
                 patient_age: Number(patientInfo.age.trim()),
                 contactNumber: patientInfo.phone.trim(),
+                status: 'Upcoming'
             };
 
             const result = await AppointmentService.bookAppointment(appointmentData);
@@ -222,7 +225,14 @@ export const useGuestBooking = (
                 userId,
                 type: 'appointment_confirmation',
                 title: i18n.t('appointments.success.bookingConfirmed'),
+                title_bn: i18n.t('appointments.success.bookingConfirmed', { lng: 'bn' }),
                 message: i18n.t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
+                message_bn: i18n.t('appointments.success.bookingMessage', {
+                    lng: 'bn',
+                    doctorName: doctor.name_bn || doctor.name,
+                    date: selectedDate,
+                    time: selectedTime
+                }),
                 priority: 3,
                 appointmentId: result.data.$id,
                 metadata: {

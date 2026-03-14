@@ -262,7 +262,7 @@ const ConsultationFeeCard: React.FC<{ appointment: Appointment }> = ({ appointme
         <View className="bg-white p-3 rounded-lg">
             <Text className="text-xs text-gray-400 mb-1">Consultation Fee</Text>
             <View className="flex-row items-center justify-between">
-                <Text className="text-gray-800 font-medium">৳{appointment.amount}</Text>
+                <Text className="text-gray-800 font-medium">৳ {appointment.amount}</Text>
                 <Text className={`text-xs px-2 py-1 rounded-full ${isCancelled ? 'text-red-600 bg-red-50' : 'text-green-600 bg-green-50'
                     }`}>
                     {isCancelled ? 'Refunded' : 'Paid'}

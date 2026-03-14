@@ -3,6 +3,7 @@ import { FlatList, Image, Text, View, Dimensions, Platform, StyleSheet, Touchabl
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { transformAppointmentToDoctorType } from '../utils/formatters';
+import { formatLocalizedTime, getTranslatedField } from '../utils/translation';
 import { HeaderText } from './HeaderText';
 import EmptyAppointmentCard from './EmptyAppointmentCard';
 import { Appointment } from '../types';
@@ -29,8 +30,9 @@ export const UpcomingConsultations = ({
     const { t } = useTranslation();
     const flatListRef = useRef<FlatList<DoctorType>>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const { i18n } = useTranslation();
 
-    const doctors: DoctorType[] = upcomingAppointments.map(transformAppointmentToDoctorType);
+    const doctors: DoctorType[] = upcomingAppointments.map((app, idx) => transformAppointmentToDoctorType(app, idx, i18n.language));
     const isSingle = doctors.length === 1;
     const effectiveCardWidth = isSingle ? SINGLE_CARD_WIDTH : CARD_WIDTH;
 
@@ -74,7 +76,7 @@ export const UpcomingConsultations = ({
                         <View className="mr-2">
                             <Ionicons name="calendar-outline" size={10} color="#3B82F6" />
                         </View>
-                        <Text className="text-blue-700 font-bold text-xs">{doctor.time}</Text>
+                        <Text className="text-blue-700 font-bold text-xs">{formatLocalizedTime(doctor.time, i18n.language)}</Text>
                     </View>
                     <View className="bg-emerald-50 px-3 py-[6.5px] rounded-xl flex-row items-center border border-emerald-100/50">
                         <View className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 shadow-sm shadow-emerald-400" />
@@ -91,9 +93,9 @@ export const UpcomingConsultations = ({
                         </View>
                     </View>
                     <View className="flex-1 ml-4 justify-center">
-                        <Text className="text-gray-900 font-bold text-lg leading-tight mb-1" numberOfLines={1}>{doctor.name}</Text>
+                        <Text className="text-gray-900 font-bold text-lg leading-tight mb-1" numberOfLines={1}>{getTranslatedField(doctor, 'name', i18n.language)}</Text>
                         <View className="bg-blue-50 self-start px-2 py-0.5 rounded-lg ">
-                            <Text className="text-blue-600 font-semibold text-[11px]" numberOfLines={1}>{doctor.specialization}</Text>
+                            <Text className="text-blue-600 font-semibold text-[11px]" numberOfLines={1}>{getTranslatedField(doctor, 'specialization', i18n.language)}</Text>
                         </View>
                     </View>
 
@@ -104,8 +106,10 @@ export const UpcomingConsultations = ({
                     <View className="flex-row items-center flex-1 mr-2">
                         <View className="bg-blue-50 p-1 px-1.5 rounded-lg mr-2.5">
                             <Ionicons name="location-sharp" size={12} color="#3B82F6" />
-                        </View>
-                        <Text className="text-gray-500 font-medium text-sm flex-1" numberOfLines={1}>{doctor.location}</Text>
+                        </View> 
+                        <Text className="text-gray-500 font-medium text-sm flex-1" numberOfLines={1}>
+                            {doctor.location}
+                        </Text>
                     </View>
                     <View className="bg-gray-50 p-1 px-1.5 rounded-lg">
                         <Ionicons name="chevron-forward" size={12} color="#9CA3AF" />
@@ -192,8 +196,8 @@ const styles = StyleSheet.create({
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 0,
-        paddingHorizontal: 16,
+        marginBottom: -5,
+        paddingHorizontal: 4,
     },
     cardContainer: {
         width: CARD_WIDTH,

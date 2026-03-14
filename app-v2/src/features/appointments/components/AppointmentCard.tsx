@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Appointment } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
+import { SuccessModal } from './SuccessModal';
+import { getTranslatedField, formatLocalizedNumber, formatLocalizedTime } from '@/shared/utils/translation';
 
 interface AppointmentCardProps {
     appointment: Appointment;
@@ -17,7 +19,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     appointment,
     onPress,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const isUpcoming = appointment.status === 'Upcoming';
     const isCancelled = appointment.status === 'Cancelled';
     const isCompleted = !isUpcoming && !isCancelled;
@@ -33,7 +35,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     const formatDate = (dateStr: string) => {
         try {
             const d = new Date(dateStr + 'T00:00:00');
-            return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            return d.toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
         } catch {
             return dateStr;
         }
@@ -57,10 +59,10 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                 <View className="flex-row justify-between items-start mb-5">
                     <View className="flex-1 mr-4">
                         <Text className="text-[10px] text-blue-500 font-bold uppercase tracking-[1.5px] mb-1">
-                            {appointment.specialty}
+                            {getTranslatedField(appointment, 'specialty', i18n.language)}
                         </Text>
                         <Text className="text-lg font-bold text-gray-900 leading-tight" numberOfLines={1}>
-                            {appointment.doctor_name}
+                            {getTranslatedField(appointment, 'doctor_name', i18n.language)}
                         </Text>
                     </View>
                     <View className={`${config.bg} px-3 py-1.5 rounded-2xl border ${config.border} flex-row items-center gap-1.5`}>
@@ -81,7 +83,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                     </View>
                     <View className="flex-1 flex-row items-center justify-center">
                         <Ionicons name="time-outline" size={14} color="#6B7280" />
-                        <Text className="text-gray-700 font-bold ml-2 text-xs">{appointment.time}</Text>
+                        <Text className="text-gray-700 font-bold ml-2 text-xs">{formatLocalizedTime(appointment.time, i18n.language)}</Text>
                     </View>
                 </View>
 
@@ -92,14 +94,14 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                             <Ionicons name="person-outline" size={14} color="#3B82F6" />
                         </View>
                         <View>
+                            <Text className="text-[10px] text-gray-400 font-medium">{t('appointments.details.patient')}</Text>
                             <Text className="text-gray-900 font-bold text-sm">
-                                {appointment.patient_name}
+                                {getTranslatedField(appointment, 'patient_name' as any, i18n.language) || appointment.patient_name}
                             </Text>
-                            <Text className="text-[10px] text-gray-400 font-medium">Patient</Text>
                         </View>
                     </View>
                     <View className="items-end bg-blue-50/80 px-4 py-2 rounded-2xl">
-                        <Text className="text-blue-600 font-black text-base">৳{appointment.amount}</Text>
+                        <Text className="text-blue-600 font-black text-base">৳ {formatLocalizedNumber(appointment.amount, i18n.language)}</Text>
                     </View>
                 </View>
 

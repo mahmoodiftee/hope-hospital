@@ -193,7 +193,7 @@ const DoctorCard: React.FC<{ appointment: Appointment }> = ({ appointment }) => 
     </View>
     <View className="items-end">
       <Text className="text-lg font-bold text-dark-100">
-        ৳{appointment.amount}
+        ৳ {appointment.amount}
       </Text>
       <Text className="text-xs text-gray-500">
         Consultation fee

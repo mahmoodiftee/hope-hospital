@@ -18,6 +18,7 @@ import { useDoctorSearch } from '../hooks/useDoctorSearch';
 import { Doctor } from '@/shared/types';
 import { useAuth } from '@/features/auth';
 import { useTranslation } from 'react-i18next';
+import { getTranslatedField } from '@/shared/utils/translation';
 
 import { DoctorCard } from './DoctorCard';
 
@@ -36,7 +37,7 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
     onClose,
     onDoctorSelect,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const router = useRouter();
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const opacity = useSharedValue(0);
@@ -100,18 +101,19 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
 
         if (params.query) {
             const lowerQuery = params.query.toLowerCase();
-            list = list.filter(d =>
-                d.name.toLowerCase().includes(lowerQuery) ||
-                d.specialty.toLowerCase().includes(lowerQuery)
-            );
+            list = list.filter(d => {
+                const name = getTranslatedField(d, 'name', i18n.language).toLowerCase();
+                const specialty = getTranslatedField(d, 'specialty', i18n.language).toLowerCase();
+                return name.includes(lowerQuery) || specialty.includes(lowerQuery);
+            });
         }
 
         if (params.filter) {
             const lowerFilter = params.filter.toLowerCase();
-            list = list.filter(d =>
-                d.specialty.toLowerCase() === lowerFilter ||
-                (d.specialties && d.specialties.some(s => s.toLowerCase() === lowerFilter))
-            );
+            list = list.filter(d => {
+                const specialty = getTranslatedField(d, 'specialty', i18n.language).toLowerCase();
+                return specialty === lowerFilter;
+            });
         }
 
         return list;
@@ -215,7 +217,7 @@ export const DoctorSearchModal: React.FC<DoctorSearchModalProps> = ({
 
                         {/* Search Section */}
                         <View className="px-4 mb-2">
-                            <View className="flex-row items-center justify-center mb-4 px-1">
+                            <View className="flex-row items-center justify-start mb-4 px-1">
                                 <View>
                                     <Text className="text-2xl font-bold text-gray-900">{t('doctors.findYourDoctor')}</Text>
                                     <Text className="text-gray-500 text-sm">{t('doctors.selectExpertPanel')}</Text>

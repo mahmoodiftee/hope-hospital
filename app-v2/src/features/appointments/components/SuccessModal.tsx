@@ -74,7 +74,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
                         className="bg-blue-500 w-full py-4 rounded-2xl items-center"
                         activeOpacity={0.8}
                     >
-                        <Text className="text-white font-bold text-lg">{useTranslation().t('appointments.success.done')}</Text>
+                        <Text className="text-white font-bold text-lg">{t('appointments.success.done')}</Text>
                     </TouchableOpacity>
                 </Animated.View>
             </Animated.View>

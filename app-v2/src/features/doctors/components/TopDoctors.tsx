@@ -5,16 +5,22 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/features/auth';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { getTranslatedField } from '@/shared/utils/translation';
 
 // In our new architecture we get the doctor definition from the shared types or define it here
 export interface DoctorI {
+    id?: string;
     $id?: string;
     name: string;
+    name_bn?: string;
     specialty: string;
+    specialty_bn?: string;
+    image?: string;
     hourlyRate: number;
-    image: string;
     experience: string;
+    experience_bn?: string;
     specialties: string[];
+    specialties_bn?: string[];
 }
 
 interface TopDoctorsProps {
@@ -23,7 +29,7 @@ interface TopDoctorsProps {
 }
 
 export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const router = useRouter();
     const flatListRef = useRef<FlatList>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,26 +94,26 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
                     <Text className="text-gray-900 font-bold text-[10px]">4.8</Text>
                 </View> */}
 
-                {topDoctor.$id && (
+                {topDoctor.id || topDoctor.$id ? (
                     <TouchableOpacity
-                        onPress={() => handleToggleFavorite(topDoctor.$id!)}
+                        onPress={() => handleToggleFavorite((topDoctor.id || topDoctor.$id) as string)}
                         className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full items-center justify-center border border-white/20"
                     >
                         <Ionicons
-                            name={dbUser?.favorites?.includes(topDoctor.$id) ? "heart" : "heart-outline"}
+                            name={dbUser?.favorites?.includes((topDoctor.id || topDoctor.$id) as string) ? "heart" : "heart-outline"}
                             size={16}
-                            color={dbUser?.favorites?.includes(topDoctor.$id) ? "#FF4D67" : "#9CA3AF"}
+                            color={dbUser?.favorites?.includes((topDoctor.id || topDoctor.$id) as string) ? "#FF4D67" : "#9CA3AF"}
                         />
                     </TouchableOpacity>
-                )}
+                ) : null}
             </View>
 
             <View className="mb-3 px-1">
                 <Text className="text-gray-900 font-bold text-sm mb-0.5" numberOfLines={1}>
-                    {topDoctor.name}
+                    {getTranslatedField(topDoctor, 'name', i18n.language)}
                 </Text>
                 <Text className="text-blue-500 font-bold text-[11px]" numberOfLines={1}>
-                    {topDoctor.specialty}
+                    {getTranslatedField(topDoctor, 'specialty', i18n.language)}
                 </Text>
             </View>
 

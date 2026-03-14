@@ -7,15 +7,16 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSequence } from 'react-native-reanimated';
 import { useDoctorStore } from '@/features/doctors';
 import { AppointmentBookingModal } from '@/features/appointments';
-import { Doctor } from '@/shared/types';
+import { Doctor, Review } from '@/shared/types';
 import { images } from '@/shared/components';
 import { useAuth } from '@/features/auth';
+import { getTranslatedField, getTranslatedSpecialties } from '@/shared/utils/translation';
 
 
 const { width } = Dimensions.get('window');
 
-const ReviewCarousel = ({ dbReviews }: { dbReviews?: { rating: number, review: string, patientName: string }[] }) => {
-    const { t } = useTranslation();
+const ReviewCarousel = ({ dbReviews }: { dbReviews?: Review[] }) => {
+    const { t, i18n } = useTranslation();
     const mockReviews = [
         { id: '1', user: 'Sarah Johnson', rating: 5, comment: 'Dr. Akhter is incredibly professional and caring. She took the time to explain everything clearly.', date: t('doctors.daysAgo', { count: 2 }) },
         { id: '2', user: 'Michael Chen', rating: 4, comment: 'Very thorough checkup. The clinic was clean and the staff was very helpful.', date: t('doctors.weekAgo') },
@@ -26,9 +27,9 @@ const ReviewCarousel = ({ dbReviews }: { dbReviews?: { rating: number, review: s
     const items = hasRealReviews
         ? dbReviews.map((r, i) => ({
             id: `real-${i}`,
-            user: r.patientName || 'Anonymous',
+            user: getTranslatedField(r, 'patientName', i18n.language) || 'Anonymous',
             rating: r.rating,
-            comment: r.review,
+            comment: getTranslatedField(r, 'review', i18n.language),
             date: t('doctors.recent')
         }))
         : mockReviews;
@@ -101,7 +102,7 @@ const HeaderRightActions = ({
 };
 
 export default function DoctorDetailScreen() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { id } = useGlobalSearchParams<{ id: string }>();
     const { getDoctorById, isLoading } = useDoctorStore();
     const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -210,7 +211,9 @@ export default function DoctorDetailScreen() {
                     <View style={styles.headerInfo}>
                         <View style={styles.nameBlock}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                                <Text style={styles.doctorName}>{doctor.name}</Text>
+                                <Text style={styles.doctorName}>
+                                    {getTranslatedField(doctor, 'name', i18n.language)}
+                                </Text>
                                 <TouchableOpacity
                                     onPress={handleToggleFavorite}
                                     style={styles.saveAction}
@@ -227,7 +230,9 @@ export default function DoctorDetailScreen() {
                             </View>
                             <View style={styles.specialtyBadge}>
                                 <SpecialtyIcon specialty={doctor.specialty} />
-                                <Text style={styles.specialtyText}>{doctor.specialty}</Text>
+                                <Text style={styles.specialtyText}>
+                                    {getTranslatedField(doctor, 'specialty', i18n.language)}
+                                </Text>
                             </View>
                         </View>
                         {/* <View style={styles.ratingBox}>
@@ -264,7 +269,9 @@ export default function DoctorDetailScreen() {
                     {/* About Section */}
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>{t('doctors.aboutDoctor')}</Text>
-                        <Text style={styles.aboutText}>{doctor.experience}</Text>
+                        <Text style={styles.aboutText}>
+                            {getTranslatedField(doctor, 'experience', i18n.language)}
+                        </Text>
                     </View>
 
                     {/* Review Carousel */}
@@ -282,7 +289,7 @@ export default function DoctorDetailScreen() {
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>{t('doctors.keySpecialties')}</Text>
                         <View style={styles.specialtiesList}>
-                            {doctor?.specialties?.map((s, idx) => (
+                            {getTranslatedSpecialties(doctor, i18n.language).map((s, idx) => (
                                 <View key={idx} style={styles.specialtyChip}>
                                     <View style={styles.chipDot} />
                                     <Text style={styles.chipText}>{s}</Text>

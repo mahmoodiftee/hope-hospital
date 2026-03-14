@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Notification } from '@/shared/types';
+import { useTranslation } from 'react-i18next';
+import { getTranslatedField } from '@/shared/utils/translation';
 
 interface NotificationItemProps {
     notification: Notification;
@@ -12,6 +14,7 @@ interface NotificationItemProps {
  * NotificationItem — consistent UI for various notification types.
  */
 export const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onPress }) => {
+    const { i18n } = useTranslation();
     const isRead = notification.isRead;
 
     const getIcon = () => {
@@ -41,7 +44,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
                         numberOfLines={1}
                         className={`text-[17px] flex-1 mr-2 tracking-tight ${isRead ? 'font-bold text-gray-700' : 'font-black text-gray-900'}`}
                     >
-                        {notification.title}
+                        {getTranslatedField(notification, 'title', i18n.language)}
                     </Text>
                     {!isRead && (
                         <View className="w-2.5 h-2.5 bg-blue-500 rounded-full mt-1.5 shadow-sm shadow-blue-500" />
@@ -51,7 +54,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
                     numberOfLines={2}
                     className={`text-sm leading-5 mb-2 ${isRead ? 'text-gray-500 font-medium' : 'text-gray-700 font-bold'}`}
                 >
-                    {notification.message}
+                    {getTranslatedField(notification, 'message', i18n.language)}
                 </Text>
                 <View className="flex-row items-center">
                     <Ionicons name="time-outline" size={12} color="#9CA3AF" />

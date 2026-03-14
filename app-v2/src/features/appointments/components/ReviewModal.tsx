@@ -17,6 +17,7 @@ import { toast } from 'sonner-native';
 import { Appointment } from '@/shared/types';
 import { AppointmentService } from '../services/appointment.service';
 import { useAuth } from '@/features/auth';
+import { getTranslatedField } from '@/shared/utils/translation';
 
 interface ReviewModalProps {
     appointment: Appointment;
@@ -31,7 +32,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     onClose,
     onSuccess,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { user, dbUser } = useAuth();
     const userId = user?.id || dbUser?.$id || '';
 
@@ -115,10 +116,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
                         {/* Doctor Info */}
                         <View className="bg-blue-50 p-3 rounded-xl mb-6">
                             <Text className="text-gray-900 font-bold">
-                                {appointment.doctor_name}
+                                {getTranslatedField(appointment, 'doctor_name', i18n.language)}
                             </Text>
                             <Text className="text-gray-500 font-medium text-sm">
-                                {appointment.specialty}
+                                {getTranslatedField(appointment, 'specialty', i18n.language)}
                             </Text>
                         </View>
 

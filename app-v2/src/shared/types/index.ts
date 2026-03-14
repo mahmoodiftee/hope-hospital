@@ -24,11 +24,15 @@ export interface DbUser {
 export interface Doctor {
     id: string;
     name: string;
+    name_bn?: string;
     specialty: string;
+    specialty_bn?: string;
     hourlyRate: number;
     image: string;
     experience: string;
+    experience_bn?: string;
     specialties?: string[];
+    specialties_bn?: string[];
     reviews?: Review[];
 }
 
@@ -39,7 +43,9 @@ export interface Appointment {
     $id?: string;
     doctorId: string;
     doctor_name: string;
+    doctor_name_bn?: string;
     specialty: string;
+    specialty_bn?: string;
     amount: number;
     date: string;        // YYYY-MM-DD
     time: string;        // e.g. "10:00 AM"
@@ -56,8 +62,10 @@ export interface Review {
     appointmentId: string;
     doctorId: string;
     patientName: string;
+    patientName_bn?: string;
     rating: number;      // 1–5
     review: string;
+    review_bn?: string;
     userId: string;
 }
 
@@ -73,7 +81,9 @@ export interface Notification {
     userId: string;
     type: NotificationType;
     title: string;
+    title_bn?: string;
     message: string;
+    message_bn?: string;
     isRead: boolean;
     appointmentId?: string;
     scheduledAt: string;

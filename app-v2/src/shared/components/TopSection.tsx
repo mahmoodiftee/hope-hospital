@@ -32,7 +32,7 @@ export const TopSection: React.FC<TopSectionProps> = ({
                     <Text className="text-gray-900 text-lg font-bold">
                         {user?.name || "John Doe"}
                     </Text>
-                    <View className="flex-row items-center gap-1 opacity-60">
+                    <View className="flex-row items-center gap-1" style={{ opacity: 0.6 }}>
                         <MapPin color="#3B82F6" size={12} />
                         <Text className="text-gray-900 font-semibold text-xs">Gulshan 1, Dhaka</Text>
                     </View>
@@ -40,7 +40,8 @@ export const TopSection: React.FC<TopSectionProps> = ({
             </View>
             <View className="flex-row items-center gap-3">
                 <TouchableOpacity
-                    className="bg-gray-50/80 w-11 h-11 rounded-2xl items-center justify-center border border-gray-100/50 relative"
+                    className="w-11 h-11 rounded-2xl items-center justify-center border relative"
+                    style={{ backgroundColor: 'rgba(249, 250, 251, 0.8)', borderColor: 'rgba(243, 244, 246, 0.5)' }}
                     onPress={() => router.push("/notifications")}
                 >
                     <Bell color="#374151" size={22} />
@@ -53,7 +54,7 @@ export const TopSection: React.FC<TopSectionProps> = ({
                     )}
                 </TouchableOpacity>
 
-                <View className="bg-blue-50 p-1 rounded-full border border-blue-100/50">
+                <View className="bg-blue-50 p-1 rounded-full border" style={{ borderColor: 'rgba(219, 234, 254, 0.5)' }}>
                     <LanguageSwitcher />
                 </View>
             </View>
