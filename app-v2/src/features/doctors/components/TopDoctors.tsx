@@ -129,8 +129,8 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
     );
 
     return (
-        <View className="mb-5">
-            <View className="flex-row items-center justify-between mb-4 mt-2 px-1">
+        <View className="mb-6">
+            <View className="flex-row items-center justify-between mb-2 mt-0 px-1">
                 <HeaderText title={t('topDoctors')} className="mb-0" />
                 <TouchableOpacity onPress={onViewAll} className="flex-row items-center">
                     <Text className="text-blue-600 font-bold text-sm">{t('viewAll')}</Text>
@@ -150,7 +150,7 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
                 contentContainerStyle={{
                     paddingHorizontal: cardMargin,
                     paddingBottom: 15,
-                    paddingTop: 10
+                    paddingTop: 8
                 }}
                 snapToInterval={cardWidth + cardMargin}
                 decelerationRate="fast"

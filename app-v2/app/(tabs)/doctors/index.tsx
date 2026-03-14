@@ -8,6 +8,7 @@ import { useDoctorStore, DoctorCard, useDoctorSearch, useDoctorFilters } from '@
 import { translateSpecialty } from '@/shared/utils/specialtyUtils';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth';
+import { getTypographyStyle } from '@/shared/utils/typography';
 
 export default function DoctorsListingScreen() {
     const { t } = useTranslation();
@@ -40,22 +41,42 @@ export default function DoctorsListingScreen() {
             <Stack.Screen options={{ headerShown: false }} />
 
             <View className="px-5 pt-4 pb-2">
-                <Text className="text-3xl py-1 font-quicksand-bold text-gray-900 mb-4 px-1">{t("doctors.findYourDoctor")}</Text>
+                <Text
+                    className="text-[26px] text-center py-1 text-gray-900 mb-4 px-1"
+                    style={getTypographyStyle('black', 26)}
+                >
+                    {t("doctors.findYourDoctor")}
+                </Text>
 
                 {/* Search Bar */}
-                <View className="flex-row items-center bg-gray-50 border border-gray-100 rounded-2xl gap-2 px-4 py-3 mb-6">
-                    <Ionicons name="search-outline" size={20} color="#9CA3AF" />
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: '#F1F5F9',
+                    borderRadius: 16,
+                    paddingHorizontal: 14,
+                    paddingVertical: 0,
+                    marginBottom: 20,
+                    height: 52,
+                }}>
+                    <Ionicons name="search-outline" size={18} color="#94A3B8" style={{ marginRight: 10 }} />
                     <AppTextInput
                         placeholder={t("doctors.searchPrompt")}
                         value={searchQuery}
                         onChangeText={search}
-                        containerStyle={{ flex: 1, height: 40 }}
-                        style={{ fontSize: 16 }}
+                        containerStyle={{ flex: 1, height: 52, backgroundColor: 'transparent', paddingHorizontal: 0 }}
+                        style={[getTypographyStyle('bold', 15), { fontSize: 15, color: '#0F172A', backgroundColor: 'transparent' }]}
+                        placeholderTextColor="#94A3B8"
                     />
+                    {searchQuery.length > 0 && (
+                        <TouchableOpacity onPress={() => search('')}>
+                            <Ionicons name="close-circle" size={18} color="#CBD5E1" />
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 {/* Filter Chips */}
-                <View className="flex-row mb-6">
+                <View className="flex-row mb-3">
                     <FlatList
                         data={[
                             { label: t('doctors.all'), value: '' },
@@ -75,7 +96,7 @@ export default function DoctorsListingScreen() {
                                     : 'bg-gray-100'
                                     }`}
                             >
-                                <Text className={`font-quicksand-bold ${(item.value === '' && !selectedSpecialty) || selectedSpecialty === item.value
+                                <Text style={getTypographyStyle('bold', 14)} className={`font-quicksand-bold ${(item.value === '' && !selectedSpecialty) || selectedSpecialty === item.value
                                     ? 'text-white'
                                     : 'text-gray-500'
                                     }`}>
@@ -107,7 +128,12 @@ export default function DoctorsListingScreen() {
                         ListEmptyComponent={
                             <View className="flex-1 items-center justify-center pt-20">
                                 <Ionicons name="search" size={60} color="#E5E7EB" />
-                                <Text className="text-gray-400 font-quicksand-bold mt-4">{t("doctors.noDoctorsFound")}</Text>
+                                <Text
+                                    className="text-gray-400 mt-4"
+                                    style={getTypographyStyle('bold', 16)}
+                                >
+                                    {t("doctors.noDoctorsFound")}
+                                </Text>
                             </View>
                         }
                         contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 10, paddingBottom: 20 }}

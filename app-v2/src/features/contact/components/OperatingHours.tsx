@@ -2,6 +2,7 @@ import { hospitalConfig } from '@/config/hospitalConfig';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface HourCardProps {
     title: string;
@@ -27,25 +28,29 @@ const HourCard: React.FC<HourCardProps> = ({ title, subtitle, icon: Icon, iconNa
     </View>
 );
 
-export const OperatingHours: React.FC = () => (
-    <View className="mb-6 px-1">
-        <View className="flex-row items-center mb-4">
-            <Ionicons name="time" size={24} color={hospitalConfig.ui.colors.black} />
-            <Text className="text-dark-100 text-xl font-bold ml-2">Operating Hours</Text>
+export const OperatingHours: React.FC = () => {
+    const { t } = useTranslation();
+
+    return (
+        <View className="mb-6 px-1">
+            <View className="flex-row items-center mb-4">
+                <Ionicons name="time" size={24} color={hospitalConfig.ui.colors.black} />
+                <Text className="text-dark-100 text-xl font-bold ml-2">{t('contact.operatingHoursTitle')}</Text>
+            </View>
+
+            <HourCard
+                title={t('contact.emergency247Title')}
+                subtitle={hospitalConfig.hours.emergency}
+                icon={FontAwesome5}
+                iconName="ambulance"
+            />
+
+            <HourCard
+                title={t('contact.opdTitle')}
+                subtitle={hospitalConfig.hours.opd}
+                icon={Ionicons}
+                iconName="medical"
+            />
         </View>
-
-        <HourCard
-            title="Emergency Available 24/7"
-            subtitle={hospitalConfig.hours.emergency}
-            icon={FontAwesome5}
-            iconName="ambulance"
-        />
-
-        <HourCard
-            title="OPD Available"
-            subtitle={hospitalConfig.hours.opd}
-            icon={Ionicons}
-            iconName="medical"
-        />
-    </View>
-);
+    );
+};

@@ -26,8 +26,10 @@ export const HospitalGallery: React.FC = () => {
     const navigateToGallery = () => router.push('/gallery' as any);
 
     return (
-        <View className="">
-            <HeaderText title={t('gallery.title')} />
+        <View className="mb-6">
+            <View className="px-1 mb-4">
+                <HeaderText title={t('gallery.title')} className="mb-0" />
+            </View>
 
             <View className="">
                 {/* Top Landscape Image */}

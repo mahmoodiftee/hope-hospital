@@ -62,7 +62,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
                         <Ionicons name="checkmark-circle" size={48} color="#22c55e" />
                     </View>
 
-                    <Text className="text-2xl font-bold text-gray-900 text-center mb-3">
+                    <Text className="text-2xl font-bold text-gray-900 text-center mb-3 py-1">
                         {displayTitle}
                     </Text>
                     <Text className="text-gray-500 font-medium text-center mb-8 leading-6">

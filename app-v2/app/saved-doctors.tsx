@@ -7,6 +7,7 @@ import { useAuth } from '@/features/auth';
 import { useDoctorStore, DoctorCard } from '@/features/doctors';
 import { Doctor } from '@/shared/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BackHeader } from '@/shared/components/BackHeader';
 
 export default function SavedDoctorsScreen() {
     const { t } = useTranslation();
@@ -46,15 +47,8 @@ export default function SavedDoctorsScreen() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-[#F9FAFB]">
-            <Stack.Screen
-                options={{
-                    title: t('savedDoctors.title'),
-                    headerTitleStyle: { fontFamily: 'Quicksand-Bold', fontSize: 20 },
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: '#F9FAFB' },
-                }}
-            />
+        <SafeAreaView className="flex-1 bg-[#F9FAFB]" edges={['bottom', 'left', 'right']}>
+            <BackHeader title={t('savedDoctors.title')} />
 
             <View className="flex-1 px-5 pt-4">
                 {isLoading ? (

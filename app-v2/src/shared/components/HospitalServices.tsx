@@ -243,7 +243,7 @@ export const HospitalServices: React.FC<HospitalServicesProps> = ({ setSearchMod
     };
 
     return (
-        <View style={{ marginBottom: 10 }}>
+        <View className="mb-6">
             <FlatList
                 ref={flatListRef}
                 data={hospitalServices}

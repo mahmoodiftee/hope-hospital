@@ -125,9 +125,9 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                 await AppointmentService.createNotification({
                     userId,
                     type: 'appointment_cancelled',
-                    title: t('appointments.details.notification.cancelledTitle'),
+                    title: t('appointments.details.notification.cancelledTitle', { lng: 'en' }),
                     title_bn: t('appointments.details.notification.cancelledTitle', { lng: 'bn' }),
-                    message: t('appointments.details.notification.cancelledMessage', { doctorName: getTranslatedField(appointment, 'doctor_name', 'en') }),
+                    message: t('appointments.details.notification.cancelledMessage', { lng: 'en', doctorName: getTranslatedField(appointment, 'doctor_name', 'en') }),
                     message_bn: t('appointments.details.notification.cancelledMessage', {
                         lng: 'bn',
                         doctorName: getTranslatedField(appointment, 'doctor_name', 'bn')

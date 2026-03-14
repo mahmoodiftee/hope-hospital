@@ -4,6 +4,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Doctor } from '@/shared/types';
 import { images } from '@/shared/components';
 import { useTranslation } from 'react-i18next';
+import { getTypographyStyle } from '@/shared/utils/typography';
 
 import { getTranslatedField, formatLocalizedNumber } from '@/shared/utils/translation';
 
@@ -63,8 +64,6 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                         <Ionicons name="person" size={36} color="#6B7280" />
                     </View>
                 )}
-                {/* Available dot */}
-                {/* <View style={styles.availableDot} /> */}
 
                 {onToggleFavorite && (
                     <TouchableOpacity
@@ -87,7 +86,10 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
             <View style={styles.info}>
                 {/* Name */}
                 <View style={styles.nameRow}>
-                    <Text style={styles.name} numberOfLines={1}>
+                    <Text
+                        style={[styles.name, getTypographyStyle('black', 16)]}
+                        numberOfLines={1}
+                    >
                         {getTranslatedField(doctor, 'name', i18n.language)}
                     </Text>
                     <View style={styles.stat}>
@@ -100,7 +102,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 <View style={styles.specialtyRow}>
                     <View style={styles.specialtyBadge}>
                         <SpecialtyIcon specialty={doctor.specialty} />
-                        <Text style={styles.specialtyText}>
+                        <Text style={[styles.specialtyText, getTypographyStyle('bold', 13)]}>
                             {getTranslatedField(doctor, 'specialty', i18n.language)}
                         </Text>
                     </View>
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 20,
         padding: 14,
-        marginBottom: 5,
+        marginBottom: 15,
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
@@ -175,7 +177,6 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 16,
-        fontFamily: 'Quicksand-Bold',
         color: '#111827',
         flex: 1,
         marginRight: 8,
@@ -199,7 +200,6 @@ const styles = StyleSheet.create({
     },
     specialtyText: {
         fontSize: 12,
-        fontFamily: 'Quicksand-Bold',
         color: '#1D4ED8',
     },
     divider: {
@@ -219,7 +219,6 @@ const styles = StyleSheet.create({
     },
     statText: {
         fontSize: 12,
-        fontFamily: 'Quicksand-Medium',
         color: '#6B7280',
     },
     statDot: {

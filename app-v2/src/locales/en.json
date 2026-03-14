@@ -115,6 +115,10 @@
     "contact": {
         "title": "Contact Us",
         "subtitle": "We're here to help you 24/7",
+        "operatingHoursTitle": "Operating Hours",
+        "emergency247Title": "Emergency Available 24/7",
+        "opdTitle": "OPD Available",
+        "hospitalAddressTitle": "Hospital Address",
         "emergency247": "24/7 Emergency",
         "emergency": "Emergency",
         "appointments": "Appointments",
@@ -199,6 +203,7 @@
             "verifyAndBook": "Verify & Book",
             "at": "at",
             "cancel": "Cancel",
+            "alreadyHasAppointment": "You already have an appointment scheduled for this day.",
             "validation": {
                 "date": "Please select a date",
                 "time": "Please select a time",
@@ -235,6 +240,7 @@
             "writeReview": "Write a Review",
             "notification": {
                 "cancelledTitle": "Appointment Cancelled",
+                "rescheduledTitle": "Appointment Rescheduled",
                 "cancelledMessage": "Your appointment with {{doctorName}} has been cancelled."
             },
             "cancelSuccess": "Appointment cancelled successfully!",

@@ -224,9 +224,9 @@ export const useGuestBooking = (
             await AppointmentService.createNotification({
                 userId,
                 type: 'appointment_confirmation',
-                title: i18n.t('appointments.success.bookingConfirmed'),
+                title: i18n.t('appointments.success.bookingConfirmed', { lng: 'en' }),
                 title_bn: i18n.t('appointments.success.bookingConfirmed', { lng: 'bn' }),
-                message: i18n.t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
+                message: i18n.t('appointments.success.bookingMessage', { lng: 'en', doctorName: doctor.name, date: selectedDate, time: selectedTime }),
                 message_bn: i18n.t('appointments.success.bookingMessage', {
                     lng: 'bn',
                     doctorName: doctor.name_bn || doctor.name,

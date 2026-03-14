@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { PrescriptionCard, usePrescriptions, Prescription } from '@/features/prescriptions';
+import { BackHeader } from '@/shared/components/BackHeader';
 
 export default function PrescriptionsScreen() {
     const { t } = useTranslation();
@@ -27,19 +28,8 @@ export default function PrescriptionsScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
-            <Stack.Screen options={{ headerShown: false }} />
-
-            {/* Header */}
-            <View className="flex-row items-center px-4 py-3 border-b border-gray-100">
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="mr-3 p-2 -ml-2 rounded-full active:bg-gray-100"
-                >
-                    <Ionicons name="arrow-back" size={24} color="#1f2937" />
-                </TouchableOpacity>
-                <Text className="text-xl font-bold text-gray-900">{t('records.title')}</Text>
-            </View>
+        <SafeAreaView className="flex-1 bg-white" edges={['bottom', 'left', 'right']}>
+            <BackHeader title={t('records.title')} />
 
             <View className="flex-1 px-4 pt-4">
                 {isLoading ? (

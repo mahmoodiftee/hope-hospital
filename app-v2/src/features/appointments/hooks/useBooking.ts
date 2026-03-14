@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import i18n from 'i18next';
 import { AppointmentService } from '../services/appointment.service';
 import { Appointment, ValidationErrors } from '@/shared/types';
@@ -21,7 +21,7 @@ export const useBooking = (
     rescheduleDetails?: Appointment
 ) => {
     const { dbUser, user, isAuthenticated } = useAuth();
-    const { addAppointment, rescheduleAppointment: storeReschedule } = useAppointmentStore();
+    const { addAppointment, rescheduleAppointment: storeReschedule, appointments } = useAppointmentStore();
     const { refreshUnreadCount, fetchNotifications } = useNotificationStore();
 
     const isReschedule = !!rescheduleDetails;
@@ -39,6 +39,28 @@ export const useBooking = (
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({
         name: '', age: '', phone: '', date: '', time: '',
     });
+
+    // Synchronize state when rescheduleDetails changes
+    useEffect(() => {
+        if (rescheduleDetails) {
+            setPatientInfo({
+                name: rescheduleDetails.patient_name || dbUser?.name || '',
+                age: rescheduleDetails.patient_age?.toString() || dbUser?.age?.toString() || '',
+                phone: rescheduleDetails.contactNumber || user?.phone || dbUser?.phone || '',
+            });
+            setSelectedDate(rescheduleDetails.date || '');
+            setSelectedTime(rescheduleDetails.time || '');
+        } else if (!isReschedule) {
+            // Reset to defaults if we switch back to normal booking mode
+            setPatientInfo({
+                name: dbUser?.name || '',
+                age: dbUser?.age?.toString() || '',
+                phone: user?.phone || dbUser?.phone || '',
+            });
+            setSelectedDate('');
+            setSelectedTime('');
+        }
+    }, [rescheduleDetails, dbUser, user, isReschedule]);
 
     const validate = useCallback(() => {
         const errors: ValidationErrors = { name: '', age: '', phone: '', date: '', time: '' };
@@ -60,6 +82,18 @@ export const useBooking = (
 
     const book = async (): Promise<Appointment | null> => {
         if (!validate()) return null;
+
+        // Check if user already has an appointment on the same day (excluding reschedules where they are changing the same appointment)
+        const dayConflict = appointments.find(a =>
+            a.status !== 'Cancelled' &&
+            a.date === selectedDate &&
+            (!isReschedule || a.$id !== rescheduleDetails?.$id)
+        );
+
+        if (dayConflict) {
+            toast.error(i18n.t('appointments.booking.alreadyHasAppointment'));
+            return null;
+        }
 
         setIsLoading(true);
         try {
@@ -98,9 +132,9 @@ export const useBooking = (
                     await AppointmentService.createNotification({
                         userId,
                         type: 'appointment_reschedule',
-                        title: i18n.t('appointments.details.notification.cancelledTitle'), // Actually should be rescheduled title
-                        title_bn: i18n.t('appointments.details.notification.cancelledTitle', { lng: 'bn' }),
-                        message: i18n.t('appointments.success.rescheduleMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
+                        title: i18n.t('appointments.details.notification.rescheduledTitle', { lng: 'en' }),
+                        title_bn: i18n.t('appointments.details.notification.rescheduledTitle', { lng: 'bn' }),
+                        message: i18n.t('appointments.success.rescheduleMessage', { lng: 'en', doctorName: doctor.name, date: selectedDate, time: selectedTime }),
                         message_bn: i18n.t('appointments.success.rescheduleMessage', {
                             lng: 'bn',
                             doctorName: doctor.name_bn || doctor.name,
@@ -148,9 +182,9 @@ export const useBooking = (
                     await AppointmentService.createNotification({
                         userId,
                         type: 'appointment_confirmation',
-                        title: i18n.t('appointments.success.bookingConfirmed'),
+                        title: i18n.t('appointments.success.bookingConfirmed', { lng: 'en' }),
                         title_bn: i18n.t('appointments.success.bookingConfirmed', { lng: 'bn' }),
-                        message: i18n.t('appointments.success.bookingMessage', { doctorName: doctor.name, date: selectedDate, time: selectedTime }),
+                        message: i18n.t('appointments.success.bookingMessage', { lng: 'en', doctorName: doctor.name, date: selectedDate, time: selectedTime }),
                         message_bn: i18n.t('appointments.success.bookingMessage', {
                             lng: 'bn',
                             doctorName: doctor.name_bn || doctor.name,

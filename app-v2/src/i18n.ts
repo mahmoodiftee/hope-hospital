@@ -19,16 +19,15 @@ const languageDetectorPlugin = {
                 return callback(language);
             }
 
-            const bestLanguage = Localization.getLocales()[0]?.languageCode || 'en';
-            callback(bestLanguage === 'bn' ? 'bn' : 'en');
+            const bestLanguage = Localization.getLocales()[0]?.languageCode || 'bn';
+            callback(bestLanguage === 'en' ? 'en' : 'bn');
         } catch (error) {
             console.log('Error reading language', error);
-            callback('en'); // Fallback to 'en' on error
+            callback('bn');
         }
     },
     cacheUserLanguage: async function (language: string) {
         try {
-            // Save a user's language choice
             await SecureStore.setItemAsync(STORE_LANGUAGE_KEY, language);
         } catch (error) {
             console.log('Error caching language', error);
@@ -46,13 +45,13 @@ i18n
     .use(languageDetectorPlugin)
     .init({
         resources,
-        compatibilityJSON: 'v4', // Required for React Native
-        fallbackLng: 'en',
+        compatibilityJSON: 'v4',
+        fallbackLng: 'bn',
         interpolation: {
-            escapeValue: false, // React already safe from xss
+            escapeValue: false,
         },
         react: {
-            useSuspense: false, // Prevents warning
+            useSuspense: false,
         },
     });
 

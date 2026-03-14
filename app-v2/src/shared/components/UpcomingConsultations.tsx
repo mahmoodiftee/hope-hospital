@@ -106,7 +106,7 @@ export const UpcomingConsultations = ({
                     <View className="flex-row items-center flex-1 mr-2">
                         <View className="bg-blue-50 p-1 px-1.5 rounded-lg mr-2.5">
                             <Ionicons name="location-sharp" size={12} color="#3B82F6" />
-                        </View> 
+                        </View>
                         <Text className="text-gray-500 font-medium text-sm flex-1" numberOfLines={1}>
                             {doctor.location}
                         </Text>
@@ -145,9 +145,9 @@ export const UpcomingConsultations = ({
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headerRow}>
-                <HeaderText title={t("upcomingConsultation")} />
+        <View className="mb-6">
+            <View className="flex-row justify-between px-1 mb-2">
+                <HeaderText title={t("upcomingConsultation")} className="mb-0" />
             </View>
 
             <FlatList
@@ -163,8 +163,8 @@ export const UpcomingConsultations = ({
                 decelerationRate="fast"
                 contentContainerStyle={{
                     paddingHorizontal: 16,
-                    paddingBottom: 24,
-                    paddingTop: 10,
+                    paddingBottom: 16,
+                    paddingTop: 8,
                 }}
                 style={{ marginHorizontal: -16 }}
                 bounces={Platform.OS === 'ios'}
@@ -190,14 +190,10 @@ export const UpcomingConsultations = ({
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 10,
-        marginTop: 0,
+
     },
     headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: -5,
-        paddingHorizontal: 4,
+
     },
     cardContainer: {
         width: CARD_WIDTH,

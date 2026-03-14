@@ -9,7 +9,7 @@ import { Skeleton } from "moti/skeleton";
 import { useAuth } from "@/features/auth";
 import { useNotificationStore } from "@/features/notifications";
 import { useBooking, useAppointmentStore, AppointmentDetailsModal, ReviewModal, AppointmentBookingModal } from "@/features/appointments";
-import { HeaderText, TopSection, images, topDoctorList, UpcomingConsultations, HospitalServices, LanguageSwitcher } from "@/shared/components";
+import { HeaderText, TopSection, images, topDoctorList, UpcomingConsultations, HospitalServices, LanguageSwitcher, LanguageSelectionModal } from "@/shared/components";
 import { TopDoctors, DoctorI, DoctorSearchModal } from "@/features/doctors";
 import { HospitalGallery } from "@/features/gallery";
 import { useTranslation } from 'react-i18next';
@@ -115,12 +115,12 @@ const AppointmentsSection = ({
     const handleReschedule = () => {
         setShowDetails(false);
         setIsRescheduleMode(selectedAppointment?.status !== 'Cancelled');
-        setTimeout(() => setShowBooking(true), 300);
+        setTimeout(() => setShowBooking(true), 600);
     };
 
     const handleWriteReview = () => {
         setShowDetails(false);
-        setTimeout(() => setShowReview(true), 300);
+        setTimeout(() => setShowReview(true), 600);
     };
 
     const handleBookingClose = () => {
@@ -181,7 +181,9 @@ const AppointmentsSection = ({
                                 ? selectedAppointment.doctorId
                                 : (selectedAppointment.doctorId as any)?.$id || '',
                             name: selectedAppointment.doctor_name,
+                            name_bn: selectedAppointment.doctor_name_bn,
                             specialty: selectedAppointment.specialty,
+                            specialty_bn: selectedAppointment.specialty_bn,
                             hourlyRate: selectedAppointment.amount,
                         }}
                         reschedule={isRescheduleMode}
@@ -225,6 +227,7 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-white">
+            <LanguageSelectionModal />
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 refreshControl={
@@ -243,7 +246,7 @@ export default function HomeScreen() {
                             user && (
                                 <TouchableOpacity
                                     onPress={() => setSearchModalVisible(true)}
-                                    className="flex-row items-center gap-3 bg-white rounded-2xl px-5 py-4 mb-6 border"
+                                    className="flex-row items-center gap-3 bg-white rounded-2xl px-5 py-4 mb-5 border"
                                     style={{
                                         elevation: 2,
                                         borderColor: 'rgba(243, 244, 246, 0.5)',

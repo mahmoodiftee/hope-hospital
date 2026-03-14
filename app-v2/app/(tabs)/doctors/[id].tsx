@@ -10,7 +10,8 @@ import { AppointmentBookingModal } from '@/features/appointments';
 import { Doctor, Review } from '@/shared/types';
 import { images } from '@/shared/components';
 import { useAuth } from '@/features/auth';
-import { getTranslatedField, getTranslatedSpecialties } from '@/shared/utils/translation';
+import { formatLocalizedNumber, getTranslatedField, getTranslatedSpecialties } from '@/shared/utils/translation';
+import { getTypographyStyle } from '@/shared/utils/typography';
 
 
 const { width } = Dimensions.get('window');
@@ -50,7 +51,7 @@ const ReviewCarousel = ({ dbReviews }: { dbReviews?: Review[] }) => {
                                 <Text style={styles.avatarText}>{item.user.charAt(0)}</Text>
                             </View>
                             <View>
-                                <Text style={styles.userName}>{item.user}</Text>
+                                <Text style={[styles.userName, getTypographyStyle('black', 15)]}>{item.user}</Text>
                                 <Text style={styles.reviewDate}>{item.date}</Text>
                             </View>
                         </View>
@@ -211,7 +212,7 @@ export default function DoctorDetailScreen() {
                     <View style={styles.headerInfo}>
                         <View style={styles.nameBlock}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                                <Text style={styles.doctorName}>
+                                <Text style={[styles.doctorName, getTypographyStyle('black', 24)]}>
                                     {getTranslatedField(doctor, 'name', i18n.language)}
                                 </Text>
                                 <TouchableOpacity
@@ -230,7 +231,7 @@ export default function DoctorDetailScreen() {
                             </View>
                             <View style={styles.specialtyBadge}>
                                 <SpecialtyIcon specialty={doctor.specialty} />
-                                <Text style={styles.specialtyText}>
+                                <Text style={[styles.specialtyText, getTypographyStyle('black', 15)]}>
                                     {getTranslatedField(doctor, 'specialty', i18n.language)}
                                 </Text>
                             </View>
@@ -268,8 +269,8 @@ export default function DoctorDetailScreen() {
 
                     {/* About Section */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>{t('doctors.aboutDoctor')}</Text>
-                        <Text style={styles.aboutText}>
+                        <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>{t('doctors.aboutDoctor')}</Text>
+                        <Text style={[styles.aboutText, getTypographyStyle('medium', 15)]}>
                             {getTranslatedField(doctor, 'experience', i18n.language)}
                         </Text>
                     </View>
@@ -277,7 +278,7 @@ export default function DoctorDetailScreen() {
                     {/* Review Carousel */}
                     <View style={styles.section}>
                         <View style={styles.sectionTitleRow}>
-                            <Text style={styles.sectionTitle}>{t('doctors.reviews')}</Text>
+                            <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>{t('doctors.reviews')}</Text>
                             {/* <TouchableOpacity>
                                 <Text style={styles.seeAllText}>See All</Text>
                             </TouchableOpacity> */}
@@ -287,12 +288,12 @@ export default function DoctorDetailScreen() {
 
                     {/* Working Hours / Specialties */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>{t('doctors.keySpecialties')}</Text>
+                        <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>{t('doctors.keySpecialties')}</Text>
                         <View style={styles.specialtiesList}>
                             {getTranslatedSpecialties(doctor, i18n.language).map((s, idx) => (
                                 <View key={idx} style={styles.specialtyChip}>
                                     <View style={styles.chipDot} />
-                                    <Text style={styles.chipText}>{s}</Text>
+                                    <Text>{s}</Text>
                                 </View>
                             ))}
                         </View>
@@ -304,15 +305,15 @@ export default function DoctorDetailScreen() {
             <View style={[styles.footer, { paddingBottom: insets.bottom + (Platform.OS === 'ios' ? 70 : 80) }]}>
                 <View style={styles.footerContent}>
                     <View style={styles.priceBlock}>
-                        <Text style={styles.priceLabel}>{t('doctors.consultation')}</Text>
-                        <Text style={styles.priceValue}>৳{doctor.hourlyRate}</Text>
+                        <Text style={[styles.priceLabel, getTypographyStyle('black', 15)]}>{t('doctors.consultation')}</Text>
+                        <Text style={styles.priceValue}>৳ {formatLocalizedNumber(doctor.hourlyRate, i18n.language)}</Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => setShowBooking(true)}
                         style={styles.bookButton}
                         activeOpacity={0.8}
                     >
-                        <Text style={styles.bookButtonText}>{t('doctors.bookNow')}</Text>
+                        <Text style={[styles.bookButtonText, getTypographyStyle('bold', 16)]}>{t('doctors.bookNow')}</Text>
                         <Animated.View style={animatedArrowStyle}>
                             <Ionicons name="arrow-forward" size={20} color="#fff" />
                         </Animated.View>
@@ -326,7 +327,9 @@ export default function DoctorDetailScreen() {
                 doctor={{
                     id: doctor.id,
                     name: doctor.name,
+                    name_bn: doctor.name_bn,
                     specialty: doctor.specialty,
+                    specialty_bn: doctor.specialty_bn,
                     hourlyRate: doctor.hourlyRate
                 }}
             />
@@ -501,7 +504,7 @@ const styles = StyleSheet.create({
     },
     reviewDate: {
         fontSize: 12,
-        fontFamily: 'Quicksand-Medium',
+        // fontFamily: 'Quicksand-Medium',
         color: '#9CA3AF',
     },
     reviewRating: {

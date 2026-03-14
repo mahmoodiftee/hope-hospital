@@ -16,6 +16,7 @@ import {
     Dimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BackHeader } from '@/shared/components/BackHeader';
 
 const { width: windowWidth } = Dimensions.get('window');
 const CARD_CONFIG = { width: windowWidth };
@@ -237,25 +238,15 @@ const GalleryScreen: React.FC = () => {
     );
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
-            {/* Header */}
-            <View className="flex-row items-center px-3 py-2 border-b-4 border-gray-50">
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    className="mr-4 p-2 rounded-full bg-gray-50"
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="chevron-back" color="#333" size={24} />
-                </TouchableOpacity>
-
-                <Text className="text-xl font-bold text-gray-800 flex-1">
-                    {t('gallery.title')}
-                </Text>
-
-                <Text className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded-xl">
-                    {t('gallery.photosCount', { current: allLoadedImages.length, total: demoGalleryImages.length })}
-                </Text>
-            </View>
+        <SafeAreaView className="flex-1 bg-white" edges={['bottom', 'left', 'right']}>
+            <BackHeader
+                title={t('gallery.title')}
+                rightElement={
+                    <Text className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
+                        {t('gallery.photosCount', { current: allLoadedImages.length, total: demoGalleryImages.length })}
+                    </Text>
+                }
+            />
 
             {/* Masonry Gallery */}
             <ScrollView

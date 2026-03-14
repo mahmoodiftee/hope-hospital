@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, ActivityIndicator, TouchableOpacityProps, View } from 'react-native';
+import { getTypographyStyle } from '@/shared/utils/typography';
 
 interface CustomButtonProps extends TouchableOpacityProps {
     title: string;
@@ -54,7 +55,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             ) : (
                 <>
                     {leftIcon && <View className="mr-2">{leftIcon}</View>}
-                    <Text className={`font-bold text-base ${getTextColor()} ${textClassName}`}>
+                    <Text
+                        className={`text-base ${getTextColor()} ${textClassName}`}
+                        style={getTypographyStyle('bold', 16)}
+                    >
                         {title}
                     </Text>
                 </>

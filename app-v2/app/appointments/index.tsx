@@ -14,6 +14,7 @@ import {
 import { Appointment } from '@/shared/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { parseAppointmentDateTime } from '@/shared/utils/timeUtils';
+import { BackHeader } from '@/shared/components/BackHeader';
 
 const AppointmentsScreen = () => {
     const { t } = useTranslation();
@@ -84,13 +85,13 @@ const AppointmentsScreen = () => {
     const handleReschedule = () => {
         setShowDetails(false);
         setIsRescheduleMode(selectedAppointment?.status !== 'Cancelled');
-        setTimeout(() => setShowBooking(true), 300); // small delay to avoid modal overlap
+        setTimeout(() => setShowBooking(true), 600); // small delay to avoid modal overlap
     };
 
     // ── Details modal → Review ─────────────────────────────────────────────
     const handleWriteReview = () => {
         setShowDetails(false);
-        setTimeout(() => setShowReview(true), 300);
+        setTimeout(() => setShowReview(true), 600);
     };
 
     // ── Booking modal close ────────────────────────────────────────────────
@@ -101,14 +102,9 @@ const AppointmentsScreen = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50">
-            <Stack.Screen
-                options={{
-                    title: filter === 'Completed' ? t('appointments.totalVisits') : filter === 'Upcoming' ? t('appointments.upcomingVisits') : t('appointments.title'),
-                    headerTitleStyle: { fontFamily: 'Quicksand-Bold', fontSize: 20 },
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: '#F9FAFB' },
-                }}
+        <SafeAreaView className="flex-1 bg-gray-50" edges={['bottom', 'left', 'right']}>
+            <BackHeader
+                title={filter === 'Completed' ? t('appointments.totalVisits') : filter === 'Upcoming' ? t('appointments.upcomingVisits') : t('appointments.title')}
             />
 
             <View className="flex-1 px-5">

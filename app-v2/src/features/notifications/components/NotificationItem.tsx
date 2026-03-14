@@ -22,7 +22,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
             case 'appointment_confirmation': return { name: 'checkmark-done-outline', color: '#22C55E', bg: 'bg-green-50' };
             case 'appointment_reminder': return { name: 'alarm', color: '#FBBF24', bg: 'bg-yellow-50' };
             case 'appointment_cancelled': return { name: 'close-circle-outline', color: '#EF4444', bg: 'bg-red-50' };
-            default: return { name: 'notifications', color: '#6B7280', bg: 'bg-gray-50' };
+            default: return { name: 'notifications', color: '#6366F1', bg: 'bg-indigo-50' };
         }
     };
 
