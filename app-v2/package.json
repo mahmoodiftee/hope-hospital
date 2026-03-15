@@ -6,7 +6,9 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "featureflags": "node ./scripts/featureflags/index.js",
+    "postinstall": "node scripts/fix-hermes-path.js"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
