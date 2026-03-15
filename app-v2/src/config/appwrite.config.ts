@@ -1,11 +1,14 @@
 import { Client, Databases, Storage, Account, Avatars } from 'react-native-appwrite';
+import { Platform } from 'react-native';
 
 const client = new Client();
+
+const platform = Platform.OS === 'ios' ? 'com.hope.hospital' : 'com.hope.hopehospital';
 
 client
     .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!)
     .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!)
-    .setPlatform('com.hope.hospital');
+    .setPlatform(platform);
 
 export const databases = new Databases(client);
 export const storage = new Storage(client);

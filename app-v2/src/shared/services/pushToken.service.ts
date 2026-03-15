@@ -9,6 +9,7 @@
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -54,8 +55,27 @@ export async function getExpoPushToken(): Promise<string | null> {
         });
     }
 
-    const token = await Notifications.getExpoPushTokenAsync();
-    return token.data;
+    let projectId =
+        Constants?.expoConfig?.extra?.eas?.projectId ??
+        Constants?.easConfig?.projectId;
+
+    if (!projectId) {
+        // Fallback for Expo Go if eas.json isn't strictly loaded
+        console.warn('[pushToken] EAS projectId not found on object. Using hardcoded fallback for Expo Go.');
+        projectId = "382877d6-bf48-4c42-87d2-28f3417cc9e6";
+    }
+
+    try {
+        const token = await Notifications.getExpoPushTokenAsync({ projectId });
+        console.log('\n==============================================');
+        console.log('📱 YOUR EXPO PUSH TOKEN FOR TESTING:');
+        console.log(token.data);
+        console.log('==============================================\n');
+        return token.data;
+    } catch (e: any) {
+        console.error('[pushToken] Failed to get Expo Push Token:', e.message);
+        return null;
+    }
 }
 
 /**
