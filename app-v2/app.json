@@ -67,7 +67,9 @@
       ],
       [
         "expo-secure-store"
-      ]
+      ],
+      "expo-image",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
