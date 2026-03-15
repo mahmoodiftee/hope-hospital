@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hope.hopehospital",
+      "package": "com.hope.hospital",
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.INTERNET",
