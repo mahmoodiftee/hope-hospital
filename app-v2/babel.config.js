@@ -7,7 +7,7 @@ module.exports = function (api) {
         ],
         plugins: [
             "@babel/plugin-proposal-optional-chaining",
-            "react-native-reanimated/plugin",
+            "react-native-worklets/plugin",
         ],
     };
 };
