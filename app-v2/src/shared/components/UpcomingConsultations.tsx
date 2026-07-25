@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { transformAppointmentToDoctorType } from '../utils/formatters';
 import { formatLocalizedTime, getTranslatedField } from '../utils/translation';
 import { HeaderText } from './HeaderText';
-import EmptyAppointmentCard from './EmptyAppointmentCard';
+import { EmptyAppointmentCard } from './EmptyAppointmentCard';
 import { Appointment } from '../types';
 
 const { width } = Dimensions.get('window');

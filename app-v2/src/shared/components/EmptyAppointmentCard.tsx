@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View, Dimensions } from "react-native";
 
 const CARD_CONFIG = { width: Dimensions.get('window').width * 0.85, margin: 16 };
 
-const EmptyAppointmentCard = () => (
+export const EmptyAppointmentCard = () => (
     <TouchableOpacity
         onPress={() => router.push("/doctors")}
         className="bg-gray-50 rounded-2xl p-6 items-center justify-center border-2 border-dashed border-gray-200"
@@ -25,5 +25,3 @@ const EmptyAppointmentCard = () => (
         </View>
     </TouchableOpacity>
 );
-
-export default EmptyAppointmentCard;
