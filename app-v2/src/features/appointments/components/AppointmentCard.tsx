@@ -1,16 +1,19 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Appointment } from '@/shared/types';
 import { useTranslation } from 'react-i18next';
 import { getTranslatedField, formatLocalizedNumber, formatLocalizedTime } from '@/shared/utils/translation';
 import { getTypographyStyle } from '@/shared/utils/typography';
 import { images } from '@/shared/components';
+import { parseAppointmentDateTime } from '@/shared/utils/timeUtils';
 
 interface AppointmentCardProps {
     appointment: Appointment;
     onPress?: () => void;
 }
+
+type DisplayStatus = 'Upcoming' | 'Completed' | 'Cancelled';
 
 /**
  * AppointmentCard — unified card for upcoming, completed, or cancelled appointments.
@@ -21,9 +24,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
     onPress,
 }) => {
     const { t, i18n } = useTranslation();
-    const isUpcoming = appointment.status === 'Upcoming';
-    const isCancelled = appointment.status === 'Cancelled';
-    const isCompleted = !isUpcoming && !isCancelled;
+
+    // DB status stays "Upcoming" until manually updated — derive display status from date/time
+    const displayStatus = useMemo<DisplayStatus>(() => {
+        if (appointment.status === 'Cancelled') return 'Cancelled';
+        if (appointment.status === 'Completed') return 'Completed';
+        const dt = parseAppointmentDateTime(appointment.date, appointment.time);
+        return dt <= new Date() ? 'Completed' : 'Upcoming';
+    }, [appointment.status, appointment.date, appointment.time]);
+
+    const isUpcoming = displayStatus === 'Upcoming';
 
     const statusConfig = {
         Upcoming: { color: '#2563EB', bg: 'bg-blue-50', border: 'border-blue-100', icon: 'time-outline' },
@@ -31,7 +41,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         Completed: { color: '#059669', bg: 'bg-emerald-50', border: 'border-emerald-100', icon: 'checkmark-circle-outline' }
     };
 
-    const config = statusConfig[appointment.status as keyof typeof statusConfig] || statusConfig.Upcoming;
+    const config = statusConfig[displayStatus];
 
     const formatDate = (dateStr: string) => {
         try {
@@ -96,7 +106,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                             className="uppercase tracking-wide"
                             style={[{ color: config.color }, getTypographyStyle('black', 10)]}
                         >
-                            {appointment.status ? t(`appointments.card.status.${appointment.status.toLowerCase()}`) : t('appointments.card.status.upcoming')}
+                            {t(`appointments.card.status.${displayStatus.toLowerCase()}`)}
                         </Text>
                     </View>
                 </View>

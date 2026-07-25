@@ -61,11 +61,11 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
 
     const userId = user?.id || dbUser?.$id || '';
     const isCancelled = appointment.status === 'Cancelled';
-    const isCompleted = appointment.status === 'Completed';
     const isUpcoming = useMemo(() => {
-        if (isCancelled || isCompleted) return false;
+        if (isCancelled || appointment.status === 'Completed') return false;
         return parseAppointmentDateTime(appointment.date, appointment.time) > new Date();
-    }, [appointment.date, appointment.time, isCancelled, isCompleted]);
+    }, [appointment.date, appointment.time, appointment.status, isCancelled]);
+    const isCompleted = !isCancelled && !isUpcoming;
 
     // ── Drag to close pan responder ────────────────────────────────────────
     const panResponder = useRef(
@@ -251,7 +251,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                         }}>
                             <View style={{ width: 7, height: 7, borderRadius: 3.5, backgroundColor: statusConfig.dot }} />
                             <Text style={{ fontSize: 12, fontFamily: 'Quicksand-Bold', color: statusConfig.text }}>
-                                {t(`appointmentDetails.status.${(appointment.status || 'upcoming').toLowerCase()}`)}
+                                {t(`appointmentDetails.status.${(isCancelled ? 'cancelled' : isCompleted ? 'completed' : 'upcoming')}`)}
                             </Text>
                         </View>
 

@@ -7,6 +7,8 @@ import {
     Modal,
     ActivityIndicator,
     TextInput,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AppTextInput } from '@/shared/components/AppTextInput';
@@ -147,7 +149,10 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
         <>
             <Modal visible={isVisible} animationType="slide" transparent onRequestClose={onClose}>
                 {/* Plain View backdrop — no Pressable/KeyboardAvoidingView which steal scroll gestures */}
-                <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}
+                >
                     <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, height: '92%', padding: 24 }}>
                         {/* Header */}
                         <View className="flex-row justify-between items-center mb-4">
@@ -383,12 +388,15 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                             <View className="h-8" />
                         </ScrollView>
                     </View>
-                </View>
+                </KeyboardAvoidingView>
 
                 {/* ── OTP Modal for Guests ── */}
                 {showOtp && (
                     <Modal visible={showOtp} transparent animationType="fade">
-                        <View className="flex-1 bg-black/60 justify-center p-6">
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                            style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', padding: 24 }}
+                        >
                             <View className="bg-white rounded-3xl p-8 items-center">
                                 <Text className="text-2xl font-bold mb-2">{t('appointments.booking.verifyPhone')}</Text>
                                 <Text className="text-gray-400 font-medium text-center mb-6">
@@ -436,7 +444,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                                     <Text className="text-gray-400 font-bold">{t('appointments.booking.cancel')}</Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </KeyboardAvoidingView>
                     </Modal>
                 )}
             </Modal>
