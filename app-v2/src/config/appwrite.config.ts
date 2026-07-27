@@ -21,6 +21,7 @@ export const config = {
     databaseId: '687535c30001472b370a',
     userCollectionId: '6880a6e4003bb8eb1daf',
     doctorsCollectionId: '687cde58003e3a481b07',
+    topDoctorsCollectionId: 'topDoctors',
     reviewsCollectionId: '68811f370016887ed420',
     appointmentsCollectionId: '687ceabe0022244f6e7d',
     availableSlotsId: '687e377a00203492fd21',

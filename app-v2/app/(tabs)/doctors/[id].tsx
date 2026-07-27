@@ -108,8 +108,11 @@ export default function DoctorDetailScreen() {
     const { getDoctorById, isLoading } = useDoctorStore();
     const [doctor, setDoctor] = useState<Doctor | null>(null);
     const [showBooking, setShowBooking] = useState(false);
+    const [specialtiesExpanded, setSpecialtiesExpanded] = useState(false);
     const insets = useSafeAreaInsets();
     const { dbUser, toggleFavorite, isAuthenticated } = useAuth();
+
+    const SPECIALTIES_PREVIEW_COUNT = 8;
 
     // Animation for the arrow icon
     const translateX = useSharedValue(0);
@@ -149,6 +152,7 @@ export default function DoctorDetailScreen() {
     useEffect(() => {
         const fetch = async () => {
             if (id) {
+                setSpecialtiesExpanded(false);
                 const doc = await getDoctorById(id);
                 setDoctor(doc);
             }
@@ -289,14 +293,46 @@ export default function DoctorDetailScreen() {
                     {/* Working Hours / Specialties */}
                     <View style={styles.section}>
                         <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>{t('doctors.keySpecialties')}</Text>
-                        <View style={styles.specialtiesList}>
-                            {getTranslatedSpecialties(doctor, i18n.language).map((s, idx) => (
-                                <View key={idx} style={styles.specialtyChip}>
-                                    <View style={styles.chipDot} />
-                                    <Text>{s}</Text>
-                                </View>
-                            ))}
-                        </View>
+                        {(() => {
+                            const allSpecialties = getTranslatedSpecialties(doctor, i18n.language);
+                            const hasMore = allSpecialties.length > SPECIALTIES_PREVIEW_COUNT;
+                            const visible = specialtiesExpanded || !hasMore
+                                ? allSpecialties
+                                : allSpecialties.slice(0, SPECIALTIES_PREVIEW_COUNT);
+                            const hiddenCount = allSpecialties.length - SPECIALTIES_PREVIEW_COUNT;
+
+                            return (
+                                <>
+                                    <View style={styles.specialtiesList}>
+                                        {visible.map((s, idx) => (
+                                            <View key={idx} style={styles.specialtyChip}>
+                                                <Text style={[styles.chipText, getTypographyStyle('medium', 13)]} numberOfLines={2}>
+                                                    {s}
+                                                </Text>
+                                            </View>
+                                        ))}
+                                    </View>
+                                    {hasMore && (
+                                        <TouchableOpacity
+                                            onPress={() => setSpecialtiesExpanded((prev) => !prev)}
+                                            style={styles.specialtiesToggle}
+                                            activeOpacity={0.7}
+                                        >
+                                            <Text style={[styles.specialtiesToggleText, getTypographyStyle('bold', 13)]}>
+                                                {specialtiesExpanded
+                                                    ? t('doctors.showLess')
+                                                    : t('doctors.showMore', { count: hiddenCount })}
+                                            </Text>
+                                            <Ionicons
+                                                name={specialtiesExpanded ? 'chevron-up' : 'chevron-down'}
+                                                size={16}
+                                                color="#2563EB"
+                                            />
+                                        </TouchableOpacity>
+                                    )}
+                                </>
+                            );
+                        })()}
                     </View>
                 </View>
             </ScrollView>
@@ -543,18 +579,21 @@ const styles = StyleSheet.create({
         lineHeight: 24,
     },
     specialtiesList: {
-        flexDirection: 'column',
-        gap: 10,
-        marginBottom: 60,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginBottom: 4,
     },
     specialtyChip: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F3F4F6',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderRadius: 16,
-        gap: 12,
+        backgroundColor: '#EFF6FF',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#DBEAFE',
+        maxWidth: '100%',
     },
     chipDot: {
         width: 6,
@@ -563,9 +602,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#3B82F6',
     },
     chipText: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: 'Quicksand-Medium',
-        color: '#374151',
+        color: '#1E40AF',
+        lineHeight: 18,
+    },
+    specialtiesToggle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+        gap: 4,
+        marginTop: 10,
+        marginBottom: 40,
+        paddingVertical: 4,
+    },
+    specialtiesToggleText: {
+        fontSize: 13,
+        fontFamily: 'Quicksand-Bold',
+        color: '#2563EB',
     },
     footer: {
         position: 'absolute',

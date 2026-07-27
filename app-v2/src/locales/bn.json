@@ -84,6 +84,8 @@
         "aboutDoctor": "ডাক্তার সম্পর্কে",
         "reviews": "রিভিউ",
         "keySpecialties": "মূল দক্ষতা",
+        "showMore": "আরও {{count}}টি দেখুন",
+        "showLess": "কম দেখুন",
         "consultation": "পরামর্শ",
         "bookNow": "বুক করুন",
         "experience": "অভিজ্ঞতা",

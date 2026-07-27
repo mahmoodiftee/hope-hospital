@@ -88,5 +88,62 @@ export class DoctorService {
             throw new Error(error.message || 'Failed to fetch doctor details');
         }
     }
+
+    /**
+     * Fetches featured "top doctors" from the topDoctors collection,
+     * resolving each doctorId to a full doctor document (sorted by sortOrder).
+     */
+    static async getTopDoctors(): Promise<Doctor[]> {
+        try {
+            const featured = await databases.listDocuments(
+                config.databaseId,
+                config.topDoctorsCollectionId,
+                [
+                    Query.equal('isActive', true),
+                    Query.orderAsc('sortOrder'),
+                    Query.limit(50),
+                ]
+            );
+
+            if (!featured.documents.length) return [];
+
+            const doctors = await Promise.all(
+                featured.documents.map(async (row) => {
+                    try {
+                        const doc = await databases.getDocument(
+                            config.databaseId,
+                            config.doctorsCollectionId,
+                            row.doctorId
+                        );
+                        return {
+                            id: doc.$id,
+                            name: doc.name,
+                            name_bn: doc.name_bn,
+                            specialty: doc.specialty,
+                            specialty_bn: doc.specialty_bn,
+                            hourlyRate: doc.hourlyRate,
+                            image: doc.image,
+                            experience: doc.experience,
+                            experience_bn: doc.experience_bn,
+                            specialties: doc.specialties || [],
+                            specialties_bn: doc.specialties_bn || [],
+                            reviews: doc.reviews || [],
+                        } as Doctor;
+                    } catch (err) {
+                        console.warn(
+                            `[DoctorService] top doctor missing: ${row.doctorId}`,
+                            err
+                        );
+                        return null;
+                    }
+                })
+            );
+
+            return doctors.filter((d): d is Doctor => d !== null);
+        } catch (error: any) {
+            console.error('[DoctorService] getTopDoctors error:', error);
+            throw new Error(error.message || 'Failed to fetch top doctors');
+        }
+    }
 }
 

@@ -4,13 +4,16 @@ import { DoctorService } from '../services/doctor.service';
 
 interface DoctorState {
     doctors: Doctor[];
+    topDoctors: Doctor[];
     filteredDoctors: Doctor[];
     isLoading: boolean;
+    isTopDoctorsLoading: boolean;
     error: string | null;
     searchQuery: string;
 
     // Actions
     fetchDoctors: (search?: string) => Promise<void>;
+    fetchTopDoctors: () => Promise<void>;
     setSearchQuery: (query: string) => void;
     getDoctorById: (id: string) => Promise<Doctor | null>;
     clearError: () => void;
@@ -18,8 +21,10 @@ interface DoctorState {
 
 export const useDoctorStore = create<DoctorState>((set, get) => ({
     doctors: [],
+    topDoctors: [],
     filteredDoctors: [],
     isLoading: false,
+    isTopDoctorsLoading: false,
     error: null,
     searchQuery: '',
 
@@ -35,6 +40,16 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
             });
         } catch (error: any) {
             set({ error: error.message, isLoading: false });
+        }
+    },
+
+    fetchTopDoctors: async () => {
+        set({ isTopDoctorsLoading: true, error: null });
+        try {
+            const topDoctors = await DoctorService.getTopDoctors();
+            set({ topDoctors, isTopDoctorsLoading: false });
+        } catch (error: any) {
+            set({ error: error.message, isTopDoctorsLoading: false });
         }
     },
 
@@ -61,4 +76,3 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
 
     clearError: () => set({ error: null }),
 }));
-

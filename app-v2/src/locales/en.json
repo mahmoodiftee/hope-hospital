@@ -84,6 +84,8 @@
         "aboutDoctor": "About Doctor",
         "reviews": "Reviews",
         "keySpecialties": "Key Specialties",
+        "showMore": "Show {{count}} more",
+        "showLess": "Show less",
         "consultation": "Consultation",
         "bookNow": "Book Now",
         "experience": "Experience",

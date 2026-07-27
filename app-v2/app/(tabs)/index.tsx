@@ -1,16 +1,16 @@
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Search } from "lucide-react-native";
-import React, { useEffect, useState, useCallback } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View, RefreshControl } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View, RefreshControl } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Skeleton } from "moti/skeleton";
 import { useAuth } from "@/features/auth";
 import { useNotificationStore } from "@/features/notifications";
 import { useBooking, useAppointmentStore, AppointmentDetailsModal, ReviewModal, AppointmentBookingModal } from "@/features/appointments";
-import { HeaderText, TopSection, images, topDoctorList, UpcomingConsultations, HospitalServices, LanguageSwitcher, LanguageSelectionModal } from "@/shared/components";
-import { TopDoctors, DoctorI, DoctorSearchModal } from "@/features/doctors";
+import { TopSection, UpcomingConsultations, HospitalServices, LanguageSwitcher, LanguageSelectionModal } from "@/shared/components";
+import { TopDoctors, DoctorI, DoctorSearchModal, useDoctorStore } from "@/features/doctors";
 import { HospitalGallery } from "@/features/gallery";
 import { useTranslation } from 'react-i18next';
 
@@ -208,24 +208,33 @@ export default function HomeScreen() {
     const { user, dbUser } = useAuth();
     const phone = user?.phone || dbUser?.phone;
     const { refreshAppointments, refreshing } = useAppointmentStore();
+    const { topDoctors: featuredDoctors, fetchTopDoctors } = useDoctorStore();
+
+    useEffect(() => {
+        fetchTopDoctors();
+    }, [fetchTopDoctors]);
 
     const onRefresh = React.useCallback(() => {
+        fetchTopDoctors();
         if (phone) {
             refreshAppointments({ phone });
         }
-    }, [phone, refreshAppointments]);
+    }, [phone, refreshAppointments, fetchTopDoctors]);
 
-    type SpecialistName = keyof typeof images;
-
-    const specialists: { id: number; name: SpecialistName }[] = [
-        { id: 1, name: "dental" },
-        { id: 2, name: "heart" },
-        { id: 3, name: "liver" },
-        { id: 4, name: "lungs" },
-        { id: 5, name: "kidney" },
-    ];
-
-    const topDoctors: DoctorI[] = topDoctorList || [];
+    const topDoctors: DoctorI[] = featuredDoctors.map((d) => ({
+        $id: d.id,
+        id: d.id,
+        name: d.name,
+        name_bn: d.name_bn,
+        specialty: d.specialty,
+        specialty_bn: d.specialty_bn,
+        image: d.image,
+        hourlyRate: d.hourlyRate,
+        experience: d.experience,
+        experience_bn: d.experience_bn,
+        specialties: d.specialties || [],
+        specialties_bn: d.specialties_bn || [],
+    }));
 
     return (
         <SafeAreaView className="flex-1 bg-white">
