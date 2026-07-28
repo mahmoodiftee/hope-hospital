@@ -1,17 +1,20 @@
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import 'react-native-url-polyfill/auto';
 import { useFonts } from 'expo-font';
 import { SplashScreen as ExpoSplashScreen, Stack } from 'expo-router';
 import * as SystemUI from 'expo-system-ui';
 import React, { useEffect } from 'react';
-import { Platform, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 import { useAuth } from '@/features/auth';
+import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import '@/globals.css';
 import '../src/i18n';
 
-ExpoSplashScreen.preventAutoHideAsync();
+ExpoSplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
     const [fontsLoaded, error] = useFonts({
@@ -25,31 +28,39 @@ export default function RootLayout() {
     const { initializeAuth } = useAuth();
 
     useEffect(() => {
-        SystemUI.setBackgroundColorAsync('#ffffff');
+        SystemUI.setBackgroundColorAsync('#ffffff').catch(() => {});
         if (fontsLoaded || error) {
-            ExpoSplashScreen.hideAsync();
+            ExpoSplashScreen.hideAsync().catch(() => {});
         }
+    }, [fontsLoaded, error]);
 
-        // ARCH RULE: Initialize auth and push token on app boot
-        initializeAuth();
-    }, [fontsLoaded, error, initializeAuth]);
+    useEffect(() => {
+        // Defer auth boot so a SecureStore/network failure cannot kill first paint
+        const id = setTimeout(() => {
+            initializeAuth().catch((err) => {
+                console.warn('[RootLayout] initializeAuth failed:', err);
+            });
+        }, 0);
+        return () => clearTimeout(id);
+    }, [initializeAuth]);
 
     if (!fontsLoaded && !error) return null;
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaProvider>
-                <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-                <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(auth)" />
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="appointments/index" />
-                    <Stack.Screen name="notifications/index" />
-                    <Stack.Screen name="prescriptions/index" />
-                    <Stack.Screen name="gallery/index" />
-                </Stack>
-                {/* Single global Toaster — do NOT add this inside any other component */}
-                <Toaster />
+                <ErrorBoundary>
+                    <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+                    <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="(auth)" />
+                        <Stack.Screen name="(tabs)" />
+                        <Stack.Screen name="appointments/index" />
+                        <Stack.Screen name="notifications/index" />
+                        <Stack.Screen name="prescriptions/index" />
+                        <Stack.Screen name="gallery/index" />
+                    </Stack>
+                    <Toaster />
+                </ErrorBoundary>
             </SafeAreaProvider>
         </GestureHandlerRootView>
     );

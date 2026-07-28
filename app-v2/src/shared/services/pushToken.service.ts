@@ -13,67 +13,74 @@ import Constants from 'expo-constants';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-        shouldShowBanner: true,
-        shouldShowList: true
-    }),
-});
+let handlerConfigured = false;
+
+function ensureNotificationHandler() {
+    if (handlerConfigured) return;
+    handlerConfigured = true;
+    try {
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldShowAlert: true,
+                shouldPlaySound: true,
+                shouldSetBadge: true,
+                shouldShowBanner: true,
+                shouldShowList: true,
+            }),
+        });
+    } catch (error) {
+        console.warn('[pushToken] Failed to set notification handler:', error);
+    }
+}
 
 /**
  * Requests permission and returns the Expo push token string.
  * Returns null if on simulator or permission denied.
  */
 export async function getExpoPushToken(): Promise<string | null> {
-    if (!Device.isDevice) {
-        console.warn('[pushToken] Push notifications only work on physical devices.');
-        return null;
-    }
-
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-
-    if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-    }
-
-    if (finalStatus !== 'granted') {
-        console.warn('[pushToken] Push notification permission denied.');
-        return null;
-    }
-
-    if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#007AFF',
-        });
-    }
-
-    let projectId =
-        Constants?.expoConfig?.extra?.eas?.projectId ??
-        Constants?.easConfig?.projectId;
-
-    if (!projectId) {
-        // Fallback for Expo Go if eas.json isn't strictly loaded
-        console.warn('[pushToken] EAS projectId not found on object. Using hardcoded fallback for Expo Go.');
-        projectId = "382877d6-bf48-4c42-87d2-28f3417cc9e6";
-    }
-
     try {
+        ensureNotificationHandler();
+
+        if (!Device.isDevice) {
+            console.warn('[pushToken] Push notifications only work on physical devices.');
+            return null;
+        }
+
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+        }
+
+        if (finalStatus !== 'granted') {
+            console.warn('[pushToken] Push notification permission denied.');
+            return null;
+        }
+
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#007AFF',
+            });
+        }
+
+        let projectId =
+            Constants?.expoConfig?.extra?.eas?.projectId ??
+            Constants?.easConfig?.projectId;
+
+        if (!projectId) {
+            projectId = '382877d6-bf48-4c42-87d2-28f3417cc9e6';
+        }
+
         const token = await Notifications.getExpoPushTokenAsync({ projectId });
-        console.log('\n==============================================');
-        console.log('📱 YOUR EXPO PUSH TOKEN FOR TESTING:');
-        console.log(token.data);
-        console.log('==============================================\n');
         return token.data;
     } catch (e: any) {
-        console.error('[pushToken] Failed to get Expo Push Token:', e.message);
+        // Common when FCM/google-services is misconfigured — never crash the app
+        console.warn('[pushToken] Failed to get Expo Push Token:', e?.message || e);
         return null;
     }
 }
@@ -85,7 +92,7 @@ export async function getExpoPushToken(): Promise<string | null> {
 export async function registerPushToken(userId: string): Promise<void> {
     try {
         const token = await getExpoPushToken();
-        if (!token) return;
+        if (!token || !API_BASE_URL) return;
 
         await fetch(`${API_BASE_URL}/api/register-push-token`, {
             method: 'POST',
@@ -93,7 +100,6 @@ export async function registerPushToken(userId: string): Promise<void> {
             body: JSON.stringify({ userId, expoPushToken: token }),
         });
     } catch (error) {
-        // Non-fatal — log but don't crash the app or fail the login
         console.warn('[pushToken] Failed to register push token:', error);
     }
 }

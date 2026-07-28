@@ -1,14 +1,16 @@
 import { Client, Databases, Storage, Account, Avatars } from 'react-native-appwrite';
-import { Platform } from 'react-native';
 
 const client = new Client();
 
-const platform = Platform.OS === 'ios' ? 'com.hope.hospital' : 'com.hope.hopehospital';
+// Must match app.json ios.bundleIdentifier / android.package
+const platform = 'com.hope.hospital';
 
-client
-    .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!)
-    .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!)
-    .setPlatform(platform);
+const endpoint =
+    process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1';
+const projectId =
+    process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID || '687534a40002a65f2150';
+
+client.setEndpoint(endpoint).setProject(projectId).setPlatform(platform);
 
 export const databases = new Databases(client);
 export const storage = new Storage(client);

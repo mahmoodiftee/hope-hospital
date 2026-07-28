@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Search } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View, RefreshControl } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Hope Hospital",
     "slug": "hope-hospital",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "hopehospital",
@@ -20,6 +20,7 @@
       "backgroundColor": "#000000"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

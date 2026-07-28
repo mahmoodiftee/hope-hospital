@@ -82,12 +82,14 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
                 elevation: 3
             }}
         >
-            <View className="relative">
-                <Image
-                    source={{ uri: topDoctor.image }}
-                    className="w-full h-36 rounded-2xl mb-3"
-                    resizeMode="cover"
-                />
+            <View className="relative mb-3">
+                <View className="w-full h-36 rounded-2xl bg-gray-100 overflow-hidden">
+                    <Image
+                        source={{ uri: topDoctor.image }}
+                        className="w-full h-full"
+                        resizeMode="contain"
+                    />
+                </View>
                 {/* Rating Overlay */}
                 {/* <View className="absolute top-2 left-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex-row items-center gap-1 border border-white/20">
                     <Ionicons name="star" size={12} color="#F59E0B" />
