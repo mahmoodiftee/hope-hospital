@@ -4,8 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:dev": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "build:dev:android": "eas build --platform android --profile development",
     "lint": "expo lint",
     "postinstall": "node scripts/fix-hermes-path.js"
   },

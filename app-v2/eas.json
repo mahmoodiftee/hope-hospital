@@ -7,6 +7,9 @@
         "development": {
             "developmentClient": true,
             "distribution": "internal",
+            "android": {
+                "buildType": "apk"
+            },
             "env": {
                 "EXPO_PUBLIC_API_BASE_URL": "https://otp-backend-eight.vercel.app",
                 "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "687534a40002a65f2150",
