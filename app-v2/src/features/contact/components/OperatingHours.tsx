@@ -1,30 +1,45 @@
 import { hospitalConfig } from '@/config/hospitalConfig';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-interface HourCardProps {
-    title: string;
-    subtitle: string;
-    icon: React.ComponentType<any>;
-    iconName: string;
+interface ScheduleRowProps {
+    label: string;
+    value: string;
+    accent?: string;
 }
 
-const HourCard: React.FC<HourCardProps> = ({ title, subtitle, icon: Icon, iconName }) => (
+const ScheduleRow: React.FC<ScheduleRowProps> = ({ label, value, accent = '#0F172A' }) => (
     <View
-        className="bg-white rounded-2xl p-5 shadow-sm mb-3"
-        style={hospitalConfig.ui.shadows.default}
+        style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            paddingVertical: 12,
+        }}
     >
-        <View className="flex-row justify-between items-center">
-            <View className="flex-1">
-                <Text className="text-black text-base font-semibold mb-1">{title}</Text>
-                <Text className="text-black/70 text-sm">{subtitle}</Text>
-            </View>
-            <View className="opacity-80">
-                <Icon name={iconName} size={24} color={hospitalConfig.ui.colors.primary} />
-            </View>
-        </View>
+        <Text
+            style={{
+                flex: 1,
+                fontSize: 14,
+                fontFamily: 'Quicksand-SemiBold',
+                color: '#64748B',
+                paddingRight: 12,
+            }}
+        >
+            {label}
+        </Text>
+        <Text
+            style={{
+                flex: 1,
+                fontSize: 14,
+                fontFamily: 'Quicksand-Bold',
+                color: accent,
+                textAlign: 'right',
+            }}
+        >
+            {value}
+        </Text>
     </View>
 );
 
@@ -32,25 +47,38 @@ export const OperatingHours: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <View className="mb-6 px-1">
-            <View className="flex-row items-center mb-4">
-                <Ionicons name="time" size={24} color={hospitalConfig.ui.colors.black} />
-                <Text className="text-dark-100 text-xl font-bold ml-2">{t('contact.operatingHoursTitle')}</Text>
+        <View style={{ marginBottom: 8 }}>
+            <Text
+                style={{
+                    fontSize: 11,
+                    fontFamily: 'Quicksand-Bold',
+                    color: '#94A3B8',
+                    letterSpacing: 1.1,
+                    textTransform: 'uppercase',
+                    marginBottom: 8,
+                }}
+            >
+                {t('contact.operatingHoursTitle')}
+            </Text>
+
+            <View
+                style={{
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                    borderColor: '#EEF2F7',
+                }}
+            >
+                <ScheduleRow
+                    label={t('contact.emergency247Title')}
+                    value={hospitalConfig.hours.emergency}
+                    accent="#DC2626"
+                />
+                <View style={{ height: 1, backgroundColor: '#EEF2F7' }} />
+                <ScheduleRow
+                    label={t('contact.opdTitle')}
+                    value={hospitalConfig.hours.opd}
+                />
             </View>
-
-            <HourCard
-                title={t('contact.emergency247Title')}
-                subtitle={hospitalConfig.hours.emergency}
-                icon={FontAwesome5}
-                iconName="ambulance"
-            />
-
-            <HourCard
-                title={t('contact.opdTitle')}
-                subtitle={hospitalConfig.hours.opd}
-                icon={Ionicons}
-                iconName="medical"
-            />
         </View>
     );
 };
