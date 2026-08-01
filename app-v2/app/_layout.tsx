@@ -4,13 +4,14 @@ import 'react-native-url-polyfill/auto';
 import { useFonts } from 'expo-font';
 import { SplashScreen as ExpoSplashScreen, Stack } from 'expo-router';
 import * as SystemUI from 'expo-system-ui';
-import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { DeviceEventEmitter, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from 'sonner-native';
 import { useAuth } from '@/features/auth';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
+import { TOAST_RECLAIM_EVENT } from '@/shared/utils/toastReclaim';
 import '@/globals.css';
 import '../src/i18n';
 
@@ -24,6 +25,7 @@ export default function RootLayout() {
         'Quicksand-SemiBold': require('../assets/fonts/Quicksand-SemiBold.ttf'),
         'Quicksand-Bold': require('../assets/fonts/Quicksand-Bold.ttf'),
     });
+    const [toasterKey, setToasterKey] = useState(0);
 
     const { initializeAuth } = useAuth();
 
@@ -44,6 +46,13 @@ export default function RootLayout() {
         return () => clearTimeout(id);
     }, [initializeAuth]);
 
+    useEffect(() => {
+        const sub = DeviceEventEmitter.addListener(TOAST_RECLAIM_EVENT, () => {
+            setToasterKey((k) => k + 1);
+        });
+        return () => sub.remove();
+    }, []);
+
     if (!fontsLoaded && !error) return null;
 
     return (
@@ -59,7 +68,7 @@ export default function RootLayout() {
                         <Stack.Screen name="prescriptions/index" />
                         <Stack.Screen name="gallery/index" />
                     </Stack>
-                    <Toaster />
+                    <Toaster key={toasterKey} />
                 </ErrorBoundary>
             </SafeAreaProvider>
         </GestureHandlerRootView>

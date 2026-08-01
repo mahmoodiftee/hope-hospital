@@ -22,7 +22,7 @@ export const MASTER_TIME_SLOTS = [
     '08:00 PM',
 ] as const;
 
-export const APPOINTMENT_BOOKING_DAYS_AHEAD = 30;
+export const APPOINTMENT_BOOKING_DAYS_AHEAD = 90;
 
 export const OTP_RESEND_COUNTDOWN_SECONDS = 60;
 export const OTP_DEMO_CODE = '123456'; // demo mode only

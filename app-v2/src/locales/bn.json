@@ -158,6 +158,12 @@
         "privacySecuritySub": "আপনার স্বাস্থ্য তথ্য পরিচালনা করুন",
         "appSettings": "অ্যাপ সেটিংস",
         "appSettingsSub": "পছন্দ এবং অঞ্চল",
+        "language": "ভাষা",
+        "languageSub": "English",
+        "languageSubBn": "বাংলা",
+        "languageChoose": "আপনার পছন্দের ভাষা বেছে নিন",
+        "languageEnglish": "English",
+        "languageBangla": "বাংলা",
         "signOut": "সাইন আউট",
         "appVersion": "হোপ হাসপাতাল • ভার্সন ২.১.০"
     },

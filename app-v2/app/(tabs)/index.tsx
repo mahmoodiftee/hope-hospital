@@ -208,7 +208,7 @@ export default function HomeScreen() {
     const { user, dbUser } = useAuth();
     const phone = user?.phone || dbUser?.phone;
     const { refreshAppointments, refreshing } = useAppointmentStore();
-    const { topDoctors: featuredDoctors, fetchTopDoctors } = useDoctorStore();
+    const { topDoctors: featuredDoctors, fetchTopDoctors, isTopDoctorsLoading } = useDoctorStore();
 
     useEffect(() => {
         fetchTopDoctors();
@@ -291,10 +291,11 @@ export default function HomeScreen() {
                     }
 
                     <View className="px-4">
-                        {TopDoctors && topDoctors.length > 0 && (
+                        {(isTopDoctorsLoading || topDoctors.length > 0) && (
                             <TopDoctors
                                 onViewAll={() => router.push("/doctors")}
                                 topDoctors={topDoctors}
+                                loading={isTopDoctorsLoading && topDoctors.length === 0}
                             />
                         )}
 

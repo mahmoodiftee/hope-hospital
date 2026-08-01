@@ -192,23 +192,52 @@ export class AppointmentService {
     // ─── Doctor Time Slots ────────────────────────────────────────────────────
 
     /**
-     * Fetches a doctor's available schedule from the `timeslots` collection.
-     * Returns { day: string[], time: string[] } or null if no record found.
+     * Fetches a doctor's schedule from `timeslots`.
+     * Collection stores one document per day (`day` string + `time` string[]).
+     * Returns merged days/times plus per-day times for accurate slot filtering.
      */
-    static async getDoctorTimeSlots(doctorId: string): Promise<{ day: string[]; time: string[] } | null> {
+    static async getDoctorTimeSlots(doctorId: string): Promise<{
+        day: string[];
+        time: string[];
+        timesByDay: Record<string, string[]>;
+    } | null> {
         try {
             const response = await databases.listDocuments(
                 config.databaseId,
                 config.timeSlotsCollectionId,
-                [Query.equal('docId', doctorId)]
+                [Query.equal('docId', doctorId), Query.limit(100)]
             );
 
             if (!response.total || response.documents.length === 0) return null;
 
-            const doc = response.documents[0];
+            const days = new Set<string>();
+            const times = new Set<string>();
+            const timesByDay: Record<string, string[]> = {};
+
+            for (const doc of response.documents) {
+                const dayName =
+                    typeof doc.day === 'string'
+                        ? doc.day
+                        : Array.isArray(doc.day)
+                          ? String(doc.day[0] ?? '')
+                          : '';
+                if (!dayName) continue;
+
+                days.add(dayName);
+
+                const slotTimes: string[] = (Array.isArray(doc.time) ? doc.time : [])
+                    .filter(Boolean)
+                    .map(String);
+                timesByDay[dayName] = slotTimes;
+                for (const t of slotTimes) times.add(t);
+            }
+
+            if (days.size === 0) return null;
+
             return {
-                day: doc.day ?? [],
-                time: doc.time ?? [],
+                day: Array.from(days),
+                time: Array.from(times),
+                timesByDay,
             };
         } catch (error: any) {
             console.error('[AppointmentService] getDoctorTimeSlots error:', error);

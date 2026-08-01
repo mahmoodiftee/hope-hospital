@@ -158,6 +158,12 @@
         "privacySecuritySub": "Manage your health data",
         "appSettings": "App Settings",
         "appSettingsSub": "Preferences and region",
+        "language": "Language",
+        "languageSub": "English",
+        "languageSubBn": "বাংলা",
+        "languageChoose": "Choose your preferred language",
+        "languageEnglish": "English",
+        "languageBangla": "বাংলা",
         "signOut": "Sign Out",
         "appVersion": "Hope Hospital • Version 2.1.0"
     },

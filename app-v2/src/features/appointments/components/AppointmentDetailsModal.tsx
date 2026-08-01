@@ -24,6 +24,7 @@ import { parseAppointmentDateTime } from '@/shared/utils/timeUtils';
 import { getTranslatedField, formatLocalizedNumber, formatLocalizedTime, getTranslatedSpecialties } from '@/shared/utils/translation';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { images } from '@/shared/components';
+import { ModalToaster } from '@/shared/components/ModalToaster';
 
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -53,6 +54,8 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
 
     const [showModal, setShowModal] = useState(visible);
     const [isLoading, setIsLoading] = useState(false);
+    const [specialtiesExpanded, setSpecialtiesExpanded] = useState(false);
+    const SPECIALTIES_PREVIEW_COUNT = 4;
 
     // Animation values
     const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -99,6 +102,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
     useEffect(() => {
         if (visible) {
             dragY.setValue(0);
+            setSpecialtiesExpanded(false);
             setShowModal(true);
             Animated.parallel([
                 Animated.spring(translateY, { toValue: 0, tension: 65, friction: 11, useNativeDriver: true }),
@@ -352,24 +356,58 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
 
                     {/* ── Specialties ── */}
                     {/* @ts-ignore */}
-                    {appointment.doctorId?.specialties && (
-                        <View style={{ marginHorizontal: 20, marginBottom: 16 }}>
-                            <SectionLabel>{t('appointments.details.specializations')}</SectionLabel>
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                                {/* @ts-ignore */}
-                                {getTranslatedSpecialties(appointment.doctorId, i18n.language).map((s: string, i: number) => (
-                                    <View key={i} style={{
-                                        backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 6,
-                                        borderRadius: 20, borderWidth: 1, borderColor: '#BFDBFE',
-                                    }}>
-                                        <Text style={{ fontSize: 12, fontFamily: 'Quicksand-Bold', color: '#2563EB' }}>
-                                            {s.split(' - ')[0]}
+                    {appointment.doctorId?.specialties && (() => {
+                        // @ts-ignore
+                        const allSpecialties = getTranslatedSpecialties(appointment.doctorId, i18n.language);
+                        const hasMore = allSpecialties.length > SPECIALTIES_PREVIEW_COUNT;
+                        const visibleSpecialties =
+                            specialtiesExpanded || !hasMore
+                                ? allSpecialties
+                                : allSpecialties.slice(0, SPECIALTIES_PREVIEW_COUNT);
+                        const hiddenCount = allSpecialties.length - SPECIALTIES_PREVIEW_COUNT;
+
+                        return (
+                            <View style={{ marginHorizontal: 20, marginBottom: 16 }}>
+                                <SectionLabel>{t('appointments.details.specializations')}</SectionLabel>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                                    {visibleSpecialties.map((s: string, i: number) => (
+                                        <View key={i} style={{
+                                            backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 6,
+                                            borderRadius: 20, borderWidth: 1, borderColor: '#BFDBFE',
+                                        }}>
+                                            <Text style={{ fontSize: 12, fontFamily: 'Quicksand-Bold', color: '#2563EB' }}>
+                                                {s.split(' - ')[0]}
+                                            </Text>
+                                        </View>
+                                    ))}
+                                </View>
+                                {hasMore && (
+                                    <TouchableOpacity
+                                        onPress={() => setSpecialtiesExpanded((prev) => !prev)}
+                                        activeOpacity={0.7}
+                                        style={{
+                                            marginTop: 10,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            alignSelf: 'flex-start',
+                                            gap: 4,
+                                        }}
+                                    >
+                                        <Text style={{ fontSize: 13, fontFamily: 'Quicksand-Bold', color: '#2563EB' }}>
+                                            {specialtiesExpanded
+                                                ? t('doctors.showLess')
+                                                : t('doctors.showMore', { count: hiddenCount })}
                                         </Text>
-                                    </View>
-                                ))}
+                                        <Ionicons
+                                            name={specialtiesExpanded ? 'chevron-up' : 'chevron-down'}
+                                            size={16}
+                                            color="#2563EB"
+                                        />
+                                    </TouchableOpacity>
+                                )}
                             </View>
-                        </View>
-                    )}
+                        );
+                    })()}
 
                     {/* ── Bio ── */}
                     {/* @ts-ignore */}
@@ -433,6 +471,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                     </View>
                 </ScrollView>
             </Animated.View>
+            <ModalToaster />
         </Modal>
     );
 };

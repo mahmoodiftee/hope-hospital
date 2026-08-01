@@ -150,7 +150,7 @@ export default function DoctorDetailScreen() {
   const insets = useSafeAreaInsets()
   const { dbUser, toggleFavorite, isAuthenticated } = useAuth()
 
-  const SPECIALTIES_PREVIEW_COUNT = 8
+  const SPECIALTIES_PREVIEW_COUNT = 4
 
   // Animation for the arrow icon
   const translateX = useSharedValue(0)

@@ -1,27 +1,32 @@
-import React, { useEffect, useMemo } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/features/auth';
-import { PersonalInfoForm, SettingsItem } from '@/features/profile';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+    PersonalInfoForm,
+    SettingsItem,
+    LanguagePickerModal,
+    LogoutConfirmModal,
+} from '@/features/profile';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppointmentStore } from '@/features/appointments/stores/appointment.store';
 import { useNotificationStore } from '@/features/notifications';
 import { parseAppointmentDateTime } from '@/shared/utils/timeUtils';
 import { User as UserIcon, Phone, ChevronRight } from 'lucide-react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 export default function ProfileScreen() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const router = useRouter();
     const { user, dbUser, logout, isAuthenticated, initializeAuth } = useAuth();
     const { appointments, fetchAppointments, refreshAppointments } = useAppointmentStore();
     const { unreadCount, fetchNotifications } = useNotificationStore();
-    const [refreshing, setRefreshing] = React.useState(false);
-    const insets = useSafeAreaInsets();
+    const [refreshing, setRefreshing] = useState(false);
+    const [showLanguageModal, setShowLanguageModal] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+    const isBn = i18n.language === 'bn' || i18n.language.startsWith('bn');
 
     useEffect(() => {
         if (isAuthenticated && (user?.phone || dbUser?.phone)) {
@@ -66,15 +71,9 @@ export default function ProfileScreen() {
         return { visits, upcoming };
     }, [appointments, isAuthenticated]);
 
-    const handleLogout = () => {
-        Alert.alert(
-            t("profile.logoutTitle"),
-            t("profile.logoutConfirm"),
-            [
-                { text: t("profile.cancel"), style: "cancel" },
-                { text: t("profile.logout"), style: "destructive", onPress: logout }
-            ]
-        );
+    const handleLogoutConfirm = () => {
+        setShowLogoutModal(false);
+        logout();
     };
 
     const handleLogin = () => {
@@ -115,6 +114,34 @@ export default function ProfileScreen() {
                             </View>
                         </View>
 
+                        <TouchableOpacity
+                            onPress={() => setShowLanguageModal(true)}
+                            className="bg-white rounded-[32px] p-6 border border-blue-50 mb-4"
+                            style={{
+                                shadowColor: "#3B82F6",
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: 0.03,
+                                shadowRadius: 12,
+                                elevation: 2
+                            }}
+                            activeOpacity={0.7}
+                        >
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-row items-center">
+                                    <View className="w-12 h-12 rounded-2xl items-center justify-center mr-4 bg-blue-50">
+                                        <Ionicons name="language" size={22} color="#3B82F6" />
+                                    </View>
+                                    <View>
+                                        <Text className="text-gray-900 font-bold text-base">{t("profile.language")}</Text>
+                                        <Text className="text-blue-500 font-bold text-sm">
+                                            {isBn ? t("profile.languageSubBn") : t("profile.languageSub")}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <ChevronRight size={18} color="#D1D5DB" />
+                            </View>
+                        </TouchableOpacity>
+
                         {/* Emergency Card */}
                         <TouchableOpacity
                             className="bg-white rounded-[32px] p-6 border border-red-50"
@@ -149,6 +176,11 @@ export default function ProfileScreen() {
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
+
+                <LanguagePickerModal
+                    visible={showLanguageModal}
+                    onClose={() => setShowLanguageModal(false)}
+                />
             </SafeAreaView>
         );
     }
@@ -247,6 +279,13 @@ export default function ProfileScreen() {
                         />
                         <View className="h-[1px] bg-gray-50 mx-4" />
                         <SettingsItem
+                            icon="language"
+                            title={t("profile.language")}
+                            subtitle={isBn ? t("profile.languageSubBn") : t("profile.languageSub")}
+                            onPress={() => setShowLanguageModal(true)}
+                        />
+                        <View className="h-[1px] bg-gray-50 mx-4" />
+                        <SettingsItem
                             icon="settings"
                             title={t("profile.appSettings")}
                             subtitle={t("profile.appSettingsSub")}
@@ -258,7 +297,7 @@ export default function ProfileScreen() {
                 {/* Logout Button */}
                 <View className="px-4 mt-8 mb-20">
                     <TouchableOpacity
-                        onPress={handleLogout}
+                        onPress={() => setShowLogoutModal(true)}
                         className="flex-row items-center justify-center py-5 bg-red-50 rounded-[32px] border border-red-100"
                         activeOpacity={0.7}
                     >
@@ -272,6 +311,16 @@ export default function ProfileScreen() {
                 </View>
 
             </ScrollView>
+
+            <LanguagePickerModal
+                visible={showLanguageModal}
+                onClose={() => setShowLanguageModal(false)}
+            />
+            <LogoutConfirmModal
+                visible={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogoutConfirm}
+            />
         </SafeAreaView >
     );
 }

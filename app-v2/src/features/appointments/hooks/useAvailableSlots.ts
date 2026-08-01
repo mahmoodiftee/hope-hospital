@@ -4,6 +4,12 @@ import { TimeSlot, TimeSlotStatus } from '@/shared/types';
 import { MASTER_TIME_SLOTS, APPOINTMENT_BOOKING_BUFFER_MINUTES, APPOINTMENT_BOOKING_DAYS_AHEAD } from '@/shared/constants';
 import { timeStringToMinutes, getCurrentTimeInMinutes, getTodayDateString, normalizeTimeFormat } from '@/shared/utils/timeUtils';
 
+type DoctorSchedule = {
+    day: string[];
+    time: string[];
+    timesByDay: Record<string, string[]>;
+};
+
 /**
  * useAvailableSlots — fetches a doctor's schedule from the `timeslots` collection
  * and computes which master time slots are available for a given date.
@@ -11,7 +17,7 @@ import { timeStringToMinutes, getCurrentTimeInMinutes, getTodayDateString, norma
  * Also exposes `availableDays` for the calendar to highlight selectable days.
  */
 export const useAvailableSlots = (doctorId: string, selectedDate: string) => {
-    const [doctorSchedule, setDoctorSchedule] = useState<{ day: string[]; time: string[] } | null>(null);
+    const [doctorSchedule, setDoctorSchedule] = useState<DoctorSchedule | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -35,16 +41,26 @@ export const useAvailableSlots = (doctorId: string, selectedDate: string) => {
         fetchSchedule();
     }, [fetchSchedule]);
 
+    const selectedDayName = useMemo(() => {
+        if (!selectedDate) return null;
+        // Noon avoids timezone day-boundary flips when parsing YYYY-MM-DD
+        const date = new Date(`${selectedDate}T12:00:00`);
+        return date.toLocaleDateString('en-US', { weekday: 'long' });
+    }, [selectedDate]);
+
     // Compute time slots for the selected date
     const slots: TimeSlot[] = useMemo(() => {
-        if (!doctorSchedule || !selectedDate) return [];
+        if (!doctorSchedule || !selectedDate || !selectedDayName) return [];
 
         const today = getTodayDateString();
         const currentTimePlusBuffer = getCurrentTimeInMinutes() + APPOINTMENT_BOOKING_BUFFER_MINUTES;
+        const dayTimes =
+            doctorSchedule.timesByDay[selectedDayName] ??
+            (doctorSchedule.day.includes(selectedDayName) ? doctorSchedule.time : []);
 
         return MASTER_TIME_SLOTS.map((time, index) => {
             const normalizedTime = normalizeTimeFormat(time);
-            const isInDoctorSchedule = doctorSchedule.time.some(
+            const isInDoctorSchedule = dayTimes.some(
                 (t) => normalizeTimeFormat(t) === normalizedTime
             );
 
@@ -75,11 +91,11 @@ export const useAvailableSlots = (doctorId: string, selectedDate: string) => {
                             : 'Not Available',
             };
         });
-    }, [doctorSchedule, selectedDate]);
+    }, [doctorSchedule, selectedDate, selectedDayName]);
 
     // Compute available days for the next N days (for the calendar)
     const availableDays: string[] = useMemo(() => {
-        if (!doctorSchedule?.day) return [];
+        if (!doctorSchedule?.day?.length) return [];
 
         const result: string[] = [];
         const now = new Date();
@@ -88,9 +104,12 @@ export const useAvailableSlots = (doctorId: string, selectedDate: string) => {
             const date = new Date(now);
             date.setDate(date.getDate() + i);
 
-            const dayName = date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
             if (doctorSchedule.day.includes(dayName)) {
-                result.push(date.toISOString().split('T')[0]);
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                result.push(`${y}-${m}-${d}`);
             }
         }
 

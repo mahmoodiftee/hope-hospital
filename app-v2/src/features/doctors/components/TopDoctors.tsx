@@ -26,9 +26,10 @@ export interface DoctorI {
 interface TopDoctorsProps {
     onViewAll?: () => void;
     topDoctors: DoctorI[];
+    loading?: boolean;
 }
 
-export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors }) => {
+export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors, loading = false }) => {
     const { t, i18n } = useTranslation();
     const router = useRouter();
     const flatListRef = useRef<FlatList>(null);
@@ -38,6 +39,7 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
     const screenWidth = Dimensions.get('window').width;
     const cardMargin = 16;
     const cardWidth = (screenWidth - (cardMargin * 3)) / 2;
+    const skeletonItems = [0, 1];
 
     const onScroll = (event: any) => {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
@@ -64,6 +66,28 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
         }
         toggleFavorite(doctorId);
     };
+
+    const renderSkeletonCard = ({ index }: { index: number }) => (
+        <View
+            key={`top-doctor-skeleton-${index}`}
+            className="bg-white"
+            style={{
+                width: cardWidth,
+                marginRight: cardMargin,
+                borderRadius: 28,
+                padding: 12,
+                borderWidth: 1,
+                borderColor: '#EBF2FF',
+            }}
+        >
+            <View className="w-full h-36 rounded-2xl bg-gray-100 mb-3" />
+            <View className="mb-3 px-1">
+                <View style={{ width: '75%', height: 14, borderRadius: 6, backgroundColor: '#F3F4F6', marginBottom: 8 }} />
+                <View style={{ width: '50%', height: 12, borderRadius: 6, backgroundColor: '#F3F4F6' }} />
+            </View>
+            <View style={{ height: 40, borderRadius: 12, backgroundColor: '#F3F4F6' }} />
+        </View>
+    );
 
     const renderTopDoctorCard = ({ item: topDoctor }: { item: DoctorI }) => (
         <View
@@ -140,40 +164,56 @@ export const TopDoctors: React.FC<TopDoctorsProps> = ({ onViewAll, topDoctors })
                 </TouchableOpacity>
             </View>
 
-            <FlatList
-                ref={flatListRef}
-                data={topDoctors}
-                renderItem={renderTopDoctorCard}
-                keyExtractor={(item, index) => item.$id || index.toString()}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                onScroll={onScroll}
-                scrollEventThrottle={16}
-                contentContainerStyle={{
-                    paddingHorizontal: cardMargin,
-                    paddingBottom: 15,
-                    paddingTop: 8
-                }}
-                snapToInterval={cardWidth + cardMargin}
-                decelerationRate="fast"
-                bounces={false}
-                getItemLayout={(data, index) => ({
-                    length: cardWidth + cardMargin,
-                    offset: (cardWidth + cardMargin) * index,
-                    index,
-                })}
-                style={{ marginHorizontal: -cardMargin }} // Pull back the padding to align with header
-                removeClippedSubviews={false} // Prevent shadow clipping
-            />
-
-            <View className="flex-row justify-center mt-4 gap-2">
-                {Array.from({ length: Math.ceil(topDoctors.length / 2) }, (_, index) => (
-                    <View
-                        key={index}
-                        className={`w-2 h-2 rounded-full ${Math.floor(currentIndex / 2) === index ? 'bg-blue-600' : 'bg-gray-200'}`}
+            {loading ? (
+                <View
+                    className="flex-row"
+                    style={{
+                        paddingHorizontal: cardMargin,
+                        paddingBottom: 15,
+                        paddingTop: 8,
+                        marginHorizontal: -cardMargin,
+                    }}
+                >
+                    {skeletonItems.map((index) => renderSkeletonCard({ index }))}
+                </View>
+            ) : (
+                <>
+                    <FlatList
+                        ref={flatListRef}
+                        data={topDoctors}
+                        renderItem={renderTopDoctorCard}
+                        keyExtractor={(item, index) => item.$id || index.toString()}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        onScroll={onScroll}
+                        scrollEventThrottle={16}
+                        contentContainerStyle={{
+                            paddingHorizontal: cardMargin,
+                            paddingBottom: 15,
+                            paddingTop: 8
+                        }}
+                        snapToInterval={cardWidth + cardMargin}
+                        decelerationRate="fast"
+                        bounces={false}
+                        getItemLayout={(data, index) => ({
+                            length: cardWidth + cardMargin,
+                            offset: (cardWidth + cardMargin) * index,
+                            index,
+                        })}
+                        style={{ marginHorizontal: -cardMargin }} // Pull back the padding to align with header
+                        removeClippedSubviews={false} // Prevent shadow clipping
                     />
-                ))}
-            </View>
+
+                    <View className="flex-row justify-center mt-4 gap-2">
+                        {Array.from({ length: Math.ceil(topDoctors.length / 2) }, (_, index) => (
+                            <View
+                                key={index}
+                                className={`w-2 h-2 rounded-full ${Math.floor(currentIndex / 2) === index ? 'bg-blue-600' : 'bg-gray-200'}`}
+                            />
+                        ))}
+                    </View>
+                </>
+            )}
         </View>
     );
 };

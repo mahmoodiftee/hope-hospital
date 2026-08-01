@@ -107,7 +107,7 @@ const AppointmentsScreen = () => {
                 title={filter === 'Completed' ? t('appointments.totalVisits') : filter === 'Upcoming' ? t('appointments.upcomingVisits') : t('appointments.title')}
             />
 
-            <View className="flex-1 px-5">
+            <View className="flex-1">
                 {isLoading && !refreshing ? (
                     <View className="flex-1 justify-center items-center">
                         <ActivityIndicator size="large" color="#3B82F6" />
@@ -131,7 +131,7 @@ const AppointmentsScreen = () => {
                             />
                         }
                         ListEmptyComponent={
-                            <View className="flex-1 items-center justify-center pt-20">
+                            <View className="flex-1 items-center justify-center pt-20 px-5">
                                 <View className="w-20 h-20 bg-gray-100 rounded-full items-center justify-center mb-4">
                                     <Ionicons name="calendar-outline" size={40} color="#9CA3AF" />
                                 </View>

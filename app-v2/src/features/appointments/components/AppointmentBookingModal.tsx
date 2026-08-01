@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     View,
     Text,
@@ -23,7 +23,8 @@ import { TimeSlot, Appointment } from '@/shared/types';
 import { SuccessModal } from './SuccessModal';
 import { getTodayDateString } from '@/shared/utils/timeUtils';
 import { getTranslatedField } from '@/shared/utils/translation';
-import { OTP_RESEND_COUNTDOWN_SECONDS } from '@/shared/constants';
+import { OTP_RESEND_COUNTDOWN_SECONDS, APPOINTMENT_BOOKING_DAYS_AHEAD } from '@/shared/constants';
+import { ModalToaster } from '@/shared/components/ModalToaster';
 
 interface AppointmentBookingModalProps {
     isVisible: boolean;
@@ -94,6 +95,15 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
         isDateAvailable,
     } = useAvailableSlots(doctor.id, selectedDate);
 
+    const maxDate = useMemo(() => {
+        const d = new Date();
+        d.setDate(d.getDate() + APPOINTMENT_BOOKING_DAYS_AHEAD - 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }, []);
+
     // ── Success modal ──────────────────────────────────────────────────────
     const [showSuccess, setShowSuccess] = useState(false);
     const [focusedField, setFocusedField] = useState<string>('');
@@ -154,6 +164,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                     style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}
                 >
                     <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, height: '92%', padding: 24 }}>
+                        <ModalToaster />
                         {/* Header */}
                         <View className="flex-row justify-between items-center mb-4">
                             <Text className="text-2xl font-bold text-gray-900">
@@ -192,6 +203,7 @@ export const AppointmentBookingModal: React.FC<AppointmentBookingModalProps> = (
                                 <Calendar
                                     style={{ borderRadius: 16 }}
                                     minDate={today}
+                                    maxDate={maxDate}
                                     markingType="custom"
                                     markedDates={markedDates}
                                     onDayPress={handleDateSelect}
