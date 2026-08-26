@@ -8,6 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "build:dev:android": "eas build --platform android --profile development",
+    "update:production": "eas update --channel production --environment production",
     "lint": "expo lint",
     "postinstall": "node scripts/fix-hermes-path.js"
   },
@@ -36,6 +37,7 @@
     "expo-status-bar": "~55.0.6",
     "expo-symbols": "~55.0.9",
     "expo-system-ui": "~55.0.20",
+    "expo-updates": "~55.0.28",
     "expo-web-browser": "~55.0.18",
     "i18next": "^25.8.18",
     "lucide-react-native": "^0.479.0",

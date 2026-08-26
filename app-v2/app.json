@@ -3,6 +3,15 @@
     "name": "Hope Hospital",
     "slug": "hope-hospital",
     "version": "1.0.1",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/382877d6-bf48-4c42-87d2-28f3417cc9e6",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "hopehospital",
@@ -67,7 +76,8 @@
       ],
       ["expo-secure-store"],
       "expo-image",
-      "expo-localization"
+      "expo-localization",
+      "expo-updates"
     ],
     "experiments": {
       "typedRoutes": true

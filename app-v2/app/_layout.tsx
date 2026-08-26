@@ -12,6 +12,7 @@ import { Toaster } from 'sonner-native';
 import { useAuth } from '@/features/auth';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { TOAST_RECLAIM_EVENT } from '@/shared/utils/toastReclaim';
+import { applyOtaUpdateIfAvailable } from '@/shared/services/otaUpdate.service';
 import '@/globals.css';
 import '../src/i18n';
 
@@ -51,6 +52,10 @@ export default function RootLayout() {
             setToasterKey((k) => k + 1);
         });
         return () => sub.remove();
+    }, []);
+
+    useEffect(() => {
+        applyOtaUpdateIfAvailable().catch(() => {});
     }, []);
 
     if (!fontsLoaded && !error) return null;
