@@ -65,9 +65,7 @@
           "mode": "production"
         }
       ],
-      [
-        "expo-secure-store"
-      ],
+      ["expo-secure-store"],
       "expo-image",
       "expo-localization"
     ],

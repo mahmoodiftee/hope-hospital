@@ -6,12 +6,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useDoctorStore, DoctorCard, useDoctorSearch, useDoctorFilters } from '@/features/doctors';
 import { translateSpecialty } from '@/shared/utils/specialtyUtils';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth';
 import { getTypographyStyle } from '@/shared/utils/typography';
 
 export default function DoctorsListingScreen() {
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
+    const bottomPad = Math.max(insets.bottom, 12) + 110;
     const { fetchDoctors, isLoading } = useDoctorStore();
     const { searchQuery, search, filteredDoctors: searchFilteredDoctors } = useDoctorSearch();
     const { specialties, selectedSpecialty, toggleSpecialty, filteredDoctors } = useDoctorFilters(searchFilteredDoctors);
@@ -136,7 +138,7 @@ export default function DoctorsListingScreen() {
                                 </Text>
                             </View>
                         }
-                        contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 10, paddingBottom: 20 }}
+                        contentContainerStyle={{ paddingHorizontal: 15, paddingVertical: 10, paddingBottom: bottomPad }}
                         showsVerticalScrollIndicator={false}
                     />
                 )}

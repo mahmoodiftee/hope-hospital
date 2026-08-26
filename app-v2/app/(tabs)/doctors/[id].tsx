@@ -38,30 +38,30 @@ const { width } = Dimensions.get('window')
 
 const ReviewCarousel = ({ dbReviews }: { dbReviews?: Review[] }) => {
   const { t, i18n } = useTranslation()
-  const mockReviews = [
-    {
-      id: '1',
-      user: 'Sarah Johnson',
-      rating: 5,
-      comment:
-        'Dr. Akhter is incredibly professional and caring. She took the time to explain everything clearly.',
-      date: t('doctors.daysAgo', { count: 2 }),
-    },
-    {
-      id: '2',
-      user: 'Michael Chen',
-      rating: 4,
-      comment: 'Very thorough checkup. The clinic was clean and the staff was very helpful.',
-      date: t('doctors.weekAgo'),
-    },
-    {
-      id: '3',
-      user: 'Emily Davis',
-      rating: 5,
-      comment: 'Best nephrologist I have visited. Highly recommend for any kidney-related issues.',
-      date: t('doctors.weeksAgo', { count: 3 }),
-    },
-  ]
+  // const mockReviews = [
+  //   {
+  //     id: '1',
+  //     user: 'Sarah Johnson',
+  //     rating: 5,
+  //     comment:
+  //       'Dr. Akhter is incredibly professional and caring. She took the time to explain everything clearly.',
+  //     date: t('doctors.daysAgo', { count: 2 }),
+  //   },
+  //   {
+  //     id: '2',
+  //     user: 'Michael Chen',
+  //     rating: 4,
+  //     comment: 'Very thorough checkup. The clinic was clean and the staff was very helpful.',
+  //     date: t('doctors.weekAgo'),
+  //   },
+  //   {
+  //     id: '3',
+  //     user: 'Emily Davis',
+  //     rating: 5,
+  //     comment: 'Best nephrologist I have visited. Highly recommend for any kidney-related issues.',
+  //     date: t('doctors.weeksAgo', { count: 3 }),
+  //   },
+  // ]
 
   const hasRealReviews = dbReviews && dbReviews.length > 0
   const items = hasRealReviews
@@ -72,7 +72,7 @@ const ReviewCarousel = ({ dbReviews }: { dbReviews?: Review[] }) => {
         comment: getTranslatedField(r, 'review', i18n.language),
         date: t('doctors.recent'),
       }))
-    : mockReviews
+    : []
 
   return (
     <ScrollView
@@ -224,11 +224,17 @@ export default function DoctorDetailScreen() {
         }}
       />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: Math.max(insets.bottom, 12) + 180 },
+        ]}
+      >
         {/* Hero section with Image */}
         <View style={styles.heroSection}>
           {doctor.image && (
-            <Image source={{ uri: doctor.image }} style={styles.heroImage} resizeMode="cover" />
+            <Image source={{ uri: doctor.image }} style={styles.heroImage} resizeMode="contain" />
           )}
           <View style={styles.overlay} />
         </View>
@@ -307,19 +313,6 @@ export default function DoctorDetailScreen() {
             </Text>
           </View>
 
-          {/* Review Carousel */}
-          <View style={styles.section}>
-            <View style={styles.sectionTitleRow}>
-              <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>
-                {t('doctors.reviews')}
-              </Text>
-              {/* <TouchableOpacity>
-                                <Text style={styles.seeAllText}>See All</Text>
-                            </TouchableOpacity> */}
-            </View>
-            <ReviewCarousel dbReviews={doctor.reviews} />
-          </View>
-
           {/* Working Hours / Specialties */}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>
@@ -369,6 +362,19 @@ export default function DoctorDetailScreen() {
                 </>
               )
             })()}
+          </View>
+
+          {/* Review Carousel */}
+          <View style={styles.section}>
+            <View style={styles.sectionTitleRow}>
+              <Text style={[styles.sectionTitle, getTypographyStyle('black', 18)]}>
+                {t('doctors.reviews')}
+              </Text>
+              {/* <TouchableOpacity>
+                                <Text style={styles.seeAllText}>See All</Text>
+                            </TouchableOpacity> */}
+            </View>
+            <ReviewCarousel dbReviews={doctor.reviews} />
           </View>
         </View>
       </ScrollView>
